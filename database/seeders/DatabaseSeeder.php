@@ -1,9 +1,27 @@
 <?php
-
+/**
+ * Database seeder
+ *
+ * PHP version 7.4
+ *
+ * @category MyCategory
+ * @package  MyPackage
+ * @author   Stefan Monteiro <stefanmonteiro@gmail.com>
+ * @license  MIT treino.localhost
+ * @link     link()
+ * */
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-
+/**
+ *  DatabaseSeeder class
+ *
+ * @category MyCategory
+ * @package  MyPackage
+ * @author   Stefan Monteiro <stefanmonteiro@gmail.com>
+ * @license  MIT treino.localhost
+ * @link     link()
+ * */
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -13,6 +31,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        $this->call(
+            [
+                //LaratrustSeeder::class,
+                UserSeeder::class
+            ]
+        );
         // \App\Models\User::factory(10)->create();
     }
 }

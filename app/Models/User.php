@@ -1,6 +1,6 @@
 <?php
 /**
- * Laravel Users Model
+ * Users Model
  *
  * PHP version 7.4
  *
@@ -17,6 +17,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laratrust\Traits\LaratrustUserTrait;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Validation\Rule;
+
 /**
  *  Users class
  *
@@ -60,6 +63,19 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    /**
+     * Basic validation rules to be used in request
+     *
+     * @var array
+     */
+    public const VALIDATION_RULES = [
+        'name' => ['required', 'string', 'min:5', 'max:191'],
+        'email' => ['required', 'email:rfc,dns', 'unique:users,email'],
+        'birthdate' => ['required', 'date', 'before:today'],
+        'gender' => ['required'],
+        'ssn' => ['required', 'numeric','unique:users,ssn'],
+        'password' => ['required', 'string', 'min:6']
+    ];
 
     /**
      * Adminlte image
@@ -68,7 +84,12 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function adminlte_image()
     {
-        return 'https://picsum.photos/300/300';
+        if ($this->photo == null) {
+            return 'https://picsum.photos/300/300';
+        } else {
+            return asset('storage/images/profile/users/'.$this->photo);
+        }
+
     }
 
     /**
@@ -88,7 +109,28 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function adminlte_profile_url()
     {
+
         return route('user.profile', ['user'=>$this]);;
+    }
+
+    /**
+     * Addresses
+     *
+     * @return Illuminate\Database\Eloquent\Model
+     */
+    public function addresses()
+    {
+        return $this->morphMany(Address::class, 'addressable');
+    }
+
+    /**
+     * Contacts
+     *
+     * @return Illuminate\Database\Eloquent\Model
+     */
+    public function contacts()
+    {
+        return $this->morphMany(Contact::class, 'contactable');
     }
 
 }

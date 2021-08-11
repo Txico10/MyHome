@@ -40,7 +40,7 @@ return [
     |
     */
 
-    'use_ico_only' => false,
+    'use_ico_only' => true,
     'use_full_favicon' => false,
 
     /*
@@ -198,7 +198,7 @@ return [
     */
 
     'use_route_url' => false,
-    'dashboard_url' => 'home',
+    'dashboard_url' => 'dashboard',
     'logout_url' => 'logout',
     'login_url' => 'login',
     'register_url' => 'register',
@@ -237,7 +237,7 @@ return [
     'menu' => [
         // Navbar items:
         [
-            'type'         => 'navbar-search',
+            'search'         => 'navbar-search',
             'text'         => 'search',
             'topnav_right' => true,
         ],
@@ -401,7 +401,7 @@ return [
                 ],
             ],
         ],
-        'Daterangepicker' => [
+        'DateRangePicker' => [
             'active' => false,
             'files' => [
                 [
@@ -444,11 +444,6 @@ return [
         'Moment' => [
             'active' => false,
             'files' => [
-                [
-                    'type' => 'js',
-                    'asset' => true,
-                    'location' => 'vendor/moment/locales.min.js',
-                ],
                 [
                     'type' => 'js',
                     'asset' => true,
@@ -563,6 +558,16 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'vendor/toastr/toastr.min.js',
+                ],
+            ],
+        ],
+        'BsCustomFileInput' => [
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'vendor/bs-custom-file-input/bs-custom-file-input.min.js',
                 ],
             ],
         ],
