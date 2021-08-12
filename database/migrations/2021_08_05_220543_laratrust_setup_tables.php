@@ -34,9 +34,12 @@ class LaratrustSetupTables extends Migration
         // Create table for storing teams
         Schema::create('teams', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name')->unique();
+            $table->string('slug')->unique();
             $table->string('display_name')->nullable();
+            $table->string('bn', 15)->nullable();
+            $table->string('legalform')->nullable();
             $table->string('description')->nullable();
+            $table->string('logo')->nullable();
             $table->timestamps();
         });
 

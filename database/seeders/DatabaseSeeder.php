@@ -33,8 +33,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(
             [
-                //LaratrustSeeder::class,
-                UserSeeder::class
+                LaratrustSeeder::class,
+                TeamSeeder::class,
+                UserSeeder::class,
             ]
         );
         // \App\Models\User::factory(10)->create();

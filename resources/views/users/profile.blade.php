@@ -57,6 +57,20 @@
             </x-adminlte-card>
         </div>
         <div class="col-md-6">
+            @if(session()->has('message'))
+            <x-adminlte-alert theme="success" title="Success">
+                {{session()->get('message')}}
+            </x-adminlte-alert>
+            @endif
+            @if($errors->any())
+            <x-adminlte-alert theme="danger" title="Danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </x-adminlte-alert>
+            @endif
             <div class="card">
                 <div class="card-header p-2">
                     <ul class="nav nav-pills">
@@ -341,7 +355,7 @@
             </div>
             <form id="userform" method="POST" enctype="multipart/form-data">
                 {{-- File upload --}}
-                <x-adminlte-input-file name="user_photo" placeholder="Choose a file...">
+                <x-adminlte-input-file name="user_photo" placeholder="Choose your photo...">
                     <x-slot name="prependSlot">
                         <div class="input-group-text bg-lightblue">
                             <i class="fas fa-fw fa-upload"></i>
@@ -388,7 +402,7 @@
                 <x-adminlte-input name="user_ssn" placeholder="Social security number">
                     <x-slot name="prependSlot">
                         <div class="input-group-text bg-lightblue">
-                            <i class="fas fa-fw fa-key"></i>
+                            <i class="fas fa-fw fa-hashtag"></i>
                         </div>
                     </x-slot>
                 </x-adminlte-input>
@@ -440,10 +454,14 @@
                         $(".imagePreview").attr("src", document.location.origin+"/storage/images/profile/users/"+response.user.photo)
                     }
                     $("#user_name").val(response.user.name)
+                    //$("#user_name").addClass('is-valid')
                     $("#user_email").val(response.user.email)
+                    //$("#user_email").addClass('is-valid')
                     $("#user_birthdate").val(moment(response.user.birthdate).format('DD/MM/YYYY'))
+                    //$("#user_birthdate").addClass('is-valid')
                     $("#user_gender").val(response.user.gender).trigger('change')
                     $("#user_ssn").val(response.user.ssn)
+                    //$("#user_ssn").addClass('is-valid')
                     //console.log(response)
                 },
                 error: function(jsXHR, status, error){
@@ -459,10 +477,13 @@
             fileInput.dispatchEvent(new Event('change'))
 
             $("#user_birthdate").datetimepicker('clear');
-
             $("#userform").trigger('reset')
-
             $(".invalid-feedback").remove()
+            $("#user_name").removeClass('is-invalid')
+            $("#user_email").removeClass('is-invalid')
+            $("#user_birthdate").removeClass('is-invalid')
+            $("#user_ssn").removeClass('is-invalid')
+            $("#user_password").removeClass('is-invalid')
         });
     });
 
@@ -542,6 +563,7 @@
             error: function(jsXHR, status, errors){
                 $.each(jsXHR.responseJSON.errors, function(key, value){
                     var inputElement = document.getElementById("user_"+key);
+                    $("#user_"+key).addClass('is-invalid')
 
                     var spanTag = document.createElement("span");
                     spanTag.classList.add('invalid-feedback')

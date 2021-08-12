@@ -1,6 +1,6 @@
 <?php
 /**
- * Address Controller
+ * Laratrust Team Seeder
  *
  * PHP version 7.4
  *
@@ -10,12 +10,14 @@
  * @license  MIT treino.localhost
  * @link     link()
  * */
-namespace App\Http\Controllers;
+namespace Database\Seeders;
 
-use App\Models\Address;
-use Illuminate\Http\Request;
+use App\Models\Role;
+use App\Models\Team;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 /**
- *  Address Controller class
+ *  Team seeder class
  *
  * @category MyCategory
  * @package  MyPackage
@@ -23,17 +25,18 @@ use Illuminate\Http\Request;
  * @license  MIT treino.localhost
  * @link     link()
  * */
-class AddressController extends Controller
+class TeamSeeder extends Seeder
 {
     /**
-     * Index
+     * Run the database seeds.
      *
-     * @param Address $address Address
-     *
-     * @return view
+     * @return void
      */
-    public function index(Address $address)
+    public function run()
     {
-
+        Team::factory(5)
+            ->hasAddresses(1)
+            ->hasContacts(2)
+            ->create();
     }
 }

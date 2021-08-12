@@ -22,21 +22,86 @@ return [
     'truncate_tables' => true,
 
     'roles_structure' => [
-        'superadministrator' => [
-            'users' => 'c,r,u,d',
-            'payments' => 'c,r,u,d',
-            'profile' => 'r,u'
+        'superadministrator'=>[
+            'adminMenu'=>'r',
+            'users'=>'c,r,u,d',
+            'roles'=>'c,r,u,d',
+            'permissions'=>'c,r,u,d',
+            'clients'=>'c,r,u,d',
+            'settingsMenu'=>'r',
+            'apartmentSettings'=>'c,r,u,d',
+            'furnitureSettings'=>'c,r,u,d',
+            'companyMenu'=>'r',
+            'company'=>'c,r,u,d',
+            'building'=>'c,r,u,d',
+            'apartment'=>'c,r,u,d',
+            'furniture'=>'c,r,u,d',
+            'employee'=>'c,r,u,d',
+            'leaseMenu'=>'c,r,u,d',
+            'lease'=>'c,r,u,d',
+            'tenant'=>'c,r,u,d',
+            'payment'=>'c,r,u,d',
+            'manteinanceMenu'=>'r',
+            'ticket'=>'c,r,u,d',
+            'communication'=>'c,r,u,d',
         ],
-        'administrator' => [
-            'users' => 'c,r,u,d',
-            'profile' => 'r,u'
+        'administrator'=>[
+            'adminMenu'=>'r',
+            'users'=>'r',
+            'roles'=>'r',
+            'permissions'=>'r',
+            'settingsMenu'=>'r',
+            'apartmentSettings'=>'c,r,u,d',
+            'furnitureSettings'=>'c,r,u,d',
+            'companyMenu'=>'r',
+            'company'=>'r,u',
+            'building'=>'c,r,u,d',
+            'apartment'=>'c,r,u,d',
+            'furniture'=>'c,r,u,d',
+            'employee' =>'c,r,u,d',
+            'leaseMenu'=>'r',
+            'lease'=>'c,r,u,d',
+            'tenant'=>'c,r,u,d',
+            'payment'=>'c,r,u,d',
+            'manteinanceMenu'=>'r',
+            'ticket'=>'c,r,u,d',
+            'communication'=>'c,r,u,d',
         ],
-        'user' => [
-            'profile' => 'r,u',
+        'manager'=>[
+            'companyMenu'=>'r',
+            'company'=>'r,u',
+            'building'=>'c,r,u,d',
+            'apartment'=>'c,r,u,d',
+            'furniture'=>'c,r,u,d',
+            'employee'=>'c,r,u,d',
+            'leaseMenu'=>'r',
+            'lease'=>'c,r,u,d',
+            'tenant'=>'c,r,u,d',
+            'payment'=>'c,r,u,d',
+            'manteinanceMenu'=>'r',
+            'ticket'=>'c,r,u,d',
+            'communication'=>'c,r,u,d',
         ],
-        'role_name' => [
-            'module_1_name' => 'c,r,u,d',
-        ]
+        'janitor'=>[
+            'companyMenu'=>'r',
+            'building'=>'r',
+            'apartment'=>'r',
+            'furniture'=>'c,r,u',
+            'leaseMenu'=>'r',
+            'lease'=>'r',
+            'tenant'=>'r',
+            'manteinanceMenu'=>'r',
+            'ticket'=>'c,r,u,d',
+            'communication'=> 'r'
+        ],
+        'tenant'=>[
+            'leaseMenu'=>'r',
+            'lease'=>'r',
+            'payment'=>'c,r,u,d',
+            'manteinanceMenu'=>'r',
+            'ticket'=>'c,r,u,d',
+            'communication'=> 'r'
+        ],
     ],
 
     'permissions_map' => [

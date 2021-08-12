@@ -37,7 +37,7 @@ class UserController extends Controller
      *
      * @param User $user User
      *
-     * @return void
+     * @return view
      */
     public function profile(User $user)
     {
@@ -52,13 +52,14 @@ class UserController extends Controller
      * @param Request $request Request
      * @param User    $user    User
      *
-     * @return Illuminate\Http\Response
+     * @return Illuminate\Http\RedirectResponse
      */
     public function updatepasswd(Request $request, User $user)
     {
         $request->validate(
             [
                 'old_password' => [
+                    'bail',
                     'required',
                     'string',
                     'min:6',
@@ -72,6 +73,11 @@ class UserController extends Controller
                 ],
             ]
         );
+
+        $user->password = bcrypt($request->new_password);
+
+        return redirect()->route('user.profile', [$user])->with('message', 'Password changed successfully!!!');
+
     }
 
     /**

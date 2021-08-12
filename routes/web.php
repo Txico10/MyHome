@@ -43,13 +43,22 @@ Route::get(
     }
 )->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/users/{user}/profile', [UserController::class,'profile'])
-    ->middleware(['auth', 'verified'])->name('user.profile');
-Route::post('/users/{user}/updatepasswd', [UserController::class,'updatepasswd'])
-    ->middleware(['auth', 'verified'])->name('user.updatepasswd');
-Route::post('/users/{user}/photo-upload', [UserController::class,'updatephoto'])
-    ->middleware(['auth', 'verified'])->name('user.photo.store');
-Route::get('/users/{user}/edit', [UserController::class,'edit'])
-    ->middleware(['auth', 'verified'])->name('user.edit');
-Route::patch('/users/{user}', [UserController::class,'update'])
-    ->middleware(['auth', 'verified'])->name('user.update');
+/**
+ * Users Profile Routes
+ */
+Route::middleware(['auth', 'verified'])->prefix('users/{user}')->name('user.')
+    ->group(
+        function () {
+            Route::get('/profile', [UserController::class,'profile'])
+                ->name('profile');
+            Route::post('/updatepasswd', [UserController::class,'updatepasswd'])
+                ->name('updatepasswd');
+            Route::post('/photo-upload', [UserController::class,'updatephoto'])
+                ->name('photo.store');
+            Route::get('/edit', [UserController::class,'edit'])
+                ->name('edit');
+            Route::patch('/', [UserController::class,'update'])
+                ->name('update');
+        }
+    );
+

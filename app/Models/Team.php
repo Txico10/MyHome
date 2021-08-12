@@ -13,6 +13,7 @@
 namespace App\Models;
 
 use Laratrust\Models\LaratrustTeam;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 /**
  *  Laratrust Team class
  *
@@ -24,5 +25,37 @@ use Laratrust\Models\LaratrustTeam;
  * */
 class Team extends LaratrustTeam
 {
+    use HasFactory;
+
     public $guarded = [];
+
+    /**
+     * Addresses
+     *
+     * @return Illuminate\Database\Eloquent\Model
+     */
+    public function addresses()
+    {
+        return $this->morphMany(Address::class, 'addressable');
+    }
+
+    /**
+     * Contacts
+     *
+     * @return Illuminate\Database\Eloquent\Model
+     */
+    public function contacts()
+    {
+        return $this->morphMany(Contact::class, 'contactable');
+    }
+
+    /**
+     * Team users
+     *
+     * @return Illuminate\Database\Eloquent\Model
+     */
+    public function users()
+    {
+        return $this->morphedByMany(User::class, 'role_user');
+    }
 }

@@ -12,8 +12,8 @@
  * */
 namespace Database\Seeders;
 
-use App\Models\Address;
-use App\Models\Contact;
+use App\Models\Role;
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 /**
@@ -34,7 +34,7 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        User::factory()
+        $user = User::factory()
             ->hasAddresses(2)
             ->hasContacts(3)
             ->create(
@@ -45,9 +45,37 @@ class UserSeeder extends Seeder
                     'password' => bcrypt('stefan123'),
                 ]
             );
-        User::factory(3)
-            ->hasAddresses(2)
-            ->hasContacts(3)
-            ->create();
+
+
+        $roles = Role::all();
+
+        $user->attachRole($roles->first());
+
+        $companies = Team::all();
+
+        foreach ($companies as $company) {
+
+            User::factory(5)
+                ->hasAddresses(2)
+                ->hasContacts(3)
+                ->create()
+                ->each(
+                    function ($user, $key) use ($company, $roles) {
+
+                        switch($key) {
+                        case 1:
+                            $role = $roles[1];
+                            break;
+                        case 2:
+                            $role = $roles[2];
+                            break;
+                        default:
+                            $role = $roles[3];
+                        }
+
+                        $user->attachRole($role, $company->id);
+                    }
+                );
+        }
     }
 }
