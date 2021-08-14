@@ -32,29 +32,17 @@
     <div class="row">
         <div class="col-md-3">
             <!-- User profile -->
-            <x-adminlte-profile-widget name="{{$user->name}}" desc="Hello" theme="lightblue"
+            <x-adminlte-profile-widget name="{{$user->name}}" desc="{{$user->roles->first()->display_name}}" theme="lightblue"
                 img="{{!empty($user->photo)? asset('storage/images/profile/users/'.$user->photo) :'https://picsum.photos/id/1/100'}}" layout-type="classic">
                 <x-adminlte-profile-row-item icon="fas fa-fw fa-venus-mars" class="mr-1 border-bottom" title="Gender" text="{{ucfirst(__($user->gender))}}"/>
                 <x-adminlte-profile-row-item icon="fas fa-fw fa-birthday-cake" class="mr-1 border-bottom" title="Birthdate" text="{{\Carbon\Carbon::parse($user->birthdate)->format('d F Y')}}"/>
                 <x-adminlte-profile-row-item icon="fas fa-fw fa-user-check" class="mr-1 border-bottom" title="Status" text="{{$user->status?__('Active'):__('Inactive')}}"/>
                 <x-adminlte-profile-row-item icon="fas fa-fw fa-envelope" class="mr-1 border-bottom" title="Email" text="{{$user->email}}"/>
                 <x-adminlte-profile-row-item icon="fas fa-fw fa-hashtag" class="mr-1 mb-2" title="SSN" text="{{$user->ssn}}"/>
-                <x-adminlte-button label="Edit user" class="btn-block editUser"  theme="primary" icon="fas fa-pencil-alt"/>
+                <x-adminlte-button label="Edit profile" class="btn-block editUser"  theme="primary" icon="fas fa-pencil-alt"/>
             </x-adminlte-profile-widget>
             <!--User contact-->
-            <x-adminlte-card title="Addresses" theme="lightblue" theme-mode="outline" icon="fas fa-lg fa-map-marker-alt" removable collapsible>
-                @foreach ($user->addresses as $address)
-                <strong><i class="fas fa-globe mr-1"></i> <a href="#" data-contact="{{$address->id}}">{{ucfirst($address->type)}} address</a></strong>
-                <p class="text-muted">
-                    {{$address->number}},
-                    {{$address->street}},
-                    {{$address->city}},
-                    {{$address->region}},
-                    {{$address->country}},
-                    {{$address->postcode}}
-                </p>
-                @endforeach
-            </x-adminlte-card>
+            <livewire:addresses :model="$user" />
         </div>
         <div class="col-md-6">
             @if(session()->has('message'))
@@ -326,24 +314,7 @@
         </div>
         <div class="col-md-3">
             <!-- Contacts -->
-            <x-adminlte-card title="Contact" theme="lightblue" theme-mode="outline" icon="fas fa-lg fa-address-book" removable collapsible>
-                @foreach ($user->contacts as $key => $contact)
-                    @if($key>0 && $key <$user->contacts->count())
-                        <hr>
-                    @endif
-                    @if(strcmp($contact->type, 'email')==0)
-                        <strong><i class="fas fa-at mr-1"></i> Email</strong>
-                    @elseif (strcmp($contact->type, 'phone')==0)
-                        <strong><i class="fas fa-phone-alt mr-1"></i> Phone</strong>
-                    @elseif (strcmp($contact->type, 'mobile')==0)
-                        <strong><i class="fas fa-mobile-alt mr-1"></i> Mobile</strong>
-                    @else
-                        <strong><i class="fas fa-globe mr-1"></i> Other</strong>
-                    @endif
-                    <p class="text-muted">{{__($contact->description)}} <br> {{__(ucfirst($contact->priority))}} contact {{is_null($contact->name)?'':'- '.__($contact->name)}}</p>
-                @endforeach
-                <x-adminlte-button label="Edit contact" class="btn-block" theme="primary" icon="fas fa-pencil-alt"/>
-            </x-adminlte-card>
+            <livewire:contacts :contacts="$user->contacts" />
         </div>
         @php
             $config = ['format' => 'DD/MM/YYYY'];

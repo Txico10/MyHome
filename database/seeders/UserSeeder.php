@@ -12,9 +12,11 @@
  * */
 namespace Database\Seeders;
 
+use App\Models\Address;
 use App\Models\Role;
 use App\Models\Team;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Seeder;
 /**
  *  User seeder class
@@ -35,7 +37,16 @@ class UserSeeder extends Seeder
     public function run()
     {
         $user = User::factory()
-            ->hasAddresses(2)
+            ->has(
+                Address::factory()
+                    ->count(2)
+                    ->state(
+                        new Sequence(
+                            ['type'=>'primary'],
+                            ['type'=>'secondary']
+                        )
+                    )
+            )
             ->hasContacts(3)
             ->create(
                 [
@@ -56,7 +67,16 @@ class UserSeeder extends Seeder
         foreach ($companies as $company) {
 
             User::factory(5)
-                ->hasAddresses(2)
+                ->has(
+                    Address::factory()
+                        ->count(2)
+                        ->state(
+                            new Sequence(
+                                ['type'=>'primary'],
+                                ['type'=>'secondary']
+                            )
+                        )
+                )
                 ->hasContacts(3)
                 ->create()
                 ->each(

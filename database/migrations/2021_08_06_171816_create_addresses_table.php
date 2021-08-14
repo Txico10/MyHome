@@ -17,14 +17,13 @@ class CreateAddressesTable extends Migration
             $table->id();
             $table->morphs('addressable');
             $table->enum('type', ['primary', 'secondary', 'other']);
+            $table->string('suite')->nullable();
             $table->string('number')->nullable();
             $table->string('street')->nullable();
             $table->string('city')->nullable();
             $table->string('region')->nullable();
             $table->string('country')->nullable();
             $table->string('postcode')->nullable();
-            $table->decimal('latitude', 10, 8)->nullable();
-            $table->decimal('longitude', 11, 8)->nullable();
             $table->timestamps();
         });
     }

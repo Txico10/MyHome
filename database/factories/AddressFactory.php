@@ -13,6 +13,7 @@
 namespace Database\Factories;
 
 use App\Models\Address;
+use PragmaRX\Countries\Package\Countries;
 use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  *  Users class
@@ -39,17 +40,32 @@ class AddressFactory extends Factory
      */
     public function definition()
     {
-        $type = $this->faker->randomElement(['primary', 'secondary']);
+        $myCountry = "CAN";
+
+        $countryCities = Countries::where('cca3', $myCountry)->first()
+            ->hydrate('cities')
+            ->cities
+            ->pluck('nameascii')
+            ->toArray();
+
+        $myCity = $this->faker->randomElement($countryCities);
+
+        $myRegion =  Countries::where('cca3', $myCountry)->first()
+            ->hydrateCities()
+            ->cities
+            ->where('nameascii', $myCity)
+            ->first()
+            ->adm1name;
+
         return [
-            'type'     => $type,
+            'type'     => 'primary',
+            'suite'    => $this->faker->secondaryAddress(),
             'number'   => $this->faker->buildingNumber(),
             'street'   => $this->faker->streetName(),
-            'city'     => $this->faker->city(),
-            'region'   => $this->faker->state(),
-            'country'  => $this->faker->country(),
+            'city'     => $myCity,
+            'region'   => utf8_decode($myRegion),
+            'country'  => $myCountry,
             'postcode' => $this->faker->postcode(),
-            'latitude' => $this->faker->latitude(),
-            'longitude'=> $this->faker->longitude()
         ];
     }
 }

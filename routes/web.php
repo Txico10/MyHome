@@ -10,6 +10,8 @@
  * @license  MIT treino.localhost
  * @link     link()
  * */
+
+use App\Http\Controllers\AddressController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;

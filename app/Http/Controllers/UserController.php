@@ -76,7 +76,8 @@ class UserController extends Controller
 
         $user->password = bcrypt($request->new_password);
 
-        return redirect()->route('user.profile', [$user])->with('message', 'Password changed successfully!!!');
+        return redirect()->route('user.profile', [$user])
+            ->with('message', 'Password changed successfully!!!');
 
     }
 
@@ -97,13 +98,15 @@ class UserController extends Controller
 
             if ($request->file('file')) {
 
-                $file_name = Str::random().time().'.'.$request->file('file')->extension();
+                $file_name = Str::random().time().'.'.$request->file('file')
+                    ->extension();
 
                 if ($user->photo) {
                     Storage::delete('public/images/profile/users/'.$user->photo);
                 }
 
-                $request->file('file')->storeAs('public/images/profile/users', $file_name);
+                $request->file('file')
+                    ->storeAs('public/images/profile/users', $file_name);
 
                 $user->photo = $file_name;
 
@@ -166,7 +169,8 @@ class UserController extends Controller
                 event(new Registered($user));
             }
 
-            return response()->json(['message'=>'Profile updated successfully'], 200);
+            return response()
+                ->json(['message'=>'Profile updated successfully'], 200);
         }
         return null;
     }

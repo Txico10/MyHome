@@ -12,9 +12,11 @@
  * */
 namespace Database\Seeders;
 
+use App\Models\Address;
 use App\Models\Role;
 use App\Models\Team;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Seeder;
 /**
  *  Team seeder class
@@ -35,7 +37,16 @@ class TeamSeeder extends Seeder
     public function run()
     {
         Team::factory(5)
-            ->hasAddresses(1)
+            ->has(
+                Address::factory()
+                    ->count(2)
+                    ->state(
+                        new Sequence(
+                            ['type'=>'primary'],
+                            ['type'=>'secondary']
+                        )
+                    )
+            )
             ->hasContacts(2)
             ->create();
     }

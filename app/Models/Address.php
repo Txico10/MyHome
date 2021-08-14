@@ -34,14 +34,13 @@ class Address extends Model
      */
     protected $fillable = [
         'type',
+        'suite',
         'number',
         'street',
         'city',
         'region',
         'country',
         'postcode',
-        'latitude',
-        'longitude'
     ];
 
     /**
