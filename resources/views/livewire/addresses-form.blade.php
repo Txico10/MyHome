@@ -7,9 +7,11 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text text-lightblue"><i class="fas fa-fw fa-address-book"></i></span>
                     </div>
-                    <select name="address_type" id="address_type" wire:model="address_type" data-placeholder="Enter address type" data-allow-clear="true" style="width: 85%">
+                    <select name="address_type" id="address_type" wire:model="address_type" data-placeholder="Enter address type" data-allow-clear="true" style="width: 85%" {{strcmp($address_type,'primary')==0 ? 'disabled':''}}>
                         <option value=""></option>
+                        @if(strcmp($address_type, 'primary')==0)
                         <option value="primary">Primary</option>
+                        @endif
                         <option value="secondary">Secondary</option>
                         <option value="other">Other</option>
                     </select>

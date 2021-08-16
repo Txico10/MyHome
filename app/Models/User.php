@@ -90,7 +90,9 @@ class User extends Authenticatable implements MustVerifyEmail
     public function adminlte_image()
     {
         if ($this->photo == null) {
-            return 'https://picsum.photos/300/300';
+            $gravatarEmail = md5(strtolower(trim($this->email)));
+            return 'https://www.gravatar.com/avatar/'.$gravatarEmail.'?s=200';
+
         } else {
             return asset('storage/images/profile/users/'.$this->photo);
         }

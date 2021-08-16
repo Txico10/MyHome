@@ -53,12 +53,15 @@ class UserRequest extends FormRequest
             'max:2048']];
         } else {
             if (strcmp(request()->email, request()->route('user')->email)==0) {
-                $rules['email'][2]='unique:users,email,'.request()->route('user')->id;
+                $rules['email'][2]='unique:users,email,'.request()
+                    ->route('user')->id;
             }
             if (request()->ssn == request()->route('user')->ssn) {
                 $rules['ssn'][2]='unique:users,ssn,'.request()->route('user')->id;
             }
-            $rules['password'][]= new Checkpassword(request()->route('user')->password);
+            $rules['password'][]= new Checkpassword(
+                request()->route('user')->password
+            );
         }
 
         return $rules;

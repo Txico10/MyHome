@@ -13,9 +13,13 @@
 namespace App\Http\Livewire;
 
 use App\Models\Address;
+use App\Rules\AddressTypeRule;
 use Illuminate\Validation\Rule;
 use PragmaRX\Countries\Package\Countries;
 use Livewire\Component;
+
+use function PHPSTORM_META\type;
+
 /**
  *  Address Form component class
  *
@@ -45,6 +49,8 @@ class AddressesForm extends Component
         'editAddress'=> 'edit',
         'saveAddressForm' => 'store',
         'resetAdressInputFiels' => 'resetInputFields',
+        'deleteAddressConfirm' => 'confirmDelete',
+        'deleteAddress'=>'destroy',
     ];
 
     /**
@@ -60,6 +66,7 @@ class AddressesForm extends Component
         $this->all_countries = Countries::all()
             ->pluck('name.common', 'cca3')
             ->toArray();
+        //dd($this->model->addresses->contains('type', 'other'));
     }
 
     /**
@@ -79,8 +86,19 @@ class AddressesForm extends Component
      */
     public function rules()
     {
+
+        $address_type_rules = [
+            'required',
+            Rule::in(['primary', 'secondary', 'other']),
+            //new AddressTypeRule(['primary', 'secondary'])
+        ];
+
+        if (is_null($this->address_id) || strcmp($this->address_type, $this->model->addresses->where('id', $this->address_id)->first()->type)!=0) {
+            $address_type_rules[] = new AddressTypeRule($this->model->addresses->pluck('type')->toArray());
+        }
+
         return [
-            'address_type' => ['required', Rule::in(['primary', 'secondary', 'other'])],
+            'address_type' => $address_type_rules,
             'address_suite' => 'nullable|alpha_num|min:1|max:191',
             'address_number' => [
                 Rule::requiredIf(!empty($this->address_suite) || !empty($this->address_street)),
@@ -173,7 +191,7 @@ class AddressesForm extends Component
      */
     public function edit($address)
     {
-        //dd($address);
+        $this->resetInputFields();
         $this->address_id = $address['id'];
         $this->address_type = $address['type'];
         $this->address_suite = $address['suite'];
@@ -219,10 +237,61 @@ class AddressesForm extends Component
         $this->emitUp('refreshAddresses');
         $this->dispatchBrowserEvent('closeAddressModal');
         $this->dispatchBrowserEvent(
+            'swal:modal',
+            [
+                'icon'=>'success',
+                'title' => 'Address created successfully',
+                'text' => '',
+            ]
+        );
+        /*
+        $this->dispatchBrowserEvent(
             'alert',
             [
                 'type'=>'success',
                 'message'=> 'Address stored successfully!!!',
+            ]
+        );
+        */
+    }
+
+    /**
+     * Confirm delete
+     *
+     * @param mixed $id ID
+     *
+     * @return void
+     */
+    public function confirmDelete($id)
+    {
+        $this->dispatchBrowserEvent(
+            'swal:confirm',
+            [
+                'icon'  => 'warning',
+                'title' => 'Are you sure?',
+                'text' => 'The address will be deleted',
+                'id' => $id,
+            ]
+        );
+    }
+    /**
+     * Destroy Address
+     *
+     * @param mixed $id Address
+     *
+     * @return void
+     */
+    public function destroy($id)
+    {
+        $address = $this->model->addresses->where('id', $id)->first();
+        $address->delete();
+        $this->emitUp('refreshAddresses');
+        $this->dispatchBrowserEvent(
+            'swal:modal',
+            [
+                'icon'=>'success',
+                'title' => 'Address deleted successfully',
+                'text' => '',
             ]
         );
     }
