@@ -24,7 +24,7 @@ use Livewire\Component;
  * */
 class Contacts extends Component
 {
-    public $contacts;
+    public $model;
 
     protected $listeners = [
         'refreshContacts'=> '$refresh',
@@ -33,13 +33,13 @@ class Contacts extends Component
     /**
      * Mount
      *
-     * @param mixed $contacts Contacts
+     * @param mixed $model Model
      *
      * @return void
      */
-    public function mount($contacts)
+    public function mount($model)
     {
-        $this->contacts = $contacts;
+        $this->model = $model;
     }
     /**
      * Render
@@ -48,6 +48,6 @@ class Contacts extends Component
      */
     public function render()
     {
-        return view('livewire.contacts', ['contacts'=>$this->contacts]);
+        return view('livewire.contacts', ['contacts'=>$this->model->contacts]);
     }
 }

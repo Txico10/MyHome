@@ -25,7 +25,7 @@
         </p>
         @endforeach
         @if($model->addresses->count()<3)
-        <button class="btn btn-block btn-primary" wire:click="$emit('createAddress')"><i class="fas fa-lg fa-map-marker-alt"></i> New address</button>
+        <button class="btn btn-block btn-primary" wire:click="$emit('createAddress')"> New address</button>
         @endif
     </x-adminlte-card>
     <x-adminlte-modal id="addressmodal" title="Edit Address" size="lg" theme="lightblue" icon="fas fa-lg fa-map-marker-alt" static-backdrop scrollable>
@@ -33,18 +33,14 @@
         {{-- Footer button --}}
         <x-slot name="footerSlot">
             <x-adminlte-button class="mr-auto" theme="danger" label="Dismiss" data-dismiss="modal"/>
-            <x-adminlte-button theme="success" label="Save" onclick="saveform()" />
+            <x-adminlte-button theme="success" label="Save" onclick="saveAddressForm()" />
         </x-slot>
     </x-adminlte-modal>
 
 
     <script>
 
-        window.addEventListener('alert', event => {
-            toastr[event.detail.type](event.detail.message);
-        });
-
-        window.addEventListener('swal:modal', event => {
+        window.addEventListener('swalAddress:modal', event => {
             Swal.fire(
                 event.detail.title,
                 event.detail.text,
@@ -52,7 +48,7 @@
             );
         });
 
-        window.addEventListener('swal:confirm', event => {
+        window.addEventListener('swalAddress:confirm', event => {
             Swal.fire({
                 title: event.detail.title,
                 text: event.detail.text,
@@ -79,7 +75,7 @@
             $("#addressmodal").modal('hide');
         });
 
-        function saveform() {
+        function saveAddressForm() {
             Livewire.emit('saveAddressForm')
         }
 

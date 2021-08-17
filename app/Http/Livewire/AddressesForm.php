@@ -237,22 +237,13 @@ class AddressesForm extends Component
         $this->emitUp('refreshAddresses');
         $this->dispatchBrowserEvent('closeAddressModal');
         $this->dispatchBrowserEvent(
-            'swal:modal',
+            'swalAddress:modal',
             [
                 'icon'=>'success',
                 'title' => 'Address created successfully',
                 'text' => '',
             ]
         );
-        /*
-        $this->dispatchBrowserEvent(
-            'alert',
-            [
-                'type'=>'success',
-                'message'=> 'Address stored successfully!!!',
-            ]
-        );
-        */
     }
 
     /**
@@ -265,7 +256,7 @@ class AddressesForm extends Component
     public function confirmDelete($id)
     {
         $this->dispatchBrowserEvent(
-            'swal:confirm',
+            'swalAddress:confirm',
             [
                 'icon'  => 'warning',
                 'title' => 'Are you sure?',
@@ -287,7 +278,7 @@ class AddressesForm extends Component
         $address->delete();
         $this->emitUp('refreshAddresses');
         $this->dispatchBrowserEvent(
-            'swal:modal',
+            'swalAddress:modal',
             [
                 'icon'=>'success',
                 'title' => 'Address deleted successfully',

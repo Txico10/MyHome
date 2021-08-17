@@ -40,7 +40,7 @@
                 <x-adminlte-profile-row-item icon="fas fa-fw fa-user-check" class="mr-1 border-bottom" title="Status" text="{{$user->status?__('Active'):__('Inactive')}}"/>
                 <x-adminlte-profile-row-item icon="fas fa-fw fa-envelope" class="mr-1 border-bottom" title="Email" text="{{$user->email}}"/>
                 <x-adminlte-profile-row-item icon="fas fa-fw fa-hashtag" class="mr-1 mb-2" title="SSN" text="{{$user->ssn}}"/>
-                <x-adminlte-button label="Edit profile" class="btn-block editUser"  theme="primary" icon="fas fa-pencil-alt"/>
+                <x-adminlte-button label="Edit profile" class="btn-block editUser"  theme="primary"/>
             </x-adminlte-profile-widget>
             <!--User contact-->
             <livewire:addresses :model="$user" />
@@ -315,7 +315,7 @@
         </div>
         <div class="col-md-3">
             <!-- Contacts -->
-            <livewire:contacts :contacts="$user->contacts" />
+            <livewire:contacts :model="$user" />
         </div>
         @php
             $config = ['format' => 'DD/MM/YYYY'];

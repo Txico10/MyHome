@@ -36,6 +36,7 @@ class Contact extends Model
         'priority',
         'type',
         'description',
+        'name',
     ];
 
     /**
