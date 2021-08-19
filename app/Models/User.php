@@ -18,6 +18,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laratrust\Traits\LaratrustUserTrait;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\Traits\CausesActivity;
 
 /**
  *  Users class
@@ -30,8 +31,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * */
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use LaratrustUserTrait;
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, LaratrustUserTrait, LogsActivity, CausesActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -68,6 +68,29 @@ class User extends Authenticatable implements MustVerifyEmail
         'birthdate' => 'date:Y-m-d',
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Atributes to be logged
+     *
+     * @var array
+     */
+    protected static $logAttributes = [
+        'name','email','birthdate','gender','ssn',
+    ];
+
+    /**
+     * Log name
+     *
+     * @var string
+     */
+    protected static $logName = 'user_log';
+
+    /**
+     * Log only changed attributes
+     * Prevent empty logs
+     */
+    protected static $logOnlyDirty = true;
+    protected static $submitEmptyLogs = false;
     /**
      * Basic validation rules to be used in request
      *
@@ -81,6 +104,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'ssn' => ['required', 'numeric','unique:users,ssn'],
         'password' => ['required', 'string', 'min:6']
     ];
+
 
     /**
      * Adminlte image
@@ -121,6 +145,18 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Get Description For Log Event
+     *
+     * @param mixed $eventName The name of event
+     *
+     * @return string
+     */
+    public function getDescriptionForEvent(string $eventName): string
+    {
+        return "This user has been {$eventName}";
+    }
+
+    /**
      * Addresses
      *
      * @return Illuminate\Database\Eloquent\Model
@@ -138,6 +174,35 @@ class User extends Authenticatable implements MustVerifyEmail
     public function contacts()
     {
         return $this->morphMany(Contact::class, 'contactable');
+    }
+
+    /**
+     * Logins
+     *
+     * @return Illuminate\Database\Eloquent\Model
+     */
+    public function logins()
+    {
+        return $this->hasMany(Login::class);
+    }
+
+    /**
+     * Scope With Last Login Date
+     *
+     * @param mixed $query Query
+     *
+     * @return void
+     */
+    public function scopeWithLastLoginDate($query)
+    {
+        $query->addSelect(
+            [
+                'last_login_at' => Login::select('created_at')
+                    ->whereColumn('user_id', 'users.id')
+                    ->latest()
+                    ->take(1)
+            ]
+        )->withCasts(['last_login_at' => 'datetime']);
     }
 
 }

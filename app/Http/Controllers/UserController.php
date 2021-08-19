@@ -17,10 +17,11 @@ use App\Models\User;
 use App\Rules\Checkpassword;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManagerStatic as Image;
-
+use Laratrust\LaratrustFacade;
 /**
  *  Users Controller class
  *
@@ -33,6 +34,22 @@ use Intervention\Image\ImageManagerStatic as Image;
 class UserController extends Controller
 {
     /**
+     * List of users
+     *
+     * @param Request $request request
+     *
+     * @return void
+     */
+    public function index(Request $request)
+    {
+        $users = User::with('roles', 'rolesTeams')->WithLastLoginDate()->get();
+        //$teams = $user[2]->rolesTeams;
+        //dd($user);
+
+        return view('admin.users', ['users'=>$users]);
+    }
+
+    /**
      * Profile
      *
      * @param User $user User
@@ -41,6 +58,10 @@ class UserController extends Controller
      */
     public function profile(User $user)
     {
+        if (Auth::id()!= $user->id) {
+            abort(403);
+        }
+
         $user = $user->load('addresses', 'contacts');
         return view('users.profile', ['user' => $user]);
     }
@@ -75,6 +96,12 @@ class UserController extends Controller
         );
 
         $user->password = bcrypt($request->new_password);
+        $user->save();
+
+        activity('user_log')
+            ->performedOn($user)
+            ->causedBy(Auth::user())
+            ->log("User password has been updated");
 
         return redirect()->route('user.profile', [$user])
             ->with('message', 'Password changed successfully!!!');
@@ -111,10 +138,15 @@ class UserController extends Controller
                 $user->photo = $file_name;
 
                 Image::make('storage/images/profile/users/'.$file_name)
-                    ->fit(160)
+                    ->fit(200)
                     ->save('storage/images/profile/users/'.$file_name);
 
                 $user->save();
+
+                activity('user_log')
+                    ->performedOn($user)
+                    ->causedBy(Auth::user())
+                    ->log("User photo has been updated");
 
             }
 

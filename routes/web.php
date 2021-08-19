@@ -11,13 +11,11 @@
  * @link     link()
  * */
 
-use App\Http\Controllers\AddressController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
-use Intervention\Image\ImageManagerStatic as Image;
-use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,4 +61,19 @@ Route::middleware(['auth', 'verified'])->prefix('users/{user}')->name('user.')
                 ->name('update');
         }
     );
-
+/**
+ * Admin Routes
+ */
+Route::middleware(['auth','verified','role:superadministrator'])
+    ->name('admin.')->prefix('/admin')->group(
+        function () {
+            Route::get('/users', [UserController::class,'index'])
+                ->name('users');
+            Route::get('/roles', [RoleController::class,'index'])
+                ->name('roles');
+            Route::get('/permissions', [PermissionController::class, 'index'])
+                ->name('permissions');
+            Route::get('/clients', [CompanyController::class,'index'])
+                ->name('clients');
+        }
+    );

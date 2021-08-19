@@ -10,11 +10,12 @@
  * @license  MIT treino.localhost
  * @link     link()
  * */
-namespace App\Providers;
+namespace App\Models;
 
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 /**
- *  AppServiceProvider
+ *  Users class
  *
  * @category MyCategory
  * @package  MyPackage
@@ -22,25 +23,19 @@ use Illuminate\Support\ServiceProvider;
  * @license  MIT treino.localhost
  * @link     link()
  * */
-class AppServiceProvider extends ServiceProvider
+class Login extends Model
 {
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        //
-    }
+    use HasFactory;
+
+    protected $fillable = ['user_id', 'ip_address'];
 
     /**
-     * Bootstrap any application services.
+     * Users
      *
-     * @return void
+     * @return Illuminate\Database\Eloquent\Model
      */
-    public function boot()
+    public function users()
     {
-        //
+        return $this->belongsTo(User::class);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Users Model
+ * Permission Controller
  *
  * PHP version 7.4
  *
@@ -10,11 +10,11 @@
  * @license  MIT treino.localhost
  * @link     link()
  * */
-namespace App\Providers;
+namespace App\Http\Controllers;
 
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Http\Request;
 /**
- *  AppServiceProvider
+ * Permision Controller class
  *
  * @category MyCategory
  * @package  MyPackage
@@ -22,25 +22,16 @@ use Illuminate\Support\ServiceProvider;
  * @license  MIT treino.localhost
  * @link     link()
  * */
-class AppServiceProvider extends ServiceProvider
+class PermissionController extends Controller
 {
     /**
-     * Register any application services.
+     * Index
      *
      * @return void
      */
-    public function register()
+    public function index()
     {
-        //
+        return view('admin.permissions');
     }
 
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        //
-    }
 }

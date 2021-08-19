@@ -397,6 +397,9 @@
 </div>
 @stop
 
+@section('footer')
+    @include('includes.footer')
+@stop
 
 @section('js')
 <script type="text/javascript">

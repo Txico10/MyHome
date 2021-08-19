@@ -1,6 +1,6 @@
 <?php
 /**
- * Users Model
+ * Company Controller
  *
  * PHP version 7.4
  *
@@ -10,11 +10,11 @@
  * @license  MIT treino.localhost
  * @link     link()
  * */
-namespace App\Providers;
+namespace App\Http\Controllers;
 
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Http\Request;
 /**
- *  AppServiceProvider
+ *  Company Controller class
  *
  * @category MyCategory
  * @package  MyPackage
@@ -22,25 +22,15 @@ use Illuminate\Support\ServiceProvider;
  * @license  MIT treino.localhost
  * @link     link()
  * */
-class AppServiceProvider extends ServiceProvider
+class CompanyController extends Controller
 {
     /**
-     * Register any application services.
+     * List of companies
      *
-     * @return void
+     * @return View
      */
-    public function register()
+    public function index()
     {
-        //
-    }
-
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        //
+        return view('admin.clients');
     }
 }
