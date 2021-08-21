@@ -13,8 +13,6 @@
 namespace Database\Seeders;
 
 use App\Models\Address;
-use App\Models\Role;
-use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Seeder;
@@ -36,66 +34,31 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        $user = User::factory()
-            ->has(
-                Address::factory()
-                    ->count(2)
-                    ->state(
-                        new Sequence(
-                            ['type'=>'primary'],
-                            ['type'=>'secondary']
-                        )
-                    )
-            )
-            ->hasContacts(3)
-            ->create(
-                [
-                    'name'     => 'Stefan Monteiro',
-                    'email'    => 'stefanmonteiro@gmail.com',
-                    'gender'   => 'male',
-                    'password' => bcrypt('stefan123'),
-                ]
-            );
-
-
-        $roles = Role::all();
-
-        $user->attachRole($roles->first());
-
-        $companies = Team::all();
-
-        foreach ($companies as $company) {
-
-            User::factory(5)
-                ->has(
-                    Address::factory()
-                        ->count(2)
-                        ->state(
-                            new Sequence(
-                                ['type'=>'primary'],
-                                ['type'=>'secondary']
+        activity()->withoutLogs(
+            function () {
+                $user = User::factory()
+                    ->has(
+                        Address::factory()
+                            ->count(2)
+                            ->state(
+                                new Sequence(
+                                    ['type'=>'primary'],
+                                    ['type'=>'secondary']
+                                )
                             )
-                        )
-                )
-                ->hasContacts(3)
-                ->create()
-                ->each(
-                    function ($user, $key) use ($company, $roles) {
+                    )
+                    ->hasContacts(3)
+                    ->create(
+                        [
+                            'name'     => 'Stefan Monteiro',
+                            'email'    => 'stefanmonteiro@gmail.com',
+                            'gender'   => 'male',
+                            'password' => bcrypt('stefan123'),
+                        ]
+                    );
+                $user->attachRole(1);
+            }
+        );
 
-                        switch($key) {
-                        case 1:
-                            $role = $roles[1];
-                            break;
-                        case 2:
-                            $role = $roles[2];
-                            break;
-                        default:
-                            $role = $roles[3];
-                        }
-
-                        $user->attachRole($role, $company->id);
-                    }
-                );
-        }
     }
 }

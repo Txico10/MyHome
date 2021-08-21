@@ -1,6 +1,6 @@
 <?php
 /**
- * Role Model
+ * Contract Pivot Model
  *
  * PHP version 7.4
  *
@@ -12,9 +12,10 @@
  * */
 namespace App\Models;
 
-use Laratrust\Models\LaratrustRole;
+use Illuminate\Database\Eloquent\Relations\MorphPivot;
+
 /**
- *  Laratrust Role class
+ *  Contract class
  *
  * @category MyCategory
  * @package  MyPackage
@@ -22,18 +23,7 @@ use Laratrust\Models\LaratrustRole;
  * @license  MIT treino.localhost
  * @link     link()
  * */
-class Role extends LaratrustRole
+class Contract extends MorphPivot
 {
-    public $guarded = [];
-
-    /**
-     * Users
-     *
-     * @return Illuminate\Database\Eloquent\Model
-     */
-    public function users()
-    {
-        return $this->morphedByMany(User::class, 'user', 'role_user')
-            ->withPivot('team_id');
-    }
+    protected $table = 'engageables';
 }

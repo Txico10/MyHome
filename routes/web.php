@@ -64,15 +64,34 @@ Route::middleware(['auth', 'verified'])->prefix('users/{user}')->name('user.')
 /**
  * Admin Routes
  */
-Route::middleware(['auth','verified','role:superadministrator'])
+Route::middleware(['auth','verified','role:superadministrator|administrator'])
     ->name('admin.')->prefix('/admin')->group(
         function () {
+            //users
             Route::get('/users', [UserController::class,'index'])
                 ->name('users');
+            //roles
             Route::get('/roles', [RoleController::class,'index'])
+                ->middleware('permission:roles-read')
                 ->name('roles');
+            Route::post('/roles', [RoleController::class,'store'])
+                ->middleware('permission:roles-create|roles-update')
+                ->name('roles.store');
+            Route::get('/roles/{role}', [RoleController::class,'show'])
+                ->middleware('permission:roles-read')
+                ->name('roles.show');
+            Route::get('/roles/{id}/edit', [RoleController::class,'edit'])
+                ->middleware('permission:roles-update')
+                ->name('roles.edit');
+            Route::delete('/roles/{id}', [RoleController::class,'destroy'])
+                ->middleware('permission:roles-delete')
+                ->name('roles.destroy');
+            Route::post('/roles/{role}/permission', [RoleController::class, 'permissionUpdate'])
+                ->name('roles.permission');
+            //permissions
             Route::get('/permissions', [PermissionController::class, 'index'])
                 ->name('permissions');
+            //clients
             Route::get('/clients', [CompanyController::class,'index'])
                 ->name('clients');
         }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Team Model
+ * Employee contract Model
  *
  * PHP version 7.4
  *
@@ -12,12 +12,12 @@
  * */
 namespace App\Models;
 
-use Laratrust\Models\LaratrustTeam;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\Traits\CausesActivity;
 /**
- *  Laratrust Team class
+ *  Users class
  *
  * @category MyCategory
  * @package  MyPackage
@@ -25,26 +25,36 @@ use Spatie\Activitylog\Traits\CausesActivity;
  * @license  MIT treino.localhost
  * @link     link()
  * */
-class Team extends LaratrustTeam
+class EmployeeContract extends Model
 {
     use HasFactory, LogsActivity, CausesActivity;
-
-    //public $guarded = [];
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'slug',
-        'display_name',
-        'bn',
-        'legalform',
-        'description',
-        'logo',
+        'role_id',
+        'start_at',
+        'end_at',
+        'salary_term',
+        'salary_amount',
+        'availability',
+        'min_week_time',
+        'agreement',
     ];
 
-    protected static $logName = 'company_log';
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'start_at'=>'date:Y-m-d',
+        'end_at' => 'date:Y-m-d',
+    ];
+
+    protected static $logName = 'emloyee_contract_log';
     protected static $logFillable = true;
     protected static $logOnlyDirty = true;
     protected static $submitEmptyLogs = false;
@@ -58,51 +68,32 @@ class Team extends LaratrustTeam
      */
     public function getDescriptionForEvent(string $eventName): string
     {
-        return "Company has been {$eventName}";
+        return "Employee contract has been {$eventName}";
     }
 
     /**
-     * Addresses
-     *
-     * @return Illuminate\Database\Eloquent\Model
-     */
-    public function addresses()
-    {
-        return $this->morphMany(Address::class, 'addressable');
-    }
-
-    /**
-     * Contacts
-     *
-     * @return Illuminate\Database\Eloquent\Model
-     */
-    public function contacts()
-    {
-        return $this->morphMany(Contact::class, 'contactable');
-    }
-
-    /**
-     * Team users
+     * Users
      *
      * @return Illuminate\Database\Eloquent\Model
      */
     public function users()
     {
-        return $this->morphedByMany(User::class, 'user', 'role_user')
-            ->withPivot(['role_id']);
+        return $this->morphToMany(User::class, 'engageable')
+            ->using(Contract::class)
+            ->withPivot('team_id')
+            ->withTimestamps();
     }
 
     /**
-     * Employee contracts
+     * Teams
      *
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function employeeContracts()
+    public function teams()
     {
-        return $this->morphedByMany(EmployeeContract::class, 'engageable')
+        return $this->morphToMany(Team::class, 'engageable')
             ->using(Contract::class)
             ->withPivot('user_id')
             ->withTimestamps();
     }
-
 }

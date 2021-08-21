@@ -48,7 +48,7 @@ class LoginListener
      */
     public function handle($event)
     {
-        if ($event->user->status==0) {
+        if ($event->user->active==0) {
             Auth::logout();
 
             request()->session()->invalidate();

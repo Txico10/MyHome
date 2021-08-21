@@ -290,12 +290,12 @@ return [
                 [
                     'type' => 'js',
                     'asset' => true,
-                    'location' => 'vendor/datatables/js/dataTables.bootstrap4.min.js',
+                    'location' => 'vendor/datatables/js/jquery.dataTables.min.js',
                 ],
                 [
                     'type' => 'js',
                     'asset' => true,
-                    'location' => 'vendor/datatables/js/jquery.dataTables.min.js',
+                    'location' => 'vendor/datatables/js/dataTables.bootstrap4.min.js',
                 ],
                 [
                     'type' => 'js',
@@ -425,7 +425,7 @@ return [
                 [
                     'type' => 'js',
                     'asset' => true,
-                    'location' => 'vendor/sweetalert2/sweetalert2.all.min.js',
+                    'location' => 'vendor/sweetalert2/sweetalert2.min.js',
                 ],
                 [
                     'type' => 'css',

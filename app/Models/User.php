@@ -44,7 +44,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'birthdate',
         'gender',
         'ssn',
-        'status',
+        'active',
         'photo',
         'password',
     ];
@@ -65,6 +65,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $casts = [
+        'active'=>'boolean',
         'birthdate' => 'date:Y-m-d',
         'email_verified_at' => 'datetime',
     ];
@@ -203,6 +204,30 @@ class User extends Authenticatable implements MustVerifyEmail
                     ->take(1)
             ]
         )->withCasts(['last_login_at' => 'datetime']);
+    }
+
+    /**
+     * Employees
+     *
+     * @return Illuminate\Database\Eloquent\Model
+     */
+    public function employees()
+    {
+        return $this->morphedByMany(EmployeeContract::class, 'engageable')
+            ->using(Contract::class)
+            ->withPivot('team_id')
+            ->withTimestamps();
+    }
+
+    /**
+     * Companies
+     *
+     * @return Illuminate\Database\Eloquent\Model
+     */
+    public function companies()
+    {
+        return $this->morphToMany(Team::class, 'user', 'role_user')
+            ->withPivot('role_id');
     }
 
 }

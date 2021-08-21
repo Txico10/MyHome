@@ -36,18 +36,21 @@ class TeamSeeder extends Seeder
      */
     public function run()
     {
-        Team::factory(5)
-            ->has(
-                Address::factory()
-                    ->count(2)
-                    ->state(
-                        new Sequence(
-                            ['type'=>'primary'],
-                            ['type'=>'secondary']
-                        )
+        activity()->withoutLogs(
+            function () {
+                Team::factory(5)
+                    ->has(
+                        Address::factory(2)
+                            ->state(
+                                new Sequence(
+                                    ['type'=>'primary'],
+                                    ['type'=>'secondary']
+                                )
+                            )
                     )
-            )
-            ->hasContacts(2)
-            ->create();
+                    ->hasContacts(2)
+                    ->create();
+            }
+        );
     }
 }

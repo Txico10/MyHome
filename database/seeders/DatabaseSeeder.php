@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
                 LaratrustSeeder::class,
                 TeamSeeder::class,
                 UserSeeder::class,
+                EmployeeContractSeeder::class,
             ]
         );
         // \App\Models\User::factory(10)->create();

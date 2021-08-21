@@ -1,11 +1,11 @@
 @extends('adminlte::page')
+@section('plugins.Sweetalert2', true)
 @section('plugins.Select2', true)
 @section('plugins.BsCustomFileInput', true)
 @section('plugins.Moment', true)
 @section('plugins.Datepicker', true)
 @section('plugins.Inputmask', true)
-@section('plugins.Toastr', true)
-@section('plugins.Sweetalert2', true)
+{{-- @section('plugins.Toastr', true)--}}
 
 @section('title', 'Profile')
 
