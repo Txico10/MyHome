@@ -15,7 +15,6 @@ namespace App\Http\Controllers;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Team;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Laratrust\LaratrustFacade;
 
@@ -76,12 +75,13 @@ class RoleController extends Controller
      *
      * @param mixed $request Request
      *
-     * @return void
+     * @return Response
      */
     public function store(Request $request)
     {
         $request->validate(
             [
+                'role_id' => ['nullable', 'numeric', 'exists:roles,id'],
                 'role_name' => ['required', 'alpha_dash', 'min:5','max:255'],
                 'role_display_name' => ['required', 'string', 'min:5','max:255'],
                 'role_description'=> ['required', 'string', 'min:5'],
@@ -96,14 +96,9 @@ class RoleController extends Controller
                 'description' => $request->role_description,
             ]
         );
-        /*
-        if ($request->role_id == null) {
-            $role->attachPermissions($request->role_permissions);
-        } else {
-            $role->syncPermissions($request->role_permissions);
-        }
-        */
-        return redirect()->route('admin.roles')->with('success', 'Role saved successfully');
+
+        return redirect()->route('admin.roles')
+            ->with('success', 'Role saved successfully');
     }
 
     /**
@@ -112,13 +107,14 @@ class RoleController extends Controller
      * @param mixed $request Request
      * @param Role  $role    Role
      *
-     * @return void
+     * @return View|Ajax
      */
     public function show(Request $request, Role $role)
     {
         //$role = $role->load('permissions');
         $role_permissions = $role->permissions;
-        $permissions = Permission::get(['id', 'name','display_name'])->sortBy('name', SORT_NATURAL);
+        $permissions = Permission::get(['id', 'name','display_name'])
+            ->sortBy('name', SORT_NATURAL);
         $permissions = $permissions->map(
             function ($item, $key) use ($role_permissions) {
                 //dd($item);
@@ -147,7 +143,6 @@ class RoleController extends Controller
                         return $company->display_name??'';
                     }
                 )
-                ->rawColumns(['companies'])
                 ->removeColumn('id')
                 ->removeColumn('birthdate')
                 ->removeColumn('gender')
@@ -172,15 +167,14 @@ class RoleController extends Controller
      * @param Request $request Request
      * @param int     $id      ID
      *
-     * @return void
+     * @return null|Response
      */
     public function edit(Request $request, int $id)
     {
         if ($request->ajax()) {
             $role = Role::findOrFail($id);
-            $permissions = $role->permissions->pluck('id');
 
-            return response()->json(['role'=>$role, 'permissions'=>$permissions], 200);
+            return response()->json(['role'=>$role], 200);
         }
 
         return null;
@@ -192,11 +186,12 @@ class RoleController extends Controller
      * @param Request $request Request
      * @param int     $id      Role id
      *
-     * @return void
+     * @return null|Response
      */
     public function destroy(Request $request, int $id)
     {
         if ($request->ajax()) {
+
             $role = Role::findOrFail($id);
             $permissions =$role->permissions;
 

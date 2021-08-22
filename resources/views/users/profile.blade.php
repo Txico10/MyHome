@@ -330,7 +330,7 @@
                 <x-adminlte-input-file name="user_photo" placeholder="Choose your photo...">
                     <x-slot name="prependSlot">
                         <div class="input-group-text bg-lightblue">
-                            <i class="fas fa-fw fa-upload"></i>
+                            <i class="fas fa-fw fa-camera"></i>
                         </div>
                     </x-slot>
                 </x-adminlte-input-file>
@@ -482,7 +482,14 @@
                     })
                     reader.readAsDataURL(file)
                     $(".invalid-feedback").remove()
-                    toastr.success(response.message)
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 3000
+                    })
+                    //toastr.success(response.message)
                 },
                 error: function(jsXHR, status, errors){
                     var inputElement = document.getElementById("user_photo");
@@ -507,7 +514,14 @@
 
         } else {
             if(file){
-                toastr.error("The file selected is too big")
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'The file selected is too big',
+                    showConfirmButton: false,
+                    timer: 3000
+                })
+                //toastr.error("The file selected is too big")
             }
 
         }
@@ -532,8 +546,18 @@
             },
             success: function(response) {
                 $("#editusermodal").modal('hide');
-                toastr.options.onHidden = function() { location.reload() }
-                toastr.success(response.message)
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: response.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then((result) => {
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        //console.log('I was closed by the timer')
+                        location.reload()
+                    }
+                })
             },
             error: function(jsXHR, status, errors){
                 $.each(jsXHR.responseJSON.errors, function(key, value){

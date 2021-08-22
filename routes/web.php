@@ -67,6 +67,12 @@ Route::middleware(['auth', 'verified'])->prefix('users/{user}')->name('user.')
 Route::middleware(['auth','verified','role:superadministrator|administrator'])
     ->name('admin.')->prefix('/admin')->group(
         function () {
+            Route::get(
+                '/',
+                function () {
+                    return view('admin.admin');
+                }
+            )->name('index');
             //users
             Route::get('/users', [UserController::class,'index'])
                 ->name('users');
@@ -91,6 +97,20 @@ Route::middleware(['auth','verified','role:superadministrator|administrator'])
             //permissions
             Route::get('/permissions', [PermissionController::class, 'index'])
                 ->name('permissions');
+            Route::post('/permissions', [PermissionController::class, 'store'])
+                ->middleware('permission:permissions-create|permissions-update')
+                ->name('permissions.store');
+            Route::get('/permissions/{permission}', [PermissionController::class, 'show'])
+                ->middleware('permission:permissions-read')
+                ->name('permissions.show');
+            Route::get('/permissions/{id}/edit', [PermissionController::class,'edit'])
+                ->middleware('permission:permissions-update')
+                ->name('permissions.edit');
+            Route::delete('/permissions/{id}', [PermissionController::class,'destroy'])
+                ->middleware('permission:permissions-delete')
+                ->name('permissions.destroy');
+            Route::post('/permissions/{permission}/detachuser', [PermissionController::class,'detachUser'])
+                ->name('permissions.detachuser');
             //clients
             Route::get('/clients', [CompanyController::class,'index'])
                 ->name('clients');

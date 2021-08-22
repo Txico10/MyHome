@@ -1,7 +1,6 @@
 @extends('adminlte::page')
 @section('plugins.Sweetalert2', true)
 @section('plugins.Datatables', true)
-@section('plugins.Select2', true)
 @section('title', 'Roles')
 
 @section('content_header')
@@ -13,7 +12,7 @@
         <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="{{route('dashboard')}}">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                <li class="breadcrumb-item"><a href="{{route('admin.index')}}">Admin</a></li>
                 <li class="breadcrumb-item active">Roles</li>
             </ol>
         </div><!-- /.col -->
@@ -27,9 +26,9 @@
     '#',
     'Name',
     'Display name',
-    ['label'=>'Description', 'width'=>33],
+    'Description',
     'Last update',
-    'Action',
+    ['label'=>'Actions', 'width'=>16],
   ];
 
   $config = [
@@ -42,12 +41,12 @@
   ]
 @endphp
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-9">
         <x-adminlte-card title="Roles" theme="lightblue" icon="fas fa-lg fa-user-shield" removable collapsible>
             <x-adminlte-datatable id="rolesTable" :heads="$heads" :config="$config" />
         </x-adminlte-card>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         @permission('roles-create')
         @if(session('success'))
             <x-adminlte-alert theme="success" title="Success" dismissable>
@@ -88,7 +87,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text text-lightblue"><i class="fas fa-fw fa-user-cog"></i></span>
                         </div>
-                        <textarea name="role_description" id="role_description" class="form-control @error('role_description') is-invalid @enderror" rows="2" placeholder="Enter role description">{{old('role_description')}}</textarea>
+                        <textarea name="role_description" id="role_description" class="form-control @error('role_description') is-invalid @enderror" rows="3" placeholder="Enter role description">{{old('role_description')}}</textarea>
                     </div>
                     @error('role_description')
                         <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
@@ -117,7 +116,9 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-
+        $("#btnReset").click(function(){
+            $("#role_id").val('')
+        })
         $("#rolesTable").on("click", ".editRoleButton",function(event){
             event.preventDefault();
             var role_id = $(this).val();
@@ -151,8 +152,8 @@
             let _url = "/admin/roles/"+role_id
 
             Swal.fire({
-                title: 'The furniture type will be deleted!',
-                text: 'Are You Sure?',
+                title: 'Are You Sure?',
+                text: 'The role will be deleted!',
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -167,26 +168,27 @@
                     dataType: "json",
                     cache: false,
                     success: function(response) {
-                        $("#rolesTable").DataTable().ajax.reload();
-                        //toastr.success(response.message);
-                        //setTimeout(function () { location.reload(); 5000});
-                        Swal.fire(
-                          'Deleted!',
-                          response.message,
-                          'success'
-                        )
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: response.message,
+                            showConfirmButton: false,
+                            timer: 3000
+                        }).then((result) => {
+                            if (result.dismiss === Swal.DismissReason.timer) {
+                                //console.log('I was closed by the timer')
+                                $("#rolesTable").DataTable().ajax.reload();
+                            }
+                        })
                     },
                     error: function(response, textStatus){
-                        Swal.fire(
-                          'Error',
-                          'Thes been un error',
-                          'error'
-                        )
-                        /*
-                        $.each(response.responseJSON.errors, function(key, value){
-                            toastr[textStatus](value);
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'error',
+                            title: "Theres been un error",
+                            showConfirmButton: false,
+                            timer: 3000
                         })
-                        */
                     }
                   });
                 }

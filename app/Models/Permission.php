@@ -25,4 +25,15 @@ use Laratrust\Models\LaratrustPermission;
 class Permission extends LaratrustPermission
 {
     public $guarded = [];
+
+    /**
+     * Users
+     *
+     * @return Illuminate\Database\Eloquent\Model
+     */
+    public function users()
+    {
+        return $this->morphedByMany(User::class, 'user', 'permission_user')
+            ->withPivot('team_id');
+    }
 }

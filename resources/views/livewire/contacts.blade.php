@@ -33,11 +33,14 @@
 
 <script>
     window.addEventListener('swalContact:modal', event => {
-        Swal.fire(
-            event.detail.title,
-            event.detail.text,
-            event.detail.icon,
-        );
+        Swal.fire({
+            position: 'top-end',
+            icon: event.detail.icon,
+            title: event.detail.title,
+            text: event.detail.text,
+            showConfirmButton: false,
+            timer: 3000
+        });
     });
     window.addEventListener('swalContact:confirm', event => {
         Swal.fire({

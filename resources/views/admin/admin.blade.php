@@ -1,18 +1,17 @@
 @extends('adminlte::page')
 
-@section('title', 'Users')
+@section('title', 'Admin')
 
 @section('content_header')
 <div class="container-fluid">
     <div class="row mb-2">
         <div class="col-sm-6">
-            <h1 class="m-0 text-dark">Users List</h1>
+            <h1 class="m-0 text-dark">Admin</h1>
         </div><!-- /.col -->
         <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="{{route('dashboard')}}">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="{{route('admin.index')}}">Admin</a></li>
-                <li class="breadcrumb-item active">Users</li>
+                <li class="breadcrumb-item active"><a href="#">Admin</a></li>
             </ol>
         </div><!-- /.col -->
     </div><!-- /.row -->
@@ -20,16 +19,11 @@
 @stop
 
 @section('content')
-<h3>Users</h3>
-
+    <p>Welcome to the admin page.</p>
 @stop
 
-@section('footer')
-@include('includes.footer')
-@stop
+
 
 @section('js')
-    <script>
-
-    </script>
+    <script> //console.log('Hi permissions!'); </script>
 @stop

@@ -9,12 +9,12 @@
 <div class="container-fluid">
     <div class="row mb-2">
         <div class="col-sm-6">
-            <h1 class="m-0 text-dark">Role description</h1>
+            <h1 class="m-0 text-dark">Role details</h1>
         </div><!-- /.col -->
         <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="{{route('dashboard')}}">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                <li class="breadcrumb-item"><a href="{{route('admin.index')}}">Admin</a></li>
                 <li class="breadcrumb-item"><a href="{{route('admin.roles')}}">Roles</a></li>
                 <li class="breadcrumb-item active">{{$role->display_name}}</li>
             </ol>
@@ -26,7 +26,7 @@
 @section('content')
 <div class="row">
     <div class="col-md-3">
-        <x-adminlte-card title="Roles" theme="lightblue" icon="fas fa-lg fa-user-shield" removable collapsible>
+        <x-adminlte-card title="Roles" theme="lightblue" icon="fas fa-lg fa-cogs" removable collapsible>
             <strong><i class="fas fa-user-cog mr-1"></i> Name</strong>
             <p>{{$role->name}}</p>
             <hr>
@@ -59,7 +59,7 @@
                     'columns' => [['data'=>'DT_RowIndex'], ['data'=>'name'], ['data'=>'email'], ['data'=>'companies']]
                 ]
             @endphp
-            <x-adminlte-card title="Users Role" theme="lightblue" icon="fas fa-lg fa-user-cog" removable collapsible>
+            <x-adminlte-card title="Users with {{$role->display_name}} Role" theme="lightblue" icon="fas fa-lg fa-user-shield" removable collapsible>
                 <x-adminlte-datatable id="roleUsers" :heads="$heads" :config="$config" />
             </x-adminlte-card>
         @endrole
@@ -67,7 +67,7 @@
 </div>
 <div class="row">
     <div class="col-md-12">
-        <x-adminlte-card title="Permissions" class="color-palette-box" theme="lightblue" icon="fas fa-lg fa-user-cog" removable collapsible>
+        <x-adminlte-card title="{{$role->display_name}} Permissions" class="color-palette-box" theme="lightblue" icon="fas fa-lg fa-user-cog" removable collapsible>
             @foreach ($permissions->chunk(6) as $key=>$chunk)
                 @if($key>0 && $key < $permissions->count())
                     <hr>
@@ -127,11 +127,13 @@
                 },
                 success: function(response) {
                     $("#"+id).attr("data-selected", response.selected)
-                    Swal.fire(
-                          'Success!',
-                          response.message,
-                          'success'
-                        )
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                     //console.log(response.name+" - "+ response.selected)
 
                 },
@@ -145,7 +147,6 @@
                     })
                 }
             });
-
         })
     </script>
 @stop
