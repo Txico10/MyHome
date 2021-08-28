@@ -22,8 +22,8 @@ return [
     'truncate_tables' => true,
 
     'roles_structure' => [
-        'superadministrator'=>[
-            'adminMenu'=>'r',
+        'administrator'=>[
+            'adminMenu'=>'c,r',
             'users'=>'c,r,u,d',
             'roles'=>'c,r,u,d',
             'permissions'=>'c,r,u,d',
@@ -45,11 +45,7 @@ return [
             'ticket'=>'c,r,u,d',
             'communication'=>'c,r,u,d',
         ],
-        'administrator'=>[
-            'adminMenu'=>'r',
-            'users'=>'r',
-            'roles'=>'r',
-            'permissions'=>'r',
+        'owner'=>[
             'settingsMenu'=>'r',
             'apartmentSettings'=>'c,r,u,d',
             'furnitureSettings'=>'c,r,u,d',

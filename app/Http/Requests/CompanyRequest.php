@@ -1,6 +1,6 @@
 <?php
 /**
- * User Request validation
+ * Company Request validation
  *
  * PHP version 7.4
  *
@@ -12,13 +12,12 @@
  * */
 namespace App\Http\Requests;
 
-use App\Models\User;
-use App\Rules\Checkpassword;
+use App\Models\Team;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
- *  User Form Request class
+ *  Company Form Request class
  *
  * @category MyCategory
  * @package  MyPackage
@@ -26,7 +25,7 @@ use Illuminate\Validation\Rule;
  * @license  MIT treino.localhost
  * @link     link()
  * */
-class UserRequest extends FormRequest
+class CompanyRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -45,24 +44,31 @@ class UserRequest extends FormRequest
      */
     public function rules()
     {
-        $rules = User::VALIDATION_RULES;
-        $rules['gender'][] = Rule::in(['male', 'female', 'other']);
+        $rules = Team::VALIDATION_RULES;
+
+        $rules['legalform'][] = Rule::in(
+            [
+                'Sole proprietorship',
+                'Business corporation',
+                'General partnership',
+                'Limited partnership',
+                'Cooperative'
+            ]
+        );
 
         if ($this->getMethod() == 'POST') {
-            $rules += ['photo' =>['nullable', 'image', 'mimes:png,jpg,jpeg,gif,svg',
+            $rules += ['logo' =>['nullable', 'image', 'mimes:png,jpg,jpeg,gif,svg',
             'max:2048']];
         } else {
-            if (strcmp(request()->email, request()->route('user')->email)==0) {
-                $rules['email'][2]='unique:users,email,'.request()
-                    ->route('user')->id;
+            if (request()->bn == request()->route('company')->bn) {
+                $rules['bn'][2] = 'unique:teams,bn,'.request()
+                    ->route('company')->id;
             }
-            if (request()->ssn == request()->route('user')->ssn) {
-                $rules['ssn'][2]='unique:users,ssn,'.request()->route('user')->id;
+
+            if (strcmp(request()->slug, request()->route('company')->slug)==0) {
+                $rules['slug'][2] = 'unique:teams,slug,'.request()
+                    ->route('company')->id;
             }
-            $rules['password'][]= 'current_password';
-            //$rules['password'][]= new Checkpassword(
-            //    request()->route('user')->password
-            //);
         }
 
         return $rules;

@@ -19,7 +19,51 @@
 @stop
 
 @section('content')
-    <p>Welcome to the admin page.</p>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 col-sm-6 col-md-3">
+            <x-adminlte-info-box title="CPU Traffic" text="10%" icon="fas fa-cog" icon-theme="info"/>
+        </div>
+        <!-- /.col -->
+        <div class="col-12 col-sm-6 col-md-3">
+            <x-adminlte-info-box title="Likes" text="41,410" icon="fas fa-thumbs-up" icon-theme="danger"/>
+        </div>
+        <!-- /.col -->
+
+        <!-- fix for small devices only -->
+        <div class="clearfix hidden-md-up"></div>
+
+        <div class="col-12 col-sm-6 col-md-3">
+            <x-adminlte-info-box title="Sales" text="760" icon="fas fa-shopping-cart" icon-theme="success"/>
+        </div>
+        <!-- /.col -->
+        <div class="col-12 col-sm-6 col-md-3">
+            <x-adminlte-info-box title="New Members" text="2,000" icon="fas fa-users" icon-theme="warning"/>
+        </div>
+        <!-- /.col -->
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <x-adminlte-card title="Clients" theme="lightblue" theme-mode="outline" icon="fas fa-lg fa-store" removable collapsible>
+                A removable and collapsible card with purple theme...
+            </x-adminlte-card>
+            <x-adminlte-card title="Users" theme="lightblue" theme-mode="outline" icon="fas fa-lg fa-users" removable collapsible>
+                A removable and collapsible card with purple theme...
+            </x-adminlte-card>
+        </div>
+        <!-- /.col-md-6 -->
+        <div class="col-lg-6">
+            <x-adminlte-card title="Roles" theme="lightblue" theme-mode="outline" icon="fas fa-lg fa-user-shield" removable collapsible>
+                A removable and collapsible card with purple theme...
+            </x-adminlte-card>
+            <x-adminlte-card title="Permissions" theme="lightblue" theme-mode="outline" icon="fas fa-lg fa-user-tag" removable collapsible>
+                A removable and collapsible card with purple theme...
+            </x-adminlte-card>
+        </div>
+      <!-- /.col-md-6 -->
+    </div>
+    <!-- /.row -->
+</div>
 @stop
 
 

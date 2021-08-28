@@ -13,6 +13,8 @@
 namespace App\Models;
 
 use Laratrust\Models\LaratrustPermission;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\Traits\CausesActivity;
 /**
  *  Laratrust Permission class
  *
@@ -24,7 +26,29 @@ use Laratrust\Models\LaratrustPermission;
  * */
 class Permission extends LaratrustPermission
 {
+    use LogsActivity, CausesActivity;
+
     public $guarded = [];
+
+    protected static $logAttributes = [
+        'name','display_name', 'description',
+    ];
+
+    protected static $logName = 'permission_log';
+    protected static $logOnlyDirty = true;
+    protected static $submitEmptyLogs = false;
+
+    /**
+     * Get Description For Log Event
+     *
+     * @param mixed $eventName The name of event
+     *
+     * @return string
+     */
+    public function getDescriptionForEvent(string $eventName): string
+    {
+        return "This permission has been {$eventName}";
+    }
 
     /**
      * Users

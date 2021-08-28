@@ -180,11 +180,16 @@ class PermissionController extends Controller
         if ($request->ajax()) {
             $permission = Permission::findOrFail($id);
 
-            $roles = $permission->roles;
-
-            foreach ($roles as $role) {
-                $role->detachPermission($permission);
-            }
+            $permission->roles->each(
+                function ($role) use ($permission) {
+                    $role->detachPermission($permission);
+                }
+            );
+            $permission->users->each(
+                function ($user) use ($permission) {
+                    $user->detachPermission($permission);
+                }
+            );
 
             $permission->delete();
 

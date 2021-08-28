@@ -489,7 +489,6 @@
                         showConfirmButton: false,
                         timer: 3000
                     })
-                    //toastr.success(response.message)
                 },
                 error: function(jsXHR, status, errors){
                     var inputElement = document.getElementById("user_photo");
@@ -521,7 +520,6 @@
                     showConfirmButton: false,
                     timer: 3000
                 })
-                //toastr.error("The file selected is too big")
             }
 
         }

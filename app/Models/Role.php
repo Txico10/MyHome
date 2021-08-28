@@ -13,6 +13,8 @@
 namespace App\Models;
 
 use Laratrust\Models\LaratrustRole;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\Traits\CausesActivity;
 /**
  *  Laratrust Role class
  *
@@ -24,7 +26,29 @@ use Laratrust\Models\LaratrustRole;
  * */
 class Role extends LaratrustRole
 {
+    use LogsActivity, CausesActivity;
+
     public $guarded = [];
+
+    protected static $logAttributes = [
+        'name','display_name', 'description',
+    ];
+
+    protected static $logName = 'role_log';
+    protected static $logOnlyDirty = true;
+    protected static $submitEmptyLogs = false;
+
+    /**
+     * Get Description For Log Event
+     *
+     * @param mixed $eventName The name of event
+     *
+     * @return string
+     */
+    public function getDescriptionForEvent(string $eventName): string
+    {
+        return "This role has been {$eventName}";
+    }
 
     /**
      * Users

@@ -39,7 +39,7 @@
             </x-adminlte-card>
         </div>
         <div class="col-md-9">
-            @role('superadministrator')
+
             @php
                 $heads = [
                     '#',
@@ -61,7 +61,6 @@
             <x-adminlte-card title="Users with {{$permission->display_name}} Permission" theme="lightblue" icon="fas fa-lg fa-user-shield" removable collapsible>
                 <x-adminlte-datatable id="permissionUsers" :heads="$heads" :config="$config" />
             </x-adminlte-card>
-            @endrole
         </div>
     </div>
 @stop

@@ -30,6 +30,13 @@ class Team extends LaratrustTeam
     use HasFactory, LogsActivity, CausesActivity;
 
     //public $guarded = [];
+    const VALIDATION_RULES = [
+        'slug'=>['required', 'alpha_dash', 'unique:teams,slug'],
+        'display_name' => ['required', 'string', 'min:5', 'max:255'],
+        'bn' => ['required', 'numeric', 'unique:teams,bn'],
+        'legalform' => ['required', 'string'],
+        'description' => ['nullable', 'string', 'min:5', 'max:255'],
+    ];
     /**
      * The attributes that are mass assignable.
      *
@@ -91,6 +98,20 @@ class Team extends LaratrustTeam
         return $this->morphedByMany(User::class, 'user', 'role_user')
             ->withPivot(['role_id']);
     }
+
+    /**
+     * Users Profile
+     *
+     * @param int $role_id Role
+     *
+     * @return void
+     */
+    public function usersProfile(int $role_id)
+    {
+        return $this->morphedByMany(User::class, 'user', 'role_user')
+            ->wherePivot('role_id', $role_id);
+    }
+
 
     /**
      * Employee contracts

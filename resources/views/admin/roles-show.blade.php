@@ -40,31 +40,30 @@
             <p>{{$role->updated_at->format('d F Y')}}</p>
         </x-adminlte-card>
     </div>
-    <div class="col-md-9">
-        @role('superadministrator')
-            @php
-                $heads = [
-                    '#',
-                    'Name',
-                    'Email',
-                    'Companies',
-                ];
 
-                $config = [
-                    'processing' => true,
-                    'serverSide' => true,
-                    'ajax' => ['headers'=> ['X-CSRF-TOKEN'=>csrf_token()], 'url'=> route('admin.roles.show', ['role'=>$role])],
-                    'responsive'=> true,
-                    'order' => [[0,'asc']],
-                    'columns' => [['data'=>'DT_RowIndex'], ['data'=>'name'], ['data'=>'email'], ['data'=>'companies']]
-                ]
-            @endphp
-            <x-adminlte-card title="Users with {{$role->display_name}} Role" theme="lightblue" icon="fas fa-lg fa-user-shield" removable collapsible>
-                <x-adminlte-datatable id="roleUsers" :heads="$heads" :config="$config" />
-            </x-adminlte-card>
-        @endrole
+    <div class="col-md-9">
+        @php
+            $heads = [
+                '#',
+                'Name',
+                'Email',
+                'Companies',
+            ];
+            $config = [
+                'processing' => true,
+                'serverSide' => true,
+                'ajax' => ['headers'=> ['X-CSRF-TOKEN'=>csrf_token()], 'url'=> route('admin.roles.show', ['role'=>$role])],
+                'responsive'=> true,
+                'order' => [[0,'asc']],
+                'columns' => [['data'=>'DT_RowIndex'], ['data'=>'name'], ['data'=>'email'], ['data'=>'companies']]
+            ]
+        @endphp
+        <x-adminlte-card title="Users with {{$role->display_name}} Role" theme="lightblue" icon="fas fa-lg fa-user-shield" removable collapsible>
+            <x-adminlte-datatable id="roleUsers" :heads="$heads" :config="$config" />
+        </x-adminlte-card>
     </div>
 </div>
+
 <div class="row">
     <div class="col-md-12">
         <x-adminlte-card title="{{$role->display_name}} Permissions" class="color-palette-box" theme="lightblue" icon="fas fa-lg fa-user-cog" removable collapsible>

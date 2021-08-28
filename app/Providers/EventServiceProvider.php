@@ -12,6 +12,8 @@
  * */
 namespace App\Providers;
 
+use App\Events\CompanyCreated;
+use App\Listeners\CompanyCreatedListener;
 use App\Listeners\LoginListener;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Registered;
@@ -42,6 +44,9 @@ class EventServiceProvider extends ServiceProvider
         Login::class => [
             LoginListener::class,
         ],
+        CompanyCreated::class => [
+            CompanyCreatedListener::class,
+        ]
     ];
 
     /**
@@ -68,11 +73,33 @@ class EventServiceProvider extends ServiceProvider
                         'permission' => 'adminMenu-read',
                         'submenu' => [
                             [
-                                'key' => 'roles',
-                                'text' => 'Roles',
-                                'route'  => 'admin.roles',
-                                'icon' => 'fas fa-fw fa-user-shield',
-                                'permission' => 'roles-read',
+                                'key' => 'admin',
+                                'text' => 'Admin',
+                                'route'  => 'admin.index',
+                                'icon' => 'fas fa-fw fa-tools',
+                                'permission' => 'adminMenu-create',
+                            ],
+                            [
+                                'key' => 'clients',
+                                'text' => 'Clients',
+                                'icon' => 'fas fa-fw fa-store',
+                                'permission' => 'clients-read',
+                                'submenu' => [
+                                    [
+                                        'key' => 'clients_list',
+                                        'text' => 'Clients list',
+                                        'route'  => 'admin.clients.index',
+                                        'icon' => 'fas fa-fw fa-list',
+                                        'permission' => 'clients-read',
+                                    ],
+                                    [
+                                        'key' => 'new_clients',
+                                        'text' => 'New Client',
+                                        'route'  => 'admin.clients.create',
+                                        'icon' => 'fas fa-fw fa-folder-plus',
+                                        'permission' => 'clients-create',
+                                    ],
+                                ]
                             ],
                             [
                                 'key' => 'permissions',
@@ -82,25 +109,25 @@ class EventServiceProvider extends ServiceProvider
                                 'permission' => 'permissions-read',
                             ],
                             [
-                                'key' => 'clients',
-                                'text' => 'Clients',
-                                'route'  => 'admin.clients',
-                                'icon' => 'fas fa-fw fa-list',
-                                'permission' => 'clients-read',
+                                'key' => 'roles',
+                                'text' => 'Roles',
+                                'route'  => 'admin.roles',
+                                'icon' => 'fas fa-fw fa-user-shield',
+                                'permission' => 'roles-read',
+                            ],
+                            [
+                                'key' => 'user',
+                                'text' => 'Users',
+                                'route'  => 'admin.users',
+                                'icon' => 'fas fa-fw fa-users',
+                                'permission' => 'users-read',
+                                'label'=>'10',
+                                'label_color' => 'success',
                             ]
                         ]
                     ],
                 );
-                $event->menu->add(
-                    [
-                        'key' => 'user',
-                        'text' => 'Users',
-                        'route'  => 'admin.users',
-                        'icon' => 'fas fa-fw fa-users',
-                        'permission' => 'users-read',
-                        'label_color' => 'success',
-                    ]
-                );
+
             }
         );
     }

@@ -64,7 +64,7 @@ Route::middleware(['auth', 'verified'])->prefix('users/{user}')->name('user.')
 /**
  * Admin Routes
  */
-Route::middleware(['auth','verified','role:superadministrator|administrator'])
+Route::middleware(['auth','verified','role:superadministrator'])
     ->name('admin.')->prefix('/admin')->group(
         function () {
             Route::get(
@@ -113,6 +113,29 @@ Route::middleware(['auth','verified','role:superadministrator|administrator'])
                 ->name('permissions.detachuser');
             //clients
             Route::get('/clients', [CompanyController::class,'index'])
-                ->name('clients');
+                ->middleware('permission:clients-create')
+                ->name('clients.index');
+            Route::get('/clients/create', [CompanyController::class,'create'])
+                ->middleware('permission:clients-create')
+                ->name('clients.create');
+            Route::post('/clients', [CompanyController::class, 'store'])
+                ->middleware('permission:clients-create')
+                ->name('clients.store');
         }
     );
+
+Route::get('/companies/{company:slug}', [CompanyController::class, 'show'])
+    ->middleware(['auth','verified','permission:clients-read'])
+    ->name('company.show');
+Route::get('/companies/{company}/edit', [CompanyController::class,'edit'])
+    ->middleware(['auth','verified','permission:clients-update'])
+    ->name('company.edit');
+Route::put('/companies/{company}', [CompanyController::class,'update'])
+    ->middleware(['auth','verified','permission:clients-update'])
+    ->name('company.update');
+Route::delete('/company/{id}', [CompanyController::class,'destroy'])
+    ->middleware(['auth','verified','permission:clients-delete'])
+    ->name('company.destroy');
+Route::post('/companies/{company}/logoupload', [CompanyController::class,'logoupdate'])
+    ->middleware(['auth','verified','permission:clients-update'])
+    ->name('company.logoupdate');

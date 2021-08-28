@@ -103,7 +103,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'birthdate' => ['required', 'date', 'before:today'],
         'gender' => ['required'],
         'ssn' => ['required', 'numeric','unique:users,ssn'],
-        'password' => ['required', 'string', 'min:6']
+        'password' => ['required', 'min:8', 'max:15']
     ];
 
 

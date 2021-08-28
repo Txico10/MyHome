@@ -67,7 +67,7 @@ class RoleController extends Controller
                 ->removeColumn('created_at')
                 ->make();
         }
-        return view('admin.roles', ['permissions' => Permission::pluck('display_name', 'id')]);
+        return view('admin.roles');
     }
 
     /**
@@ -111,13 +111,14 @@ class RoleController extends Controller
      */
     public function show(Request $request, Role $role)
     {
-        //$role = $role->load('permissions');
         $role_permissions = $role->permissions;
+
         $permissions = Permission::get(['id', 'name','display_name'])
             ->sortBy('name', SORT_NATURAL);
+
         $permissions = $permissions->map(
-            function ($item, $key) use ($role_permissions) {
-                //dd($item);
+            function ($item) use ($role_permissions) {
+
                 if ($role_permissions->contains($item->id)) {
                     $item['selected'] = 1;
                 } else {
@@ -128,9 +129,11 @@ class RoleController extends Controller
         );
 
         if ($request->ajax()) {
+
             $users = $role->users;
-            //$users = $users->load('companies');
+
             $companies = Team::all();
+
             return datatables()->of($users)
                 ->addIndexColumn()
                 ->addColumn(
@@ -193,11 +196,18 @@ class RoleController extends Controller
         if ($request->ajax()) {
 
             $role = Role::findOrFail($id);
+
             $permissions =$role->permissions;
 
             if ($permissions->isNotEmpty()) {
                 $role->detachPermissions($permissions);
             }
+
+            $role->users->each(
+                function ($user) use ($role) {
+                    $user->detachRole($role);
+                }
+            );
 
             $role->delete();
 
