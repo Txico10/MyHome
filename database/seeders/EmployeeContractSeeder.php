@@ -16,6 +16,7 @@ use App\Models\Address;
 use App\Models\EmployeeContract;
 use App\Models\Role;
 use App\Models\Team;
+use App\Models\TeamSetting;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Factories\Sequence;
@@ -42,6 +43,8 @@ class EmployeeContractSeeder extends Seeder
                 $companies = Team::all();
 
                 foreach ($companies as $company) {
+                    $benefits = TeamSetting::where('team_id', $company->id)
+                        ->where('type', 'benefit')->get();
                     EmployeeContract::factory(5)
                         ->state(
                             new Sequence(
@@ -68,9 +71,16 @@ class EmployeeContractSeeder extends Seeder
                         )
                         ->create()
                         ->each(
-                            function ($contract) use ($company) {
+                            function ($contract) use ($company, $benefits) {
                                 $user = $contract->users->first();
                                 $user->attachRole($contract->role_id, $company);
+
+                                $num = rand(1, 6);
+                                $contract_benefits = $benefits->random($num);
+                                foreach ($contract_benefits as $benefit) {
+                                    $contract->teamSettings()->attach($benefit->id);
+                                }
+
                             }
                         );
                 }

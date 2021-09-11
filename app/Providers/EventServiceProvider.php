@@ -15,12 +15,16 @@ namespace App\Providers;
 use App\Events\CompanyCreated;
 use App\Listeners\CompanyCreatedListener;
 use App\Listeners\LoginListener;
+use App\Models\Team;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
 use JeroenNoten\LaravelAdminLte\Events\BuildingMenu;
+use Laratrust\LaratrustFacade;
+use Illuminate\Support\Facades\Auth;
+
 /**
  *  EventServiceProvider
  *
@@ -59,6 +63,7 @@ class EventServiceProvider extends ServiceProvider
         Event::listen(
             BuildingMenu::class, function (BuildingMenu $event) {
                 // Add some items to the menu...
+
                 $event->menu->add(
                     [
                         'header' => 'ADMINISTRATION',
@@ -127,6 +132,50 @@ class EventServiceProvider extends ServiceProvider
                         ]
                     ],
                 );
+                if (!LaratrustFacade::hasRole(['superadministrator'])) {
+                    $company_id = Auth::user()->active_company;
+                    if (!is_null($company_id)) {
+                        $company = Team::findOrFail($company_id);
+                        $event->menu->add(
+                            [
+                                'header' => 'COMPANY MANAGEMENT',
+                                'permission' => 'companyMenu-read',
+                            ]
+                        );
+                        $event->menu->add(
+                            [
+                                'key' => 'real_state',
+                                'text' => 'My Company',
+                                'route'  => ['company.show',['company' => $company]],
+                                'icon' => 'fas fa-fw fa-info',
+                                'permission' => 'company-read',
+                            ],
+                        );
+                        $event->menu->add(
+                            [
+                                'key' => 'employees',
+                                'text' => 'Employees',
+                                'icon' => 'fas fa-fw fa-user-tie',
+                                'permission' => 'employee-read',
+                                'submenu' => [
+                                    [
+                                        'text' => 'All Employees',
+                                        'route'  => ['company.employees', ['company' => $company]],
+                                        'icon' => 'fas fa-fw fa-users',
+                                        'permission' => 'employee-read',
+                                    ],
+                                    [
+                                        'text' => 'New Employee',
+                                        'route'  => ['company.employees.create', ['company' => $company]],
+                                        'icon' => 'fas fa-fw fa-user-plus',
+                                        'permission' => 'employee-create',
+                                    ],
+                                ]
+                            ],
+                        );
+                    }
+
+                }
 
             }
         );

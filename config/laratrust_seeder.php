@@ -22,7 +22,7 @@ return [
     'truncate_tables' => true,
 
     'roles_structure' => [
-        'administrator'=>[
+        'superadministrator'=>[
             'adminMenu'=>'c,r',
             'users'=>'c,r,u,d',
             'roles'=>'c,r,u,d',
@@ -37,6 +37,7 @@ return [
             'apartment'=>'c,r,u,d',
             'furniture'=>'c,r,u,d',
             'employee'=>'c,r,u,d',
+            'contract'=>'c,r,u,d',
             'leaseMenu'=>'c,r,u,d',
             'lease'=>'c,r,u,d',
             'tenant'=>'c,r,u,d',
@@ -55,6 +56,7 @@ return [
             'apartment'=>'c,r,u,d',
             'furniture'=>'c,r,u,d',
             'employee' =>'c,r,u,d',
+            'contract'=>'c,r,u,d',
             'leaseMenu'=>'r',
             'lease'=>'c,r,u,d',
             'tenant'=>'c,r,u,d',
@@ -70,6 +72,7 @@ return [
             'apartment'=>'c,r,u,d',
             'furniture'=>'c,r,u,d',
             'employee'=>'c,r,u,d',
+            'contract'=>'c,r,u,d',
             'leaseMenu'=>'r',
             'lease'=>'c,r,u,d',
             'tenant'=>'c,r,u,d',

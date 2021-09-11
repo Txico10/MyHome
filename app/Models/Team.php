@@ -88,6 +88,8 @@ class Team extends LaratrustTeam
         return $this->morphMany(Contact::class, 'contactable');
     }
 
+
+
     /**
      * Team users
      *
@@ -96,7 +98,7 @@ class Team extends LaratrustTeam
     public function users()
     {
         return $this->morphedByMany(User::class, 'user', 'role_user')
-            ->withPivot(['role_id']);
+            ->withPivot('role_id');
     }
 
     /**
@@ -118,12 +120,22 @@ class Team extends LaratrustTeam
      *
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function employeeContracts()
+    public function contracts()
     {
         return $this->morphedByMany(EmployeeContract::class, 'engageable')
             ->using(Contract::class)
             ->withPivot('user_id')
             ->withTimestamps();
+    }
+
+    /**
+     * Company Settings
+     *
+     * @return Illuminate\Database\Eloquent\Model
+     */
+    public function settings()
+    {
+        return $this->hasMany(TeamSetting::class);
     }
 
 }

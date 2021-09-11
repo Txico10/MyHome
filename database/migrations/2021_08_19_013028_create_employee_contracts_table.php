@@ -19,11 +19,13 @@ class CreateEmployeeContractsTable extends Migration
             $table->date('start_at');
             $table->date('end_at')->nullable();
             $table->enum('salary_term', ['hourly', 'monthly', 'annual'])->nullable();
-            $table->decimal('salary_amount', 9, 3)->nullable();
+            $table->decimal('salary_amount', 10, 2)->nullable();
             $table->enum('availability', ['full-time', 'partial-time'])->nullable();
             $table->time('min_week_time')->nullable();
             $table->time('max_week_time')->nullable();
             $table->longText('agreement')->nullable();
+            $table->enum('agreement_status', ['unavailable','pending', 'published', 'accepted', 'refused'])->default('unavailable');
+            $table->date('acceptance_at')->nullable();
             $table->timestamps();
         });
     }

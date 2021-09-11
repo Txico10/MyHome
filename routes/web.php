@@ -12,6 +12,8 @@
  * */
 
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\ContractController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -139,3 +141,41 @@ Route::delete('/company/{id}', [CompanyController::class,'destroy'])
 Route::post('/companies/{company}/logoupload', [CompanyController::class,'logoupdate'])
     ->middleware(['auth','verified','permission:clients-update'])
     ->name('company.logoupdate');
+
+//Employees
+Route::get('/companies/{company:slug}/employees', [EmployeeController::class, 'index'])
+    ->middleware(['auth','verified','permission:employee-read'])
+    ->name('company.employees');
+Route::get('/companies/{company:slug}/employees/create', [EmployeeController::class, 'create'])
+    ->middleware(['auth','verified','permission:employee-create'])
+    ->name('company.employees.create');
+Route::post('/companies/{company:slug}/employees', [EmployeeController::class, 'store'])
+    ->middleware(['auth','verified','permission:employee-create|employee-update'])
+    ->name('company.employees.store');
+Route::get('/companies/{company:slug}/employees/{employee}', [EmployeeController::class, 'show'])
+    ->middleware(['auth','verified','permission:employee-read'])
+    ->name('company.employees.show');
+Route::get('/companies/{company:slug}/employees/{employee}/edit', [EmployeeController::class, 'edit'])
+    ->middleware(['auth','verified','permission:employee-update'])
+    ->name('company.employees.edit');
+Route::put('/companies/{company:slug}/employees/{employee}', [EmployeeController::class, 'update'])
+    ->middleware(['auth','verified','permission:employee-update'])
+    ->name('company.employees.update');
+Route::delete('/companies/{company:slug}/employees/{employee}', [EmployeeController::class, 'destroy'])
+    ->middleware(['auth','verified','permission:employee-delete'])
+    ->name('company.employees.delete');
+
+Route::get('/companies/{company:slug}/employees/{employee}/contracts', [ContractController::class, 'index'])
+    ->middleware(['auth','verified','permission:contract-read'])
+    ->name('company.employees.contract');
+//contract Create
+//Contract Store
+Route::get('/companies/{company:slug}/employees/{employee}/contracts/{contract}', [ContractController::class, 'show'])
+    ->middleware(['auth','verified','permission:contract-read'])
+    ->name('company.employees.contract.show');
+Route::get('/companies/{company:slug}/employees/{employee}/contracts/{contract}/edit', [ContractController::class, 'edit'])
+    ->middleware(['auth','verified','permission:contract-update'])
+    ->name('company.employees.contract.edit');
+Route::patch('/companies/{company:slug}/employees/{employee}/contracts/{contract}', [ContractController::class, 'update'])
+    ->middleware(['auth','verified','permission:contract-update'])
+    ->name('company.employees.contract.update');

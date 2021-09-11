@@ -23,9 +23,9 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Livewire\WithFileUploads;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 use Intervention\Image\Facades\Image;
 use PragmaRX\Countries\Package\Countries;
-use SebastianBergmann\Environment\Console;
 
 /**
  *  Company form component class
@@ -155,8 +155,14 @@ class CompaniesForm extends Component
             'owner_gender' => ['required', Rule::in(['male', 'female', 'other'])],
             'owner_password' =>
                 [
-                    'required', 'min:8', 'max:15', 'confirmed',
-                    'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/'
+                    'required',
+                    Password::min(8)
+                        ->letters()
+                        ->mixedCase()
+                        ->numbers()
+                        ->symbols()
+                        ->uncompromised(),
+                    'confirmed',
                 ],
             'owner_mobile'=>['required', 'string', 'min:7', 'max:18'],
         ];
@@ -394,8 +400,13 @@ class CompaniesForm extends Component
             'owner_ssn' => ['nullable', 'numeric'],
             'owner_password' =>
                 [
-                    'required', 'min:8', 'max:15',
-                    'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/',
+                    'required',
+                    Password::min(8)
+                        ->letters()
+                        ->mixedCase()
+                        ->numbers()
+                        ->symbols()
+                        ->uncompromised(),
                     'confirmed'
                 ],
             'owner_mobile'=>['required', 'string', 'min:7', 'max:18'],
@@ -500,7 +511,7 @@ class CompaniesForm extends Component
                 ]
             );
 
-            $owner->employees()->attach($contract->id, ['team_id'=>$company->id]);
+            $owner->employeeContracts()->attach($contract->id, ['team_id'=>$company->id]);
 
             DB::commit();
 
@@ -544,18 +555,6 @@ class CompaniesForm extends Component
                 ]
             );
         }
-
-        /*
-        $this->dispatchBrowserEvent(
-            'newTest',
-            [
-                'icon'=>'success',
-                'title' => 'Hello world',
-                'text' => '',
-            ]
-        );
-        */
-
         //redirect to Dashboad
     }
 

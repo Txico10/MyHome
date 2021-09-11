@@ -42,18 +42,18 @@ class CompanyController extends Controller
     {
 
         if ($request->ajax()) {
-            $companies = Team::has('employeeContracts')->withCount(
+            $companies = Team::has('contracts')->withCount(
                 [
-                    'employeeContracts as adminCount' => function (Builder $query) {
+                    'contracts as adminCount' => function (Builder $query) {
                         $query->where('role_id', 2);
                     },
-                    'employeeContracts as managerCount' => function (Builder $query) {
+                    'contracts as managerCount' => function (Builder $query) {
                         $query->where('role_id', 3);
                     },
-                    'employeeContracts as janitorCount' => function (Builder $query) {
+                    'contracts as janitorCount' => function (Builder $query) {
                         $query->where('role_id', 4);
                     },
-                    'employeeContracts as tenantCount' => function (Builder $query) {
+                    'contracts as tenantCount' => function (Builder $query) {
                         $query->where('role_id', 5);
                     },
                 ]

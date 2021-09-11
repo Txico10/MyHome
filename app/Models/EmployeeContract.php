@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\Traits\CausesActivity;
 /**
- *  Users class
+ *  Employee contract model class
  *
  * @category MyCategory
  * @package  MyPackage
@@ -37,11 +37,15 @@ class EmployeeContract extends Model
         'role_id',
         'start_at',
         'end_at',
+        'acceptance_at',
         'salary_term',
         'salary_amount',
         'availability',
         'min_week_time',
+        'max_week_time',
+        'benefits',
         'agreement',
+        'agreement_status',
     ];
 
     /**
@@ -52,6 +56,7 @@ class EmployeeContract extends Model
     protected $casts = [
         'start_at'=>'date:Y-m-d',
         'end_at' => 'date:Y-m-d',
+        'acceptance_at'=> 'date:Y-m-d',
     ];
 
     protected static $logName = 'emloyee_contract_log';
@@ -96,4 +101,17 @@ class EmployeeContract extends Model
             ->withPivot('user_id')
             ->withTimestamps();
     }
+
+    /**
+     * Team Settings
+     *
+     * @return Illuminate\Database\Eloquent\Model
+     */
+    public function teamSettings()
+    {
+        return $this->morphToMany(TeamSetting::class, 'settingable')
+            ->using(ConfigurationSetting::class)
+            ->withTimestamps();
+    }
+
 }

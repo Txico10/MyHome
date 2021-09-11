@@ -1,6 +1,6 @@
 <?php
 /**
- * Company Created Notification
+ * Employee Created Notification
  *
  * PHP version 7.4
  *
@@ -18,7 +18,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 /**
- *  Company Created Admin Notification class
+ *  Employee Created Notification class
  *
  * @category MyCategory
  * @package  MyPackage
@@ -26,7 +26,7 @@ use Illuminate\Notifications\Notification;
  * @license  MIT treino.localhost
  * @link     link()
  * */
-class CompanyCreatedNotification extends Notification implements ShouldQueue
+class EmployeeCreatedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -53,7 +53,7 @@ class CompanyCreatedNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -66,17 +66,38 @@ class CompanyCreatedNotification extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('New Company Registration')
-            ->line('The company has been registred successfully.')
-            ->line('To access the company profile click on the buttom below.')
-            ->action('Access company profile', route('company.show', ['company'=>$this->company]))
-            ->line('Thank you for using our management system!');
+            ->from('noreply@realestateis.com', 'Real Estate System')
+            ->subject('New employee account')
+            ->greeting('Hello '.$notifiable->name.'!')
+            ->line('Welcome to '.$this->company->display_name.'.')
+            ->line('A new contract is available for you to sign.')
+            ->line('To access your account use the following credentials:')
+            ->line('Email: '.$notifiable->email)
+            ->line('For your password contact the manager or reset your password')
+            ->action('Sign in to your profil', route('user.profile', ['user'=>$notifiable]))
+            ->line('Thank you for using our application!');
+    }
+
+    /**
+     * Store notification into Database
+     *
+     * @param mixed $notifiable Notifiable
+     *
+     * @return array
+     */
+    public function toDatabase($notifiable)
+    {
+        return [
+            'icon' => 'fas fa-fw fa-file-contract',
+            'title' => 'New Contract',
+            'text' => 'Welcome to '.$this->company->display_name.'. A new contract is available one your profile. To activate your account please sign it.',
+        ];
     }
 
     /**
      * Get the array representation of the notification.
      *
-     * @param mixed $notifiable Notiable
+     * @param mixed $notifiable Notifiable
      *
      * @return array
      */

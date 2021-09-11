@@ -53,14 +53,17 @@ class RoleController extends Controller
                 ->addColumn(
                     'action',
                     function ($role) {
-                        $btn = '<a class="btn btn-outline-primary btn-sm mx-1 shadow" type="button" title="More details" href="'.route('admin.roles.show', ['role'=>$role]).'"><i class="fas fa-info-circle fa-fw"></i></a>';
+                        $btn = '<nobr>';
+                        $btn = $btn.'<a class="btn btn-outline-primary btn-sm mx-1 shadow" type="button" title="More details" href="'.route('admin.roles.show', ['role'=>$role]).'"><i class="fas fa-info-circle fa-fw"></i></a>';
                         if (LaratrustFacade::isAbleTo('roles-update')) {
                             $btn = $btn.'<button class="btn btn-outline-secondary mx-1 shadow btn-sm editRoleButton" type="button" title="Edit role" value="'.$role->id.'"><i class="fas fa-pencil-alt fa-fw"></i></button>';
                         }
                         if (LaratrustFacade::isAbleTo('roles-delete')) {
                             $btn = $btn.'<button class="btn btn-outline-danger mx-1 shadow btn-sm deleteRoleButton" title="Delete role" type="button" value="'.$role->id.'"><i class="fas fa-trash-alt fa-fw"></i></button>';
                         }
+                        $btn=$btn.'</nobr>';
                         return $btn;
+
                     }
                 )
                 ->removeColumn('id')
@@ -111,6 +114,8 @@ class RoleController extends Controller
      */
     public function show(Request $request, Role $role)
     {
+        //$users = $role->users;
+        //dd($users);
         $role_permissions = $role->permissions;
 
         $permissions = Permission::get(['id', 'name','display_name'])

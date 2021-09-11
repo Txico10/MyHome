@@ -70,6 +70,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
+    protected $appends = [
+        'active_company'
+    ];
+
     /**
      * Atributes to be logged
      *
@@ -220,6 +224,22 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Contract Company
+     *
+     * @param mixed $company_id Company ID
+     *
+     * @return Illuminate\Database\Eloquent\Model
+     */
+    public function contractCompany($company_id)
+    {
+        return $this->morphedByMany(EmployeeContract::class, 'engageable')
+            ->using(Contract::class)
+            ->wherePivot('team_id', $company_id)
+            ->latest()
+            ->get();
+    }
+
+    /**
      * Companies
      *
      * @return Illuminate\Database\Eloquent\Model
@@ -228,6 +248,27 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->morphToMany(Team::class, 'user', 'role_user')
             ->withPivot('role_id');
+    }
+
+    /**
+     * Active Companies
+     *
+     * @return array Companies id
+     */
+    public function getActiveCompanyAttribute()
+    {
+        if ($this->employees->isNotEmpty()) {
+            $company = $this->employees
+                ->filter(
+                    function ($employee) {
+                        if ($employee->start_at <= now() && ($employee->end_at == null || $employee->end_at >= now())) {
+                            return true;
+                        }
+                    }
+                )->first();
+            return $company==null ? null: $company->pivot->team_id;
+        }
+        return null;
     }
 
 }

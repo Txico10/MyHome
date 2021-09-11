@@ -35,6 +35,7 @@ class DatabaseSeeder extends Seeder
             [
                 LaratrustSeeder::class,
                 TeamSeeder::class,
+                TeamSettingSeeder::class,
                 UserSeeder::class,
                 EmployeeContractSeeder::class,
             ]

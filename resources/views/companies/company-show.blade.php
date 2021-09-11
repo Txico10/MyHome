@@ -25,7 +25,7 @@
 @section('content')
     <div class="row">
         <div class="col-md-3">
-            <x-adminlte-profile-widget name="{{$company->display_name}}" desc="{{$company->description}}" theme="lightblue"
+            <x-adminlte-profile-widget name="{{utf8_decode($company->display_name)}}" desc="{{$company->description}}" theme="lightblue"
                 img="{{asset('storage/images/profile/companies/'.$company->logo)}}" layout-type="classic">
                 <x-adminlte-profile-row-item icon="fas fa-fw fa-hashtag" class="mr-1 border-bottom" title="Business number" text="{{ucfirst(__($company->bn))}}"/>
                 <x-adminlte-profile-row-item icon="fas fa-fw fa-file-contract" class="mr-1 mb-2" title="Legal form" text="{{$company->legalform}}"/>
