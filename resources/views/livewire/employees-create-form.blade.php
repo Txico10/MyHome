@@ -717,7 +717,7 @@
                     let data = $(this).val()
                     let amount = data.slice(2, data.length)
                     amount = amount.replace(',','')
-                    console.log(amount)
+                    //console.log(amount)
                     @this.set('contract_salary_amount', amount)
                 },
                 onincomplete: function(){

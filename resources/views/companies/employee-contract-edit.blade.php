@@ -149,7 +149,7 @@
 
                         @endswitch
                 </x-adminlte-select2>
-                <x-adminlte-input name="salary_amount" label="Salary" placeholder="Salary" type="number" min="0.00" step="0.01" value="{{$contract->salary_amount ?? null}}" label-class="text-lightblue">
+                <x-adminlte-input name="salary_amount" label="Salary" type="text" value="{{$contract->salary_amount ?? null}}"  label-class="text-lightblue">
                     <x-slot name="prependSlot">
                         <div class="input-group-text bg-gradient-lightblue">
                             <i class="fas fa-fw fa-dollar-sign"></i>
@@ -166,9 +166,10 @@
                         // [groupName, [list of button]]
                         ['style', ['bold', 'italic', 'underline', 'clear']],
                         ['font', ['strikethrough', 'superscript', 'subscript']],
+                        ['fontname', ['fontname']],
                         ['fontsize', ['fontsize']],
                         ['color', ['color']],
-                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['para', ['ul', 'ol', 'listStyles','paragraph']],
                         ['height', ['height']],
                         ['table', ['table']],
                         ['insert', ['link', 'picture', 'video']],
@@ -202,6 +203,11 @@
             //placeholder: "*",
             showMaskOnHover: true,
             showMaskOnFocus: false,
+        })
+        $('#salary_amount').inputmask({
+            alias:'currency',
+            prefix: '$',
+            placeholder: '0'
         })
     </script>
 @stop

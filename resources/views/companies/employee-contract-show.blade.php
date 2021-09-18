@@ -9,6 +9,7 @@
             <h1 class="m-0 text-dark">{{$employee->name}} Contract</h1>
         </div><!-- /.col -->
         <div class="col-sm-6">
+            {{--
             <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="{{route('dashboard')}}">Dashboard</a></li>
                 <li class="breadcrumb-item"><a href="{{route('company.show', ['company' => $company])}}">{{$company->display_name}}</a></li>
@@ -16,12 +17,22 @@
                 <li class="breadcrumb-item"><a href="{{route('company.employees.show', ['company' => $company, 'employee'=>$employee])}}">{{$employee->name}}</a></li>
                 <li class="breadcrumb-item active">Contract</li>
             </ol>
+            --}}
         </div><!-- /.col -->
     </div><!-- /.row -->
 </div><!-- /.container-fluid -->
 @stop
 
 @section('content')
+    <div class="row">
+        <div class="col-md-12">
+            @if(session('success'))
+                <x-adminlte-alert theme="success" title="Success" dismissable>
+                    {{session('success')}}
+                </x-adminlte-alert>
+            @endif
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-3">
             <div class="row">
@@ -37,12 +48,12 @@
                             <dt class="col-sm-5">Max week time</dt>
                             <dd class="col-sm-7 border-bottom">{{$contract->max_week_time ? $contract->max_week_time : 'N/A'}}</dd>
                             <dt class="col-sm-5">Start date</dt>
-                            <dd class="col-sm-7 border-bottom">{{$contract->start_at==null?'':$contract->start_at->format('d F Y')}}</dd>
+                            <dd class="col-sm-7 border-bottom">{{$contract->start_at==null?'N/A':$contract->start_at->format('d F Y')}}</dd>
                             <dt class="col-sm-5">End date</dt>
-                            <dd class="col-sm-7 border-bottom">{{$contract->end_at==null?'':$contract->end_at->format('d F Y')}}</dd>
+                            <dd class="col-sm-7 border-bottom">{{$contract->end_at==null?'N/A':$contract->end_at->format('d F Y')}}</dd>
                             <dt class="col-sm-5">Agreement status</dt>
                             <dd class="col-sm-7 border-bottom">{{ucfirst($contract->agreement_status)}}</dd>
-                            <dt class="col-sm-5">Acceptance date</dt>
+                            <dt class="col-sm-5">Signature date</dt>
                             <dd class="col-sm-7">{{$contract->acceptance_at? $contract->acceptance_at->format('d F Y'):'N/A'}}</dd>
                         </dl>
                     </x-adminlte-card>
@@ -57,8 +68,8 @@
                             <dt class="col-sm-4">Benefits</dt>
                             <dd class="col-sm-8">
                                 @if($contract->teamSettings->isNotEmpty())
-                                    @foreach ($contract->teamSettings as $key=>$benefit)
-                                        @if($key>0 && $key<$contract->teamSettings->count())
+                                    @foreach ($contract->teamSettings->where('type','benefit') as $key=>$benefit)
+                                        @if($key>0 && $key<$contract->teamSettings->where('type','benefit')->count())
                                         ,
                                         @endif
                                         <span class="badge bg-success">{{$benefit->display_name}}</span>
@@ -70,6 +81,30 @@
                         </dl>
                     </x-adminlte-card>
                 </div>
+                @if(strcmp($contract->agreement_status, "terminated")==0)
+                <div class="col-sm-12">
+                    <x-adminlte-card title="Contract termination" theme="lightblue" icon="fas fa-lg fa-user-times" removable collapsible>
+                        <dl class="row">
+                            <dt class="col-sm-4">Date</dt>
+                            <dd class="col-sm-8">{{$contract->termination_at? $contract->termination_at->format('d F Y'):'N/A'}}</dd>
+                            @if($contract->teamSettings->isNotEmpty())
+                                @foreach ($contract->teamSettings->where('type','contract_termination') as $key=>$benefit)
+                                <dt class="col-sm-4">Motive</dt>
+                                <dd class="col-sm-8">
+                                    {{$benefit->display_name}}
+                                </dd>
+                                <dt class="col-sm-4">Description</dt>
+                                <dd class="col-sm-8">
+                                    {{$benefit->pivot->description}}
+                                </dd>
+                                @endforeach
+                            @else
+                                N/A
+                            @endif
+                        </dl>
+                    </x-adminlte-card>
+                </div>
+                @endif
             </div>
         </div>
         <div class="col-md-9">

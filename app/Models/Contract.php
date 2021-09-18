@@ -13,6 +13,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\Traits\CausesActivity;
 
 /**
  *  Contract class
@@ -25,5 +27,22 @@ use Illuminate\Database\Eloquent\Relations\MorphPivot;
  * */
 class Contract extends MorphPivot
 {
+    use LogsActivity, CausesActivity;
+
     protected $table = 'engageables';
+
+    protected static $logName = 'contract_log';
+    protected static $submitEmptyLogs = false;
+
+    /**
+     * Get Description For Event Log
+     *
+     * @param mixed $eventName Event
+     *
+     * @return string
+     */
+    public function getDescriptionForEvent(string $eventName): string
+    {
+        return "Contract has been {$eventName}";
+    }
 }

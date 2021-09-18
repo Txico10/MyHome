@@ -138,4 +138,14 @@ class Team extends LaratrustTeam
         return $this->hasMany(TeamSetting::class);
     }
 
+    /**
+     * Contract Setting
+     *
+     * @return Illuminate\Database\Eloquent\Model
+     */
+    public function contractsSetting()
+    {
+        return $this->hasMany(ContractSetting::class);
+    }
+
 }

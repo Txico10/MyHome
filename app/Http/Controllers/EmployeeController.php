@@ -14,6 +14,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use App\Models\Team;
+use App\Models\TeamSetting;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -162,8 +163,13 @@ class EmployeeController extends Controller
     public function show(Team $company, User $employee)
     {
         $role = Role::findOrFail($employee->contractCompany($company->id)->first()->role_id);
-        //dd($role);
-        return view('companies.employee-show', ['company'=>$company, 'employee'=> $employee, 'role_name'=>$role->display_name]);
+        $contract_terminations = TeamSetting::where('team_id', $company->id)
+            ->where('type', 'contract_termination')
+            ->get();
+
+        //dd($contract_terminations);
+
+        return view('companies.employee-show', ['company'=>$company, 'employee'=> $employee, 'role_name'=>$role->display_name, 'contract_terminations'=>$contract_terminations]);
     }
 
     /**

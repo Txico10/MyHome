@@ -1,6 +1,6 @@
 <?php
 /**
- * Team Setting Model
+ * Contract setting Model
  *
  * PHP version 7.4
  *
@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\Traits\CausesActivity;
 /**
- *  Team Setting model class
+ *  Contract settings class
  *
  * @category MyCategory
  * @package  MyPackage
@@ -25,15 +25,18 @@ use Spatie\Activitylog\Traits\CausesActivity;
  * @license  MIT treino.localhost
  * @link     link()
  * */
-class TeamSetting extends Model
+class ContractSetting extends Model
 {
     use HasFactory, LogsActivity, CausesActivity;
 
-    protected $fillable = [
-        'team_id','type', 'name', 'display_name','description', 'location',
-    ];
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['team_id', 'type', 'agreement'];
 
-    protected static $logName = 'company_setting_log';
+    protected static $logName = 'contract_settings_log';
     protected static $logFillable = true;
     protected static $logOnlyDirty = true;
     protected static $submitEmptyLogs = false;
@@ -47,7 +50,7 @@ class TeamSetting extends Model
      */
     public function getDescriptionForEvent(string $eventName): string
     {
-        return "Company setting has been {$eventName}";
+        return "Contract settings has been {$eventName}";
     }
 
     /**
@@ -57,20 +60,6 @@ class TeamSetting extends Model
      */
     public function team()
     {
-        return $this->belongsTo(Team::class);
+        $this->belongsTo(Team::class);
     }
-
-    /**
-     * Employee Contract Settings
-     *
-     * @return Illuminate\Database\Eloquent\Model
-     */
-    public function employeeContracts()
-    {
-        return $this->morphedByMany(EmployeeContract::class, 'settingable')
-            ->using(ConfigurationSetting::class)
-            ->withPivot('description')
-            ->withTimestamps();
-    }
-
 }

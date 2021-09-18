@@ -46,6 +46,7 @@ class EmployeeContract extends Model
         'benefits',
         'agreement',
         'agreement_status',
+        'termination_at',
     ];
 
     /**
@@ -57,6 +58,7 @@ class EmployeeContract extends Model
         'start_at'=>'date:Y-m-d',
         'end_at' => 'date:Y-m-d',
         'acceptance_at'=> 'date:Y-m-d',
+        'termination_at'=> 'date:Y-m-d',
     ];
 
     protected static $logName = 'emloyee_contract_log';
@@ -111,6 +113,7 @@ class EmployeeContract extends Model
     {
         return $this->morphToMany(TeamSetting::class, 'settingable')
             ->using(ConfigurationSetting::class)
+            ->withPivot('description')
             ->withTimestamps();
     }
 

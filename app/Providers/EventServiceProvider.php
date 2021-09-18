@@ -134,6 +134,7 @@ class EventServiceProvider extends ServiceProvider
                 );
                 if (!LaratrustFacade::hasRole(['superadministrator'])) {
                     $company_id = Auth::user()->active_company;
+
                     if (!is_null($company_id)) {
                         $company = Team::findOrFail($company_id);
                         $event->menu->add(
@@ -172,6 +173,51 @@ class EventServiceProvider extends ServiceProvider
                                     ],
                                 ]
                             ],
+                        );
+                        $event->menu->add(
+                            [
+                                'key' => 'company-settings',
+                                'text' => 'Settings',
+                                'icon' => 'fas fa-fw fa-cogs',
+                                'permission' => 'settingsMenu-read',
+                                'submenu' => [
+                                    [
+                                        'key' => 'accessoriesSetting',
+                                        'text' => 'Accessories',
+                                        'url'  => '#',
+                                        'icon' => 'fas fa-fw fa-couch',
+                                        'permission' => 'accessoriesSetting-read',
+                                    ],
+                                    [
+                                        'key' => 'apartmentsSetting',
+                                        'text' => 'Apartments',
+                                        'url'  => '#',
+                                        'icon' => 'fas fa-fw fa-home',
+                                        'permission' => 'apartmentsSetting-read',
+                                    ],
+                                    [
+                                        'key' => 'benefitsSetting',
+                                        'text' => 'Benefits',
+                                        'route'  => ['company.benefits-setting', ['company' => $company]],
+                                        'icon' => 'fas fa-fw fa-notes-medical',
+                                        'permission' => 'benefitsSetting-read',
+                                    ],
+                                    [
+                                        'key' => 'contractsSetting',
+                                        'text' => 'Contracts',
+                                        'url'  => '#',
+                                        'icon' => 'fas fa-fw fa-file-contract',
+                                        'permission' => 'contractsSetting-read',
+                                    ],
+                                    [
+                                        'key' => 'dependenciesSetting',
+                                        'text' => 'Dependencies',
+                                        'url'  => '#',
+                                        'icon' => 'fas fa-fw fa-parking',
+                                        'permission' => 'dependenciesSetting-read',
+                                    ],
+                                ],
+                            ]
                         );
                     }
 

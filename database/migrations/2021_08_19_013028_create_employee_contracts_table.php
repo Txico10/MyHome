@@ -24,8 +24,9 @@ class CreateEmployeeContractsTable extends Migration
             $table->time('min_week_time')->nullable();
             $table->time('max_week_time')->nullable();
             $table->longText('agreement')->nullable();
-            $table->enum('agreement_status', ['unavailable','pending', 'published', 'accepted', 'refused'])->default('unavailable');
+            $table->enum('agreement_status', ['unavailable','pending', 'published', 'accepted', 'refused', 'terminated'])->default('unavailable');
             $table->date('acceptance_at')->nullable();
+            $table->date('termination_at')->nullable();
             $table->timestamps();
         });
     }

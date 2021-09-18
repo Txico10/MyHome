@@ -48,7 +48,12 @@ class EmployeeContractSeeder extends Seeder
                     EmployeeContract::factory(5)
                         ->state(
                             new Sequence(
-                                ['role_id'=> 2],
+                                [
+                                    'role_id'=> 2,
+                                    'end_at'=>null,
+                                    'agreement_status'=>'accepted',
+                                    'acceptance_at'=>now()
+                                ],
                                 ['role_id'=> 3],
                                 ['role_id'=> 4],
                                 ['role_id'=> 4],

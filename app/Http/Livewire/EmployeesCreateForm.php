@@ -12,6 +12,7 @@
  * */
 namespace App\Http\Livewire;
 
+use App\Models\ContractSetting;
 use App\Models\EmployeeContract;
 use App\Models\Role;
 use App\Models\TeamSetting;
@@ -425,6 +426,18 @@ class EmployeesCreateForm extends Component
 
             $employee->attachRole($this->contract_role_id, $this->company);
 
+            $company_contract = ContractSetting::where('team_id', $this->company->id)
+                ->where('type', $this->contract_availability)
+                ->first();
+
+            $agreement = null;
+            $agreement_status = null;
+
+            if ($company_contract!=null) {
+                $agreement = $company_contract->agreement;
+                $agreement_status= 'pending';
+            }
+
             $contract = EmployeeContract::create(
                 [
                     'role_id'=> $this->contract_role_id,
@@ -435,6 +448,8 @@ class EmployeesCreateForm extends Component
                     'max_week_time'=> $this->contract_max_week_time,
                     'salary_term'=> $this->contract_salary_term,
                     'salary_amount'=> $this->contract_salary_amount,
+                    'agreement'=>$agreement,
+                    'agreement_status'=>$agreement_status,
                 ]
             );
 

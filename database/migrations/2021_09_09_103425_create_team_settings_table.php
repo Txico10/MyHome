@@ -16,7 +16,7 @@ class CreateTeamSettingsTable extends Migration
         Schema::create('team_settings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('team_id')->constrained()->onDelete('cascade');
-            $table->enum('type', ['accessorie', 'apartment', 'benefit', 'dependencie']);
+            $table->enum('type', ['accessorie', 'apartment', 'benefit', 'dependencie', 'contract_termination']);
             $table->string('name');
             $table->string('display_name')->nullable();
             $table->string('description')->nullable();

@@ -261,7 +261,7 @@ class User extends Authenticatable implements MustVerifyEmail
             $company = $this->employees
                 ->filter(
                     function ($employee) {
-                        if ($employee->start_at <= now() && ($employee->end_at == null || $employee->end_at >= now())) {
+                        if ($employee->start_at <= now() && ($employee->end_at == null || $employee->end_at >= now()) && (strcmp($employee->agreement_status, 'accepted')==0)) {
                             return true;
                         }
                     }

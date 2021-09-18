@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSettingableTable extends Migration
+class CreateContractSettingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateSettingableTable extends Migration
      */
     public function up()
     {
-        Schema::create('settingables', function (Blueprint $table) {
+        Schema::create('contract_settings', function (Blueprint $table) {
             $table->id();
-            $table->morphs('settingable');
-            $table->foreignId('team_setting_id')->constrained()->onDelete('cascade');
-            $table->string('description')->nullable();
+            $table->foreignId('team_id')->constrained()->onDelete('cascade');
+            $table->enum('type', ['full-time', 'partial-time']);
+            $table->longText('agreement');
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class CreateSettingableTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('settingable');
+        Schema::dropIfExists('contract_settings');
     }
 }

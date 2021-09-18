@@ -1,10 +1,12 @@
 @extends('adminlte::page')
 @section('plugins.Sweetalert2', true)
 @section('plugins.Select2', true)
+@section('plugins.Datatables', true)
 @section('plugins.BsCustomFileInput', true)
 @section('plugins.Moment', true)
 @section('plugins.Datepicker', true)
 @section('plugins.Inputmask', true)
+@section('plugins.iCheck', true)
 {{-- @section('plugins.Toastr', true)--}}
 
 @section('title', 'Profile')
@@ -44,8 +46,9 @@
             </x-adminlte-profile-widget>
             <!--User contact-->
             <livewire:addresses :model="$user" />
+            <livewire:contacts :model="$user" />
         </div>
-        <div class="col-md-6">
+        <div class="col-md-9">
             @if(session()->has('message'))
             <x-adminlte-alert theme="success" title="Success">
                 {{session()->get('message')}}
@@ -63,125 +66,39 @@
             <div class="card">
                 <div class="card-header p-2">
                     <ul class="nav nav-pills">
-                        <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">Activity</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">Timeline</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">Contracts</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">Notifications</a></li>
                         <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Change password</a></li>
                      </ul>
                 </div><!-- /.card-header -->
                 <div class="card-body">
                     <div class="tab-content">
                         <div class="tab-pane active" id="activity">
-                            <!-- Post -->
-                            <div class="post">
-                                <div class="user-block">
-                                    <img class="img-circle img-bordered-sm" src="https://picsum.photos/id/1/128" alt="user image">
-                                    <span class="username">
-                                        <a href="#">Jonathan Burke Jr.</a>
-                                        <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
-                                    </span>
-                                    <span class="description">Shared publicly - 7:30 PM today</span>
-                                </div>
-                                <!-- /.user-block -->
-                                <p>
-                                    Lorem ipsum represents a long-held tradition for designers,
-                                    typographers and the like. Some people hate it and argue for
-                                    its demise, but others ignore the hate as they create awesome
-                                    tools to help create filler text for everyone from bacon lovers
-                                    to Charlie Sheen fans.
-                                </p>
-
-                                <p>
-                                    <a href="#" class="link-black text-sm mr-2"><i class="fas fa-share mr-1"></i> Share</a>
-                                    <a href="#" class="link-black text-sm"><i class="far fa-thumbs-up mr-1"></i> Like</a>
-                                    <span class="float-right">
-                                        <a href="#" class="link-black text-sm">
-                                            <i class="far fa-comments mr-1"></i> Comments (5)
-                                        </a>
-                                    </span>
-                                </p>
-
-                                <input class="form-control form-control-sm" type="text" placeholder="Type a comment">
-                            </div>
-                            <!-- /.post -->
-
-                            <!-- Post -->
-                            <div class="post clearfix">
-                                <div class="user-block">
-                                    <img class="img-circle img-bordered-sm" src="https://picsum.photos/id/1/128" alt="User Image">
-                                    <span class="username">
-                                        <a href="#">Sarah Ross</a>
-                                        <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
-                                    </span>
-                                    <span class="description">Sent you a message - 3 days ago</span>
-                                </div>
-                                <!-- /.user-block -->
-                                <p>
-                                    Lorem ipsum represents a long-held tradition for designers,
-                                    typographers and the like. Some people hate it and argue for
-                                    its demise, but others ignore the hate as they create awesome
-                                    tools to help create filler text for everyone from bacon lovers
-                                    to Charlie Sheen fans.
-                                </p>
-
-                                <form class="form-horizontal">
-                                    <div class="input-group input-group-sm mb-0">
-                                        <input class="form-control form-control-sm" placeholder="Response">
-                                        <div class="input-group-append">
-                                            <button type="submit" class="btn btn-danger">Send</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                            <!-- /.post -->
-
-                            <!-- Post -->
-                            <div class="post">
-                                <div class="user-block">
-                                    <img class="img-circle img-bordered-sm" src="https://picsum.photos/id/1/128" alt="User Image">
-                                    <span class="username">
-                                        <a href="#">Adam Jones</a>
-                                        <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
-                                    </span>
-                                    <span class="description">Posted 5 photos - 5 days ago</span>
-                                </div>
-                                <!-- /.user-block -->
-                                <div class="row mb-3">
-                                    <div class="col-sm-6">
-                                        <img class="img-fluid" src="https://picsum.photos/1250/835" alt="Photo">
-                                    </div>
-                                    <!-- /.col -->
-                                    <div class="col-sm-6">
-                                        <div class="row">
-                                            <div class="col-sm-6">
-                                                <img class="img-fluid mb-3" src="https://picsum.photos/1254/836" alt="Photo">
-                                                <img class="img-fluid" src="https://picsum.photos/2000/1333" alt="Photo">
-                                            </div>
-                                            <!-- /.col -->
-                                            <div class="col-sm-6">
-                                                <img class="img-fluid mb-3" src="https://picsum.photos/2000/1320" alt="Photo">
-                                                <img class="img-fluid" src="https://picsum.photos/1250/835" alt="Photo">
-                                            </div>
-                                            <!-- /.col -->
-                                        </div>
-                                        <!-- /.row -->
-                                    </div>
-                                    <!-- /.col -->
-                                </div>
-                                <!-- /.row -->
-
-                                <p>
-                                    <a href="#" class="link-black text-sm mr-2"><i class="fas fa-share mr-1"></i> Share</a>
-                                    <a href="#" class="link-black text-sm"><i class="far fa-thumbs-up mr-1"></i> Like</a>
-                                    <span class="float-right">
-                                        <a href="#" class="link-black text-sm">
-                                            <i class="far fa-comments mr-1"></i> Comments (5)
-                                        </a>
-                                    </span>
-                                </p>
-
-                                <input class="form-control form-control-sm" type="text" placeholder="Type a comment">
-                            </div>
-                            <!-- /.post -->
+                            @php
+                                $heads = [
+                                    '#',
+                                    'Code',
+                                    'Company',
+                                    'Role',
+                                    'Availability',
+                                    'Start date',
+                                    'End date',
+                                    'Status',
+                                    'Signature',
+                                    'Actions',
+                                ];
+                                $config = [
+                                    'processing' => true,
+                                    'serverSide' => true,
+                                    'ajax' => ['headers'=> ['X-CSRF-TOKEN'=>csrf_token()], 'url'=> route('user.contracts', ['user'=>$user])],
+                                    'responsive'=> true,
+                                    'order' => [[0,'asc']],
+                                    'columns' => [['data'=>'DT_RowIndex'], ['data'=>'code'], ['data'=>'company'],['data'=>'role'], ['data'=>'availability'], ['data'=>'start_at'], ['data'=>'end_at'], ['data'=>'agreement_status'], ['data'=>'acceptance_at'], ['data'=>'action', 'searchable'=>false, 'orderable' => false]],
+                                ]
+                            @endphp
+                            <x-adminlte-card title="Contracts" theme="lightblue" icon="fas fa-lg fa-file-contract" removable collapsible>
+                                <x-adminlte-datatable id="userContracts" :heads="$heads" :config="$config"/>
+                            </x-adminlte-card>
                         </div>
                         <!-- /.tab-pane -->
                         <div class="tab-pane" id="timeline">
@@ -313,10 +230,6 @@
                 </div><!-- /.card-body -->
             </div>
         </div>
-        <div class="col-md-3">
-            <!-- Contacts -->
-            <livewire:contacts :model="$user" />
-        </div>
         @php
             $config = ['format' => 'DD/MM/YYYY'];
         @endphp
@@ -393,6 +306,56 @@
                 <x-adminlte-button theme="success" label="Accept" onclick="saveForm()" />
             </x-slot>
         </x-adminlte-modal>
+        <x-adminlte-modal id="contractSignatureModal" title="Contract signature" theme="lightblue" icon="fas fa-file-signature" static-backdrop>
+            {{-- Form body --}}
+            <x-adminlte-card theme-mode="outline">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h3>Sign your contract</h3>
+                        <div class="form-group">
+                            <input type="hidden" name="contract_id" id="contract_id" value="">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <strong class="text-lightblue">Contract acceptance</strong>
+                        <div class="form-group">
+                            <div class="icheck-primary">
+                                <input type="radio" id="acceptance" value="accepted" name="agreement_status" checked=""/>
+                                <label for="acceptance" class="text-success">I accept this contract</label>
+                            </div>
+                            <div class="icheck-primary">
+                                <input type="radio" id="refusal" value="refused" name="agreement_status" />
+                                <label for="refusal" class="text-danger">I refuse this contract</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label for="signaturePassword" class="text-lightblue">Sign with your password</label>
+                            <input type="password" name="signaturePassword" class="form-control" id="signaturePassword" placeholder="Password">
+                        </div>
+                        <div class="form-group mb-0">
+                            <div class="icheck-primary">
+                                <input type="checkbox" name="terms" id="conditionsTermsCheck">
+                                <label for="conditionsTermsCheck">I agree to the <a href="#">terms of service</a>.</label>
+                            </div>
+                        </div>
+                        <div class="icheck-primary">
+                            <input type="checkbox" name="checkAcceptDate" id="checkboxAcceptDate" >
+                            <label for="checkboxAcceptDate">
+                                Signed {{now()->format('d F Y')}}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </x-adminlte-card>
+            {{-- Footer button --}}
+            <x-slot name="footerSlot">
+                <x-adminlte-button class="mr-auto" theme="danger" label="Dismiss" data-dismiss="modal"/>
+                <x-adminlte-button theme="success" label="Sign the contract" onclick="signContract()"/>
+            </x-slot>
+        </x-adminlte-modal>
     </div>
 </div>
 @stop
@@ -460,6 +423,30 @@
             $("#user_ssn").removeClass('is-invalid')
             $("#user_password").removeClass('is-invalid')
         });
+
+        $("#contractSignatureModal").on('hidden.bs.modal', function(){
+            $('#contract_id').val('')
+            $("input[name='agreement_status']").prop('checked', false);
+            $("#acceptance").prop('checked', true)
+            $('#signaturePassword').val('')
+            $("#signaturePassword").removeClass('is-invalid')
+            $("#conditionsTermsCheck").prop('checked', false)
+            $("#checkboxAcceptDate").prop('checked', false)
+            var inputElement = document.getElementById('conditionsTermsCheck');
+            var label = inputElement.parentNode.querySelector("label[for='conditionsTermsCheck']");
+            label.classList.remove('text-danger')
+            var inputElement = document.getElementById('checkboxAcceptDate');
+            var label = inputElement.parentNode.querySelector("label[for='checkboxAcceptDate']");
+            label.classList.remove('text-danger')
+            $(".invalid-feedback").remove()
+
+        })
+
+        $("#userContracts").on("click", ".contractSignature", function(){
+            $('#contract_id').val($(this).val())
+            $("#contractSignatureModal").modal('show');
+            //console.log($(this).val())
+        })
     });
 
     $("#user_photo").on("change", function(){
@@ -579,6 +566,94 @@
             }
         })
 
+    }
+
+    function signContract() {
+        $(".invalid-feedback").remove()
+        $("#signaturePassword").removeClass('is-invalid')
+        var conditionsTermsCheckElement = document.getElementById('conditionsTermsCheck');
+        var conditionsTermsChecklabel = conditionsTermsCheckElement.parentNode.querySelector("label[for='conditionsTermsCheck']");
+        conditionsTermsChecklabel.classList.remove('text-danger')
+        var inputElement = document.getElementById('checkboxAcceptDate');
+        var label = inputElement.parentNode.querySelector("label[for='checkboxAcceptDate']");
+        label.classList.remove('text-danger')
+
+        var step = $('input[name="agreement_status"]:checked').val()
+        var contract_id = $('#contract_id').val()
+        if ($('input[name="terms"]').is(':checked')) {
+            terms_check = 1
+        } else {
+            terms_check = 0
+        }
+        if ($('input[name="checkAcceptDate"]').is(':checked')) {
+            date_check = 1
+        } else {
+            date_check = 0
+        }
+        $.ajax({
+            url:"{{route('user.contracts.signed', ['user'=>$user])}}",
+            type: "POST",
+            cache: false,
+            data: {
+                contract_id: $('#contract_id').val(),
+                agreement_status: step,
+                signaturePassword: $("#signaturePassword").val(),
+                conditionsTermsCheck:terms_check,
+                checkboxAcceptDate:date_check,
+            },
+            success: function(response) {
+                $("#contractSignatureModal").modal('hide');
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: response.message,
+                    showConfirmButton: false,
+                    timer: 3000
+                }).then((result) => {
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        //console.log('I was closed by the timer')
+                        $("#userContracts").DataTable().ajax.reload();
+                    }
+                })
+            },
+            error: function(jsXHR, status, errors){
+                $.each(jsXHR.responseJSON.errors, function(key, value){
+
+                    if (key==="signaturePassword") {
+                        var inputElement = document.getElementById(key);
+                        $("#"+key).addClass('is-invalid')
+
+                        var spanTag = document.createElement("span");
+                        spanTag.classList.add('invalid-feedback')
+                        spanTag.classList.add('d-block')
+                        spanTag.setAttribute('role', 'alert')
+
+                        var strong = document.createElement("strong")
+                        strong.innerHTML=value
+
+                        spanTag.appendChild(strong)
+
+                        inputElement.parentNode.insertBefore(spanTag, inputElement.nextSibling)
+                    } else {
+                        var inputElement = document.getElementById(key);
+                        var label = inputElement.parentNode.querySelector("label[for='" + key + "']");
+                        //var label = inputElement.nextElementSibling
+                        label.classList.add('text-danger')
+                        var spanTag = document.createElement("span");
+                        spanTag.classList.add('error')
+                        spanTag.classList.add('invalid-feedback')
+                        spanTag.setAttribute('style', 'display: inline;')
+
+                        spanTag.innerHTML=value
+                        newParent=inputElement.parentNode
+                        newParent.parentNode.insertBefore(spanTag, newParent.nextSibling)
+                        //console.log(label)
+                    }
+                })
+
+            },
+        })
+        //console.log(step+"-"+contract_id+" - "+password+" - "+terms_check+" - "+date_check)
     }
 
 </script>

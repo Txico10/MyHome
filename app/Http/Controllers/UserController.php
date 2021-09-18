@@ -13,13 +13,18 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserRequest;
+use App\Models\EmployeeContract;
+use App\Models\Role;
 use App\Models\User;
 use App\Rules\Checkpassword;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Intervention\Image\ImageManagerStatic as Image;
 
 /**
@@ -58,9 +63,6 @@ class UserController extends Controller
      */
     public function profile(User $user)
     {
-        if (Auth::id()!= $user->id) {
-            abort(403);
-        }
 
         $user = $user->load('addresses', 'contacts');
         return view('users.profile', ['user' => $user]);
@@ -205,5 +207,189 @@ class UserController extends Controller
                 ->json(['message'=>'Profile updated successfully'], 200);
         }
         return null;
+    }
+
+    /**
+     * Contracts
+     *
+     * @param Request $request Request
+     * @param User    $user    User
+     *
+     * @return Illuminate\Http\Response
+     */
+    public function contracts(Request $request, User $user)
+    {
+        if ($request->ajax()) {
+            if ($user->employees->isNotEmpty()) {
+                $contracts = $user->employees
+                    ->filter(
+                        function ($contract, $key) {
+                            if (strcmp($contract->agreement_status, 'unavailable')
+                                && strcmp($contract->agreement_status, 'pending')
+                            ) {
+                                if (strcmp($contract->agreement_status, 'terminated') || $contract->acceptance_at!=null) {
+                                    return $contract;
+                                }
+                            }
+                        }
+                    )
+                    ->sortByDesc('created_at');
+
+                $roles = Role::all();
+                $companies = $user->companies;
+
+                return datatables()->of($contracts)
+                    ->addIndexColumn()
+                    ->addColumn(
+                        'code',
+                        function ($contract) use ($companies) {
+                            $company = $companies->where('id', $contract->pivot->team_id)->first();
+                            return "HR".$company->id.$contract->id.$contract->role_id;
+                        }
+                    )
+                    ->addColumn(
+                        'company',
+                        function ($contract) use ($companies) {
+                            return $companies->where('id', $contract->pivot->team_id)->first()->display_name;
+                        }
+                    )
+                    ->addColumn(
+                        'role',
+                        function ($contract) use ($roles) {
+                            $role_display_name = $roles->where('id', $contract->role_id)
+                                ->first()
+                                ->display_name;
+                            //$tag = '<span class="badge bg-primary">'.$name.'</span>';
+                            return $role_display_name??'';
+                        }
+                    )
+                    ->editColumn(
+                        'start_at',
+                        function ($contract) {
+                            return $contract->start_at->format('d F Y');
+                        }
+                    )
+                    ->editColumn(
+                        'agreement_status',
+                        function ($contract) {
+                            $tag_color = null;
+
+                            switch ($contract->agreement_status) {
+                            case 'unavailable':
+                                $tag_color = 'bg-warning';
+                                break;
+                            case 'pending':
+                                $tag_color = 'bg-primary';
+                                break;
+                            case 'published':
+                                $tag_color = 'bg-orange';
+                                break;
+                            case 'accepted':
+                                $tag_color = 'bg-success';
+                                break;
+                            case 'refused':
+                                $tag_color = 'bg-danger';
+                                break;
+                            default :
+                                $tag_color = 'bg-danger';
+                            }
+
+                            return '<span class="badge '.$tag_color.'">'.ucfirst($contract->agreement_status).'</span>';
+                        }
+                    )
+                    ->editColumn(
+                        'acceptance_at',
+                        function ($contract) {
+                            return is_null($contract->acceptance_at) ?'N/A':$contract->acceptance_at->format('d F Y');
+                        }
+                    )
+                    ->editColumn(
+                        'end_at',
+                        function ($contract) {
+                            return is_null($contract->end_at)? 'N/A':$contract->end_at->format('d F Y');
+                        }
+                    )
+                    ->editColumn(
+                        'availability',
+                        function ($contract) {
+                            return is_null($contract->availability)? 'N/A':ucfirst($contract->availability);
+                        }
+                    )
+                    ->addColumn(
+                        'action',
+                        function ($contract) use ($companies, $user) {
+                            $company = $companies->where('id', $contract->pivot->team_id)->first();
+                            $btn = '<nobr>';
+                            $btn = $btn.'<a class="btn btn-outline-primary btn-sm mx-1 shadow" type="button" title="More details" href="'.route('company.employees.contract.show', ['company'=>$company, 'employee'=>$user, 'contract'=> $contract]).'"><i class="fas fa-search fa-fw"></i></a>';
+                            if (strcmp($contract->agreement_status, 'published')==0) {
+                                $btn =$btn.'<button class="btn btn-sm btn-outline-danger mx-1 shadow contractSignature" type="button" title="contract  signature" value="'.$contract->id.'"><i class="fas fa-file-signature"></i></button>';
+                            }
+                            if (strcmp($contract->agreement_status, 'accepted')==0) {
+                                $btn =$btn.'<button class="btn btn-sm btn-outline-danger mx-1 shadow" value="'.$contract->id.'" type="button"   title="greement" ><i class="fas fa-file-pdf"></i></button>';
+                            }
+
+
+                            $btn=$btn.'</nobr>';
+                            return $btn;
+                        }
+                    )
+                    ->rawColumns(['agreement_status', 'action'])
+                    ->removeColumn('id')
+                    ->removeColumn('role_id')
+                    ->removeColumn('salary_term')
+                    ->removeColumn('salary_amount')
+                    ->removeColumn('min_week_time')
+                    ->removeColumn('max_week_time')
+                    ->removeColumn('agreement')
+                    ->removeColumn('created_at')
+                    ->removeColumn('updated_at')
+                    ->make();
+            }
+
+        }
+        return null;
+    }
+
+    /**
+     * Contract Signature
+     *
+     * @param Request $request Request
+     * @param User    $user    User
+     *
+     * @return Illuminate\Http\Response
+     */
+    public function contractSignature(Request $request, User $user)
+    {
+        if ($request->ajax()) {
+            Validator::extend(
+                'password_check',
+                function ($attr, $value) use ($user) {
+                    if (Hash::check($value, $user->password)) {
+                        return true;
+                    }
+                    return false;
+                }
+            );
+            $request->validate(
+                [
+                    'contract_id'=> ['required', 'exists:employee_contracts,id'],
+                    'agreement_status'=> ['required', Rule::in(['accepted', 'refused'])],
+                    'signaturePassword' => ['required', 'password_check'],
+                    'conditionsTermsCheck'=>['required', 'accepted'],
+                    'checkboxAcceptDate'=>['required', 'accepted'],
+                ],
+                [
+                    'signaturePassword.password_check'=>'The password is not correct. Please try again!'
+                ]
+            );
+
+            $contract = EmployeeContract::find($request->contract_id);
+            $contract->agreement_status=$request->agreement_status;
+            $contract->acceptance_at = now();
+
+            $contract->save();
+
+            return response()->json(['message'=>'Contract signed successfully']);
+        }
     }
 }

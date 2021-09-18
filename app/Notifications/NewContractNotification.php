@@ -1,6 +1,6 @@
 <?php
 /**
- * Employee Created Notification
+ * New contract Notification
  *
  * PHP version 7.4
  *
@@ -12,13 +12,13 @@
  * */
 namespace App\Notifications;
 
-use App\Models\Team;
+use App\Models\EmployeeContract;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 /**
- *  Employee Created Notification class
+ *  New Contract Notification class
  *
  * @category MyCategory
  * @package  MyPackage
@@ -26,28 +26,33 @@ use Illuminate\Notifications\Notification;
  * @license  MIT treino.localhost
  * @link     link()
  * */
-class EmployeeCreatedNotification extends Notification implements ShouldQueue
+class NewContractNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public $company;
+    /**
+     * Contract variable
+     *
+     * @var mixed $contract
+     */
+    public $contract;
 
     /**
      * Create a new notification instance.
      *
-     * @param Team $company Company
+     * @param EmployeeContract $contract Contract
      *
      * @return void
      */
-    public function __construct(Team $company)
+    public function __construct(EmployeeContract $contract)
     {
-        $this->company = $company;
+        $this->contract = $contract;
     }
 
     /**
      * Get the notification's delivery channels.
      *
-     * @param mixed $notifiable Notifiable
+     * @param mixed $notifiable User
      *
      * @return array
      */
@@ -59,7 +64,7 @@ class EmployeeCreatedNotification extends Notification implements ShouldQueue
     /**
      * Get the mail representation of the notification.
      *
-     * @param mixed $notifiable Notifiable
+     * @param mixed $notifiable User
      *
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
@@ -67,37 +72,36 @@ class EmployeeCreatedNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->from('noreply@realestateis.com', 'Real Estate System')
-            ->subject('New employee account')
+            ->subject('New contract available')
             ->greeting('Hello '.$notifiable->name.'!')
-            ->line('Welcome to '.$this->company->display_name.'.')
-            ->line('To access your employee account use the following credentials:')
-            ->line('Email: '.$notifiable->email)
-            ->line('For your password contact the manager or reset your password')
-            ->action('Sign in on profil', route('user.profile', ['user'=>$notifiable]))
+            ->line('A new contract is available for you.')
+            ->line('To access your contract go to your account profile!')
+            ->line('Please sign it before '.$this->contract->start_at.'.')
+            ->action('My profile', route('user.profile', ['user'=>$notifiable]))
             ->line('Thank you for using our application!');
     }
 
     /**
-     * Store notification into Database
+     * Get the array representation of database notification.
      *
-     * @param mixed $notifiable Notifiable
+     * @param mixed $notifiable User
      *
      * @return array
      */
     public function toDatabase($notifiable)
     {
         return [
-            'icon' => 'fas fa-fw fa-user',
-            'subject'=> 'employee',
-            'title' => 'Welcome',
-            'text' => 'Welcome to '.$this->company->display_name.'.',
+            'icon' => 'fas fa-fw fa-file-contract',
+            'subject'=> 'contract',
+            'title' => 'New Contract',
+            'text' => 'A new contract is available for signature in your user profile. The contract should be signed before'.$this->contract->start_at.'. For more information contact your superviser. Thank you',
         ];
     }
 
     /**
      * Get the array representation of the notification.
      *
-     * @param mixed $notifiable Notifiable
+     * @param mixed $notifiable User
      *
      * @return array
      */
