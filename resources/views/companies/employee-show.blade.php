@@ -190,62 +190,18 @@
                 $("#excuded").prop('checked', true)
                 $("input[name='contract_termination']").prop('disabled', true);
             } else {
-                $("#excuded").attr('checked', false)
-                $("input[name='"+name+"'][value='"+value+"']").prop('disabled', false);
-                $("#excuded").attr('disabled', true)
+                $("#excuded").prop('checked', false)
+                $("input[name='contract_termination']").prop('disabled', false);
+                $("#excuded").prop('disabled', true)
+                test = $("input[name='contract_termination']")
+                if (!test.filter(':checked').length) {
+                    test[1].checked = true;
+                }
+
             }
             $('#contractTerminationModal').modal('show');
         })
 
-        $("#employeeContracts").on("click", ".contractClose", function(event){
-            event.preventDefault();
-            var contract_id = $(this).val();
-            Swal.fire({
-                title: 'Are You Sure?',
-                text: 'The contract will be Closed!',
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Close!'
-            }).then((result) => {
-                //if user clicks on delete
-                if (result.isConfirmed) {
-                  $.ajax({
-                    url:"{{route('company.employees.contract.delete', ['company'=>$company, 'employee'=>$employee])}}",
-                    type: "DELETE",
-                    data:{
-                        contract_id:contract_id
-                    },
-                    dataType: "json",
-                    cache: false,
-                    success: function(response) {
-                        Swal.fire({
-                            position: 'top-end',
-                            icon: 'success',
-                            title: response.message,
-                            showConfirmButton: false,
-                            timer: 3000
-                        }).then((result) => {
-                            if (result.dismiss === Swal.DismissReason.timer) {
-                                //console.log('I was closed by the timer')
-                                $("#employeeContracts").DataTable().ajax.reload();
-                            }
-                        })
-                    },
-                    error: function(response, textStatus){
-                        Swal.fire({
-                            position: 'top-end',
-                            icon: 'error',
-                            title: "Theres been un error",
-                            showConfirmButton: false,
-                            timer: 3000
-                        })
-                    }
-                  });
-                }
-            });
-        });
 
         $("#employeeContracts").on("click", ".contractPublish", function(event){
             event.preventDefault();

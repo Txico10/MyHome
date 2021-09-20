@@ -105,8 +105,11 @@ class UserController extends Controller
             ->causedBy(Auth::user())
             ->log("User password has been updated");
 
-        return redirect()->route('user.profile', [$user])
-            ->with('message', 'Password changed successfully!!!');
+        //return redirect()->route('user.profile', [$user])
+        //    ->with('message', 'Password changed successfully!!!');
+        return back()
+            ->with('message', 'Password changed successfully!!!')
+            ->withInput(['tab'=>'reset_password']);
 
     }
 
@@ -361,26 +364,18 @@ class UserController extends Controller
     public function contractSignature(Request $request, User $user)
     {
         if ($request->ajax()) {
-            Validator::extend(
-                'password_check',
-                function ($attr, $value) use ($user) {
-                    if (Hash::check($value, $user->password)) {
-                        return true;
-                    }
-                    return false;
-                }
-            );
+
             $request->validate(
                 [
                     'contract_id'=> ['required', 'exists:employee_contracts,id'],
                     'agreement_status'=> ['required', Rule::in(['accepted', 'refused'])],
-                    'signaturePassword' => ['required', 'password_check'],
+                    'signaturePassword' => [
+                        'required',
+                        new Checkpassword($user->password)
+                    ],
                     'conditionsTermsCheck'=>['required', 'accepted'],
                     'checkboxAcceptDate'=>['required', 'accepted'],
                 ],
-                [
-                    'signaturePassword.password_check'=>'The password is not correct. Please try again!'
-                ]
             );
 
             $contract = EmployeeContract::find($request->contract_id);
