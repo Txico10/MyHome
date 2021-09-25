@@ -17,7 +17,7 @@ class CreateSettingableTable extends Migration
             $table->id();
             $table->morphs('settingable');
             $table->foreignId('team_setting_id')->constrained()->onDelete('cascade');
-            $table->string('description')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

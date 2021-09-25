@@ -101,7 +101,7 @@ class CompanyController extends Controller
                 ->addColumn(
                     'action',
                     function ($company) {
-                        $btn = null;
+                        $btn = '<nobr>';
                         if (LaratrustFacade::isAbleTo('clients-read')) {
                             $btn = $btn.'<a class="btn btn-outline-primary btn-sm mx-1 shadow" type="button" title="More details" href="'.route('company.show', ['company'=>$company]).'"><i class="fas fa-search fa-fw"></i></a>';
                         }
@@ -111,6 +111,7 @@ class CompanyController extends Controller
                         if (LaratrustFacade::isAbleTo('clients-delete')) {
                             $btn = $btn.'<button class="btn btn-outline-danger mx-1 shadow btn-sm deleteClientButton" title="Delete client" type="button" value="'.$company->id.'"><i class="fas fa-trash-alt fa-fw"></i></button>';
                         }
+                        $btn=$btn.'</nobr>';
                         return $btn;
                     }
                 )

@@ -100,12 +100,141 @@ class TeamSettingSeeder extends Seeder
                     ]
                 ];
 
+                $accessories = [
+                    [
+                        'type'        => 'appliances',
+                        'name'        => 'stove',
+                        'display_name'=> 'Stove',
+                        'description' => 'Electrical stove with oven'
+                    ],
+                    [
+                        'type'        => 'appliances',
+                        'name'        => 'microwave_oven',
+                        'display_name'=> 'Microwave Oven',
+                        'description' => 'Electrical microwave and/or oven'
+                    ],
+                    [
+                        'type'        => 'appliances',
+                        'name'        => 'dishwasher',
+                        'display_name'=> 'Dishwacher',
+                        'description' => 'Electrical dishwasher'
+                    ],
+                    [
+                        'type'        => 'appliances',
+                        'name'        => 'refrigerator',
+                        'display_name'=> 'Refrigerator',
+                        'description' => 'Electrical refrigirator'
+                    ],
+                    [
+                        'type'        => 'appliances',
+                        'name'        => 'washer',
+                        'display_name'=> 'Washer',
+                        'description' => 'Electrical washer'
+                    ],
+                    [
+                        'type'        => 'appliances',
+                        'name'        => 'dryer',
+                        'display_name'=> 'Dryer',
+                        'description' => 'Electrical dryer'
+                    ],
+                    [
+                        'type'        => 'furniture',
+                        'name'        => 'table',
+                        'display_name'=> 'Table',
+                        'description' => ''
+                    ],
+                    [
+                        'type'        => 'furniture',
+                        'name'        => 'chair',
+                        'display_name'=> 'Chair',
+                        'description' => ''
+                    ],
+                    [
+                        'type'        => 'furniture',
+                        'name'        => 'chest_of_drawers',
+                        'display_name'=> 'Chest of drawer',
+                        'description' => ''
+                    ],
+                    [
+                        'type'        => 'furniture',
+                        'name'        => 'couch',
+                        'display_name'=> 'Couch',
+                        'description' => ''
+                    ],
+                    [
+                        'type'        => 'furniture',
+                        'name'        => 'armchair',
+                        'display_name'=> 'Armchair',
+                        'description' => ''
+                    ],
+                    [
+                        'type'        => 'furniture',
+                        'name'        => 'bed',
+                        'display_name'=> 'Bed',
+                        'description' => ''
+                    ],
+                ];
+
+                $dependencies = [
+                    [
+                        'type'        => 'dependencie',
+                        'name'        => 'outdoor_parking',
+                        'display_name'=> 'Outdoor parking',
+                    ],
+                    [
+                        'type'        => 'dependencie',
+                        'name'        => 'indoor_parking',
+                        'display_name'=> 'Indoor parking',
+                    ],
+                    [
+                        'type'        => 'dependencie',
+                        'name'        => 'storage',
+                        'display_name'=> 'Locker or storage space',
+                    ],
+
+                ];
+
+                $apartmentTypes =  [
+                    [
+                        'type'        => 'apartment',
+                        'name'        => '1_1/2',
+                        'display_name'=> 'Un et demi',
+                        'description' => 'Mon 1 1/2'
+                    ],
+                    [
+                        'type'        => 'apartment',
+                        'name'        => '2_1/2',
+                        'display_name'=> 'Deux et demi',
+                        'description' => 'Mon 2 1/2'
+                    ],
+                    [
+                        'type'        => 'apartment',
+                        'name'        => '3_1/2',
+                        'display_name'=> 'Trois et demi',
+                        'description' => 'Mon 3 1/2'
+                    ],
+                    [
+                        'type'        => 'apartment',
+                        'name'        => '4_1/2',
+                        'display_name'=> 'Quatre et demi',
+                        'description' => 'Mon 4 1/2'
+                    ],
+                    [
+                        'type'        => 'apartment',
+                        'name'        => '5_1/2',
+                        'display_name'=> 'Cinque et demi',
+                        'description' => 'Mon 5 1/2'
+                    ],
+                ];
+
                 $teams = Team::all();
 
                 foreach ($teams as $team) {
                     $team->settings()->createMany($benefits);
                     $team->settings()->createMany($contract_termination_reasons);
-
+                    $team->settings()->createMany($accessories);
+                    $team->settings()->createMany($dependencies);
+                    $team->settings()->createMany($apartmentTypes);
                 }
             }
         );

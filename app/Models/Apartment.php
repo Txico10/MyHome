@@ -1,6 +1,6 @@
 <?php
 /**
- * Employee contract Model
+ * Apartment Model
  *
  * PHP version 7.4
  *
@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\Traits\CausesActivity;
 /**
- *  Employee contract model class
+ *  Apartment model class
  *
  * @category MyCategory
  * @package  MyPackage
@@ -25,7 +25,7 @@ use Spatie\Activitylog\Traits\CausesActivity;
  * @license  MIT treino.localhost
  * @link     link()
  * */
-class EmployeeContract extends Model
+class Apartment extends Model
 {
     use HasFactory, LogsActivity, CausesActivity;
     /**
@@ -33,35 +33,9 @@ class EmployeeContract extends Model
      *
      * @var array
      */
-    protected $fillable = [
-        'role_id',
-        'start_at',
-        'end_at',
-        'acceptance_at',
-        'salary_term',
-        'salary_amount',
-        'availability',
-        'min_week_time',
-        'max_week_time',
-        'benefits',
-        'agreement',
-        'agreement_status',
-        'termination_at',
-    ];
+    protected $fillable = ['building_id', 'number', 'description'];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'start_at'=>'date:Y-m-d',
-        'end_at' => 'date:Y-m-d',
-        'acceptance_at'=> 'date:Y-m-d',
-        'termination_at'=> 'date:Y-m-d',
-    ];
-
-    protected static $logName = 'employee_contract_log';
+    protected static $logName = 'apartment_log';
     protected static $logFillable = true;
     protected static $logOnlyDirty = true;
     protected static $submitEmptyLogs = false;
@@ -75,33 +49,17 @@ class EmployeeContract extends Model
      */
     public function getDescriptionForEvent(string $eventName): string
     {
-        return "Employee contract has been {$eventName}";
+        return "Apartment has been {$eventName}";
     }
 
     /**
-     * Users
+     * Building
      *
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function users()
+    public function building()
     {
-        return $this->morphToMany(User::class, 'engageable')
-            ->using(Contract::class)
-            ->withPivot('team_id')
-            ->withTimestamps();
-    }
-
-    /**
-     * Teams
-     *
-     * @return Illuminate\Database\Eloquent\Model
-     */
-    public function teams()
-    {
-        return $this->morphToMany(Team::class, 'engageable')
-            ->using(Contract::class)
-            ->withPivot('user_id')
-            ->withTimestamps();
+        return $this->belongsTo(Building::class);
     }
 
     /**
@@ -116,5 +74,4 @@ class EmployeeContract extends Model
             ->withPivot('description')
             ->withTimestamps();
     }
-
 }

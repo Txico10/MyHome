@@ -11,13 +11,16 @@
  * @link     link()
  * */
 
+use App\Http\Controllers\AddressController;
 use App\Http\Controllers\BenefitsSettingController;
+use App\Http\Controllers\BuildingController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -156,7 +159,7 @@ Route::post('/companies/{company}/logoupload', [CompanyController::class, 'logou
 Route::get('/companies/{company:slug}/benefits-setting', [BenefitsSettingController::class, 'index'])
     ->middleware(['auth','verified','permission:benefitsSetting-read'])
     ->name('company.benefits-setting');
-Route::post('/companies/{company}/benefits-setting', [BenefitsSettingController::class, 'store'])
+Route::post('/companies/{company:slug}/benefits-setting', [BenefitsSettingController::class, 'store'])
     ->middleware(
         [
             'auth','verified',
@@ -164,16 +167,28 @@ Route::post('/companies/{company}/benefits-setting', [BenefitsSettingController:
         ]
     )
     ->name('company.benefits-setting.store');
-Route::get('/companies/{company}/benefits-edit', [BenefitsSettingController::class, 'edit'])
+Route::get('/companies/{company:slug}/benefits-edit', [BenefitsSettingController::class, 'edit'])
     ->middleware(['auth','verified','permission:benefitsSetting-update'])
     ->name('company.benefits-setting.edit');
-Route::delete('/companies/{company}/benefits-delete', [BenefitsSettingController::class, 'destroy'])
+Route::delete('/companies/{company:slug}/benefits-delete', [BenefitsSettingController::class, 'destroy'])
     ->middleware(['auth','verified','permission:benefitsSetting-delete'])
     ->name('company.benefits-setting.delete');
 /**
  * Contract Settings
  */
 
+/**
+ * Address management
+ */
+Route::put('/address/{id}', [AddressController::class, 'update'])
+    ->middleware(['auth','verified'])
+    ->name('address.update');
+Route::get('/address/getCities', [AddressController::class, 'getCities'])
+    ->middleware(['auth','verified'])
+    ->name('address.getCities');
+Route::get('/address/getRegion', [AddressController::class, 'getRegion'])
+    ->middleware(['auth','verified'])
+    ->name('address.getRegion');
  /**
   * Employees CRUD
   */
@@ -222,3 +237,37 @@ Route::delete('/companies/{company:slug}/employees/{employee}/contracts/delete',
 Route::post('/companies/{company:slug}/employees/{employee}/contracts/change-status', [ContractController::class, 'changeAgreementStatus'])
     ->middleware(['auth','verified','permission:contract-update'])
     ->name('company.employees.contract.change-status');
+/**
+ * Buildings CRUD
+ */
+Route::get('/companies/{company:slug}/buildings', [BuildingController::class, 'index'])
+    ->middleware(['auth','verified','permission:building-read'])
+    ->name('company.buildings');
+Route::post('/companies/{company:slug}/buildings', [BuildingController::class, 'store'])
+    ->middleware(['auth','verified','permission:building-create'])
+    ->name('company.building.store');
+Route::get('/companies/{company:slug}/buildings/{building}', [BuildingController::class, 'show'])
+    ->middleware(['auth','verified','permission:building-read'])
+    ->name('company.building.show');
+Route::get('/companies/{company:slug}/buildings/{building}/edit', [BuildingController::class, 'edit'])
+    ->middleware(['auth','verified','permission:building-update'])
+    ->name('company.building.edit');
+Route::put('/companies/{company:slug}/buildings/{building}', [BuildingController::class, 'update'])
+    ->middleware(['auth','verified','permission:building-update'])
+    ->name('company.building.update');
+Route::delete('/companies/{company:slug}/buildings/delete', [BuildingController::class, 'destroy'])
+    ->middleware(['auth','verified','permission:building-delete'])
+    ->name('company.building.delete');
+Route::get('/companies/{company:slug}/buildings/{building}/getAddress', [BuildingController::class, 'getAddress'])
+    ->middleware(['auth','verified'])
+    ->name('company.building.getAddress');
+//PDF Test
+Route::get(
+    'print/invoice',
+    function () {
+        //return view('companies.forprint.invoice');
+        $pdf = PDF::loadView('companies.forprint.invoice');
+        return $pdf->download('invoice.pdf');
+
+    }
+);

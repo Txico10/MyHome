@@ -16,7 +16,7 @@ use App\Models\Address;
 use PragmaRX\Countries\Package\Countries;
 use Illuminate\Database\Eloquent\Factories\Factory;
 /**
- *  Users class
+ *  Address factory class
  *
  * @category MyCategory
  * @package  MyPackage

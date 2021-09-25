@@ -18,7 +18,7 @@ class CreateContactsTable extends Migration
             $table->morphs('contactable');
             $table->enum('priority', ['main', 'emergency', 'other']);
             $table->enum('type', ['email', 'phone', 'mobile', 'other']);
-            $table->string('description');
+            $table->text('description');
             $table->string('name')->nullable();
             $table->timestamps();
         });

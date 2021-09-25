@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTeamSettingsTable extends Migration
+class CreateApartmentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class CreateTeamSettingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('team_settings', function (Blueprint $table) {
+        Schema::create('apartments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('team_id')->constrained()->onDelete('cascade');
-            $table->enum('type', ['apartment', 'appliances','benefit', 'dependencie', 'contract_termination', 'furniture']);
-            $table->string('name');
-            $table->string('display_name')->nullable();
+            $table->foreignId('building_id')->constrained()->onDelete('cascade');
+            $table->string('number');
             $table->text('description')->nullable();
             $table->timestamps();
         });
@@ -31,6 +29,6 @@ class CreateTeamSettingsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('team_settings');
+        Schema::dropIfExists('apartments');
     }
 }

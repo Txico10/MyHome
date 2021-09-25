@@ -1,6 +1,6 @@
 <?php
 /**
- * Team Setting Model
+ * Building Model
  *
  * PHP version 7.4
  *
@@ -16,8 +16,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\Traits\CausesActivity;
+
 /**
- *  Team Setting model class
+ *  Building model class
  *
  * @category MyCategory
  * @package  MyPackage
@@ -25,15 +26,18 @@ use Spatie\Activitylog\Traits\CausesActivity;
  * @license  MIT treino.localhost
  * @link     link()
  * */
-class TeamSetting extends Model
+class Building extends Model
 {
     use HasFactory, LogsActivity, CausesActivity;
 
-    protected $fillable = [
-        'team_id','type', 'name', 'display_name','description',
-    ];
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['team_id', 'lot', 'display_name', 'description'];
 
-    protected static $logName = 'company_setting_log';
+    protected static $logName = 'building_log';
     protected static $logFillable = true;
     protected static $logOnlyDirty = true;
     protected static $submitEmptyLogs = false;
@@ -47,7 +51,7 @@ class TeamSetting extends Model
      */
     public function getDescriptionForEvent(string $eventName): string
     {
-        return "Company setting has been {$eventName}";
+        return "Building has been {$eventName}";
     }
 
     /**
@@ -61,16 +65,13 @@ class TeamSetting extends Model
     }
 
     /**
-     * Employee Contract Settings
+     * Address
      *
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function employeeContracts()
+    public function address()
     {
-        return $this->morphedByMany(EmployeeContract::class, 'settingable')
-            ->using(ConfigurationSetting::class)
-            ->withPivot('description')
-            ->withTimestamps();
+        return $this->morphOne(Address::class, 'addressable');
     }
 
     /**
@@ -80,23 +81,16 @@ class TeamSetting extends Model
      */
     public function apartments()
     {
-        return $this->morphedByMany(Apartment::class, 'settingable')
-            ->using(ConfigurationSetting::class)
-            ->withPivot('description')
-            ->withTimestamps();
+        return $this->hasMany(Apartment::class);
     }
 
     /**
      * Dependencies
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return void
      */
     public function dependencies()
     {
-        return $this->morphedByMany(Dependency::class, 'settingable')
-            ->using(ConfigurationSetting::class)
-            ->withPivot('description')
-            ->withTimestamps();
+        return $this->hasMany(Dependency::class);
     }
-
 }

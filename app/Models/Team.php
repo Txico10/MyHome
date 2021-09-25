@@ -148,4 +148,34 @@ class Team extends LaratrustTeam
         return $this->hasMany(ContractSetting::class);
     }
 
+    /**
+     * Buildings
+     *
+     * @return Illuminate\Database\Eloquent\Model
+     */
+    public function buildings()
+    {
+        return $this->hasMany(Building::class);
+    }
+
+    /**
+     * Apartments
+     *
+     * @return Illuminate\Database\Eloquent\Model
+     */
+    public function apartments()
+    {
+        return $this->hasManyThrough(Apartment::class, Building::class);
+    }
+
+    /**
+     * Dependencies
+     *
+     * @return Illuminate\Database\Eloquent\Model
+     */
+    public function dependencies()
+    {
+        return $this->hasManyThrough(Dependency::class, Building::class);
+    }
+
 }
