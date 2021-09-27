@@ -384,6 +384,10 @@ class UserController extends Controller
 
             $contract->save();
 
+            if (session('companyID')==null) {
+                session(['companyID' => $user->active_company]);
+            }
+
             return response()->json(['message'=>'Contract signed successfully']);
         }
     }

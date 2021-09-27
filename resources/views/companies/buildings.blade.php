@@ -211,6 +211,7 @@
         })
 
         $("#buildingModal").on('hidden.bs.modal', function(){
+            $(".invalid-feedback").remove()
             $("#building_id").val('')
             $("#building_lot").val('')
             $("#building_lot").removeClass('is-invalid')
@@ -218,7 +219,6 @@
             $("#building_display_name").removeClass('is-invalid')
             $("#building_description").val('')
             $("#building_description").removeClass('is-invalid')
-            $(".invalid-feedback").remove()
         })
 
 
@@ -532,8 +532,6 @@
 
             }
         })
-        //console.log("Address form saved");
-
     }
     </script>
 @stop

@@ -12,10 +12,12 @@
  * */
 
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\ApartmentController;
 use App\Http\Controllers\BenefitsSettingController;
 use App\Http\Controllers\BuildingController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ContractController;
+use App\Http\Controllers\DependencyController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
@@ -135,19 +137,19 @@ Route::middleware(['auth','verified','role:superadministrator'])
     );
 
 Route::get('/companies/{company:slug}', [CompanyController::class, 'show'])
-    ->middleware(['auth','verified','permission:clients-read|company-read'])
+    ->middleware(['auth','verified','company.check','permission:clients-read|company-read'])
     ->name('company.show');
 Route::get('/companies/{company}/edit', [CompanyController::class, 'edit'])
-    ->middleware(['auth','verified','permission:clients-update|company-update'])
+    ->middleware(['auth','verified','company.check','permission:clients-update|company-update'])
     ->name('company.edit');
 Route::put('/companies/{company}', [CompanyController::class, 'update'])
-    ->middleware(['auth','verified','permission:clients-update|company-update'])
+    ->middleware(['auth','verified','company.check','permission:clients-update|company-update'])
     ->name('company.update');
 Route::delete('/company/{id}', [CompanyController::class, 'destroy'])
-    ->middleware(['auth','verified','permission:clients-delete'])
+    ->middleware(['auth','verified','company.check','permission:clients-delete'])
     ->name('company.destroy');
 Route::post('/companies/{company}/logoupload', [CompanyController::class, 'logoupdate'])
-    ->middleware(['auth','verified','permission:clients-update||company-update'])
+    ->middleware(['auth','verified','company.check','permission:clients-update||company-update'])
     ->name('company.logoupdate');
 
 
@@ -157,21 +159,21 @@ Route::post('/companies/{company}/logoupload', [CompanyController::class, 'logou
  * Benefits Settings
  */
 Route::get('/companies/{company:slug}/benefits-setting', [BenefitsSettingController::class, 'index'])
-    ->middleware(['auth','verified','permission:benefitsSetting-read'])
+    ->middleware(['auth','verified','company.check','permission:benefitsSetting-read'])
     ->name('company.benefits-setting');
 Route::post('/companies/{company:slug}/benefits-setting', [BenefitsSettingController::class, 'store'])
     ->middleware(
         [
-            'auth','verified',
+            'auth','verified','company.check',
             'permission:benefitsSetting-create|benefitsSetting-update'
         ]
     )
     ->name('company.benefits-setting.store');
 Route::get('/companies/{company:slug}/benefits-edit', [BenefitsSettingController::class, 'edit'])
-    ->middleware(['auth','verified','permission:benefitsSetting-update'])
+    ->middleware(['auth','verified','company.check','permission:benefitsSetting-update'])
     ->name('company.benefits-setting.edit');
 Route::delete('/companies/{company:slug}/benefits-delete', [BenefitsSettingController::class, 'destroy'])
-    ->middleware(['auth','verified','permission:benefitsSetting-delete'])
+    ->middleware(['auth','verified','company.check','permission:benefitsSetting-delete'])
     ->name('company.benefits-setting.delete');
 /**
  * Contract Settings
@@ -193,74 +195,103 @@ Route::get('/address/getRegion', [AddressController::class, 'getRegion'])
   * Employees CRUD
   */
 Route::get('/companies/{company:slug}/employees', [EmployeeController::class, 'index'])
-    ->middleware(['auth','verified','permission:employee-read'])
+    ->middleware(['auth','verified','company.check','permission:employee-read'])
     ->name('company.employees');
 Route::get('/companies/{company:slug}/employees/create', [EmployeeController::class, 'create'])
-    ->middleware(['auth','verified','permission:employee-create'])
+    ->middleware(['auth','verified','company.check','permission:employee-create'])
     ->name('company.employees.create');
 Route::post('/companies/{company:slug}/employees', [EmployeeController::class, 'store'])
-    ->middleware(['auth','verified','permission:employee-create|employee-update'])
+    ->middleware(['auth','verified','company.check','permission:employee-create|employee-update'])
     ->name('company.employees.store');
 Route::get('/companies/{company:slug}/employees/{employee}', [EmployeeController::class, 'show'])
-    ->middleware(['auth','verified','permission:employee-read'])
+    ->middleware(['auth','verified','company.check','permission:employee-read'])
     ->name('company.employees.show');
 Route::get('/companies/{company:slug}/employees/{employee}/edit', [EmployeeController::class, 'edit'])
-    ->middleware(['auth','verified','permission:employee-update'])
+    ->middleware(['auth','verified','company.check','permission:employee-update'])
     ->name('company.employees.edit');
 Route::put('/companies/{company:slug}/employees/{employee}', [EmployeeController::class, 'update'])
-    ->middleware(['auth','verified','permission:employee-update'])
+    ->middleware(['auth','verified','company.check','permission:employee-update'])
     ->name('company.employees.update');
 Route::delete('/companies/{company:slug}/employees/{employee}', [EmployeeController::class, 'destroy'])
-    ->middleware(['auth','verified','permission:employee-delete'])
+    ->middleware(['auth','verified','company.check','permission:employee-delete'])
     ->name('company.employees.delete');
 
 /**
  * Company Employee Contract CRUD
  */
 Route::get('/companies/{company:slug}/employees/{employee}/contracts', [ContractController::class, 'index'])
-    ->middleware(['auth','verified','permission:contract-read'])
+    ->middleware(['auth','verified','company.check','permission:contract-read'])
     ->name('company.employees.contract');
 //contract Create
 //Contract Store
 Route::get('/companies/{company:slug}/employees/{employee}/contracts/{contract}', [ContractController::class, 'show'])
-    ->middleware(['auth','verified','permission:contract-read'])
+    ->middleware(['auth','verified','company.check','permission:contract-read'])
     ->name('company.employees.contract.show');
 Route::get('/companies/{company:slug}/employees/{employee}/contracts/{contract}/edit', [ContractController::class, 'edit'])
-    ->middleware(['auth','verified','permission:contract-update'])
+    ->middleware(['auth','verified','company.check','permission:contract-update'])
     ->name('company.employees.contract.edit');
 Route::patch('/companies/{company:slug}/employees/{employee}/contracts/{contract}', [ContractController::class, 'update'])
-    ->middleware(['auth','verified','permission:contract-update'])
+    ->middleware(['auth','verified','company.check','permission:contract-update'])
     ->name('company.employees.contract.update');
 Route::delete('/companies/{company:slug}/employees/{employee}/contracts/delete', [ContractController::class, 'destroy'])
-    ->middleware(['auth','verified','permission:contract-delete'])
+    ->middleware(['auth','verified','company.check','permission:contract-delete'])
     ->name('company.employees.contract.delete');
 Route::post('/companies/{company:slug}/employees/{employee}/contracts/change-status', [ContractController::class, 'changeAgreementStatus'])
-    ->middleware(['auth','verified','permission:contract-update'])
+    ->middleware(['auth','verified','company.check','permission:contract-update'])
     ->name('company.employees.contract.change-status');
 /**
- * Buildings CRUD
+ * Building CRUD
  */
 Route::get('/companies/{company:slug}/buildings', [BuildingController::class, 'index'])
-    ->middleware(['auth','verified','permission:building-read'])
+    ->middleware(['auth','verified','company.check','permission:building-read'])
     ->name('company.buildings');
 Route::post('/companies/{company:slug}/buildings', [BuildingController::class, 'store'])
     ->middleware(['auth','verified','permission:building-create'])
     ->name('company.building.store');
 Route::get('/companies/{company:slug}/buildings/{building}', [BuildingController::class, 'show'])
-    ->middleware(['auth','verified','permission:building-read'])
+    ->middleware(['auth','verified','company.check','permission:building-read'])
     ->name('company.building.show');
 Route::get('/companies/{company:slug}/buildings/{building}/edit', [BuildingController::class, 'edit'])
-    ->middleware(['auth','verified','permission:building-update'])
+    ->middleware(['auth','verified','company.check','permission:building-update'])
     ->name('company.building.edit');
 Route::put('/companies/{company:slug}/buildings/{building}', [BuildingController::class, 'update'])
-    ->middleware(['auth','verified','permission:building-update'])
+    ->middleware(['auth','verified','company.check','permission:building-update'])
     ->name('company.building.update');
 Route::delete('/companies/{company:slug}/buildings/delete', [BuildingController::class, 'destroy'])
-    ->middleware(['auth','verified','permission:building-delete'])
+    ->middleware(['auth','verified','company.check','permission:building-delete'])
     ->name('company.building.delete');
 Route::get('/companies/{company:slug}/buildings/{building}/getAddress', [BuildingController::class, 'getAddress'])
-    ->middleware(['auth','verified'])
+    ->middleware(['auth','verified','company.check'])
     ->name('company.building.getAddress');
+/**
+ * Apartment CRUD
+ */
+Route::get('/companies/{company:slug}/apartments', [ApartmentController::class, 'index'])
+    ->middleware(['auth','verified','company.check','permission:apartment-read'])
+    ->name('company.apartments');
+//create
+//store
+Route::post('/companies/{company:slug}/apartments', [ApartmentController::class, 'store'])
+    ->middleware(['auth','verified','company.check','permission:apartment-create|apartment-update'])
+    ->name('company.apartment.store');
+Route::get('/companies/{company:slug}/apartments/{apartment}', [ApartmentController::class, 'show'])
+    ->middleware(['auth','verified','company.check','permission:apartment-read'])
+    ->name('company.apartment.show');
+Route::get('/companies/{company:slug}/apartments/{apartment}/edit', [ApartmentController::class, 'edit'])
+    ->middleware(['auth','verified','company.check','permission:apartment-update'])
+    ->name('company.apartment.edit');
+ /**
+  * Dependency CRUD
+  */
+Route::post('/companies/{company:slug}/buildings/{building}/dependencies', [DependencyController::class, 'store'])
+    ->middleware(['auth','verified','company.check','permission:dependency-create|dependency-update'])
+    ->name('company.dependency.store');
+Route::get('/companies/{company:slug}/dependenties/edit', [DependencyController::class, 'edit'])
+    ->middleware(['auth','verified','company.check','permission:dependency-update'])
+    ->name('company.dependency.edit');
+Route::get('/companies/{company:slug}/buildings/{building}/getdependencies', [DependencyController::class, 'getBuildingDependencies'])
+    ->middleware(['auth','verified','company.check','permission:dependency-read'])
+    ->name('company.building.getdependencies');
 //PDF Test
 Route::get(
     'print/invoice',

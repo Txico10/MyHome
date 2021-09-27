@@ -185,6 +185,15 @@ class EventServiceProvider extends ServiceProvider
                         );
                         $event->menu->add(
                             [
+                                'key' => 'apartments',
+                                'text' => 'Apartments',
+                                'route'  => ['company.apartments', ['company'=>$company]],
+                                'icon' => 'fas fa-fw fa-house-user',
+                                'permission' => 'apartment-read',
+                            ]
+                        );
+                        $event->menu->add(
+                            [
                                 'key' => 'company-settings',
                                 'text' => 'Settings',
                                 'icon' => 'fas fa-fw fa-cogs',

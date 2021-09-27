@@ -63,6 +63,8 @@ class LoginListener
             return redirect()->back();
         }
 
+        request()->session()->put('companyID', Auth::user()->active_company);
+
         Login::create(
             [
                 'user_id' => $event->user->id,

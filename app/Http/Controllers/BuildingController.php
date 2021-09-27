@@ -14,6 +14,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Building;
 use App\Models\Team;
+use App\Models\TeamSetting;
 use Illuminate\Http\Request;
 use Laratrust\LaratrustFacade;
 use PragmaRX\Countries\Package\Countries;
@@ -89,14 +90,16 @@ class BuildingController extends Controller
                     function ($building) use ($company) {
                         $btn = '<nobr>';
 
-                        $btn = $btn.'<a class="btn btn-outline-primary btn-sm mx-1 shadow" type="button" title="More details" href="'.route('company.building.show', ['company'=>$company, 'building'=>$building]).'"><i class="fas fa-search fa-fw"></i></a>';
-
                         if (LaratrustFacade::isAbleTo('building-update')) {
                             $btn = $btn.'<button class="btn btn-outline-secondary mx-1 shadow btn-sm editBuildingButton" type="button" title="Edit Building" value="'.$building->id.'"><i class="fas fa-pencil-alt fa-fw"></i></button>';
                         }
                         //<i class="fas fa-map-pin"></i>
 
                         $btn = $btn.'<button class="btn btn-outline-primary mx-1 shadow btn-sm editAddressButton" title="Update address" type="button" value="'.$building->id.'"><i class="fas fa-map-marker-alt fa-fw"></i></button>';
+
+                        if (LaratrustFacade::isAbleTo('dependency-read')) {
+                            $btn = $btn.'<a class="btn btn-outline-primary btn-sm mx-1 shadow" type="button" title="Dependencies" href="'.route('company.building.show', ['company'=>$company, 'building'=>$building]).'"><i class="fas fa-warehouse fa-fw"></i></a>';
+                        }
 
                         if (LaratrustFacade::isAbleTo('building-delete')) {
                             $btn = $btn.'<button class="btn btn-outline-danger mx-1 shadow btn-sm deleteBuildingtButton" title="Delete client" type="button" value="'.$building->id.'"><i class="fas fa-trash-alt fa-fw"></i></button>';
@@ -169,7 +172,8 @@ class BuildingController extends Controller
      */
     public function show(Team $company, Building $building)
     {
-        return view('companies.building-show', ['company'=>$company, 'building'=>$building]);
+        $dependency_types = TeamSetting::where('team_id', $company->id)->where('type', 'dependencie')->pluck('display_name', 'id');
+        return view('companies.building-show', ['company'=>$company, 'building'=>$building, 'dependency_types'=>$dependency_types]);
     }
 
     /**
@@ -225,10 +229,11 @@ class BuildingController extends Controller
      * Get Address
      *
      * @param Request $request Request
+     * @param Team    $company Company
      *
      * @return void
      */
-    public function getAddress(Request $request)
+    public function getAddress(Request $request, Team $company)
     {
         if ($request->ajax()) {
             $request->validate(

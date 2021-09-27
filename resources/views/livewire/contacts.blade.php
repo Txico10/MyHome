@@ -29,44 +29,44 @@
             <x-adminlte-button theme="success" label="Save" onclick="saveContactForm()" />
         </x-slot>
     </x-adminlte-modal>
-</div>
 
-<script>
-    window.addEventListener('swalContact:modal', event => {
-        Swal.fire({
-            position: 'top-end',
-            icon: event.detail.icon,
-            title: event.detail.title,
-            text: event.detail.text,
-            showConfirmButton: false,
-            timer: 3000
+    <script>
+        window.addEventListener('swalContact:modal', event => {
+            Swal.fire({
+                position: 'top-end',
+                icon: event.detail.icon,
+                title: event.detail.title,
+                text: event.detail.text,
+                showConfirmButton: false,
+                timer: 3000
+            });
         });
-    });
-    window.addEventListener('swalContact:confirm', event => {
-        Swal.fire({
-            title: event.detail.title,
-            text: event.detail.text,
-            icon: event.detail.icon,
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-                //if user clicks on delete
-            if (result.isConfirmed) {
-                    // calling destroy method to delete
-                Livewire.emit('deleteContact', event.detail.id);
-                //console.log(assign);
-            }
+        window.addEventListener('swalContact:confirm', event => {
+            Swal.fire({
+                title: event.detail.title,
+                text: event.detail.text,
+                icon: event.detail.icon,
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                    //if user clicks on delete
+                if (result.isConfirmed) {
+                        // calling destroy method to delete
+                    Livewire.emit('deleteContact', event.detail.id);
+                    //console.log(assign);
+                }
+            });
         });
-    });
-    window.addEventListener('openContactModal', event => {
-        $("#contactmodal").modal('show');
-    });
-    window.addEventListener('closeContactModal', event => {
-        $("#contactmodal").modal('hide');
-    });
-    function saveContactForm() {
-        Livewire.emit('saveContactForm')
-    }
-</script>
+        window.addEventListener('openContactModal', event => {
+            $("#contactmodal").modal('show');
+        });
+        window.addEventListener('closeContactModal', event => {
+            $("#contactmodal").modal('hide');
+        });
+        function saveContactForm() {
+            Livewire.emit('saveContactForm')
+        }
+    </script>
+</div>
