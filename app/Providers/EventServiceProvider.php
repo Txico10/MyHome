@@ -133,7 +133,8 @@ class EventServiceProvider extends ServiceProvider
                     ],
                 );
                 if (!LaratrustFacade::hasRole(['superadministrator'])) {
-                    $company_id = Auth::user()->active_company;
+                    //$company_id = Auth::user()->active_company;
+                    $company_id = session('companyID');
 
                     if (!is_null($company_id)) {
                         $company = Team::findOrFail($company_id);
@@ -190,6 +191,15 @@ class EventServiceProvider extends ServiceProvider
                                 'route'  => ['company.apartments', ['company'=>$company]],
                                 'icon' => 'fas fa-fw fa-house-user',
                                 'permission' => 'apartment-read',
+                            ]
+                        );
+                        $event->menu->add(
+                            [
+                                'key' => 'accessories',
+                                'text' => 'Accessories',
+                                'route'  => ['company.accessories', ['company'=>$company]],
+                                'icon' => 'fas fa-fw fa-chair',
+                                'permission' => 'accessory-read',
                             ]
                         );
                         $event->menu->add(

@@ -38,6 +38,7 @@ class DatabaseSeeder extends Seeder
                 TeamSettingSeeder::class,
                 ContractSettingSeeder::class,
                 BuildingSeeder::class,
+                AccessorySeeder::class,
                 UserSeeder::class,
                 EmployeeContractSeeder::class,
             ]

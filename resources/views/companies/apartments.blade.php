@@ -146,9 +146,6 @@
                 $("#apartment_description").removeClass('is-invalid')
                 $(".invalid-feedback").remove()
             })
-
-
-
         })
 
         $("#apartments").on('click', '.editApartmentButton', function(){

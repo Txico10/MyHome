@@ -164,7 +164,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Addresses
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function addresses()
     {
@@ -174,7 +174,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Contacts
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function contacts()
     {
@@ -184,7 +184,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Logins
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function logins()
     {
@@ -213,7 +213,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Employees
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function employees()
     {
@@ -228,7 +228,7 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @param mixed $company_id Company ID
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function contractCompany($company_id)
     {
@@ -242,7 +242,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Companies
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function companies()
     {

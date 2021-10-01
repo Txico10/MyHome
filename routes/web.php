@@ -11,6 +11,7 @@
  * @link     link()
  * */
 
+use App\Http\Controllers\AccessoryController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\ApartmentController;
 use App\Http\Controllers\BenefitsSettingController;
@@ -292,6 +293,21 @@ Route::get('/companies/{company:slug}/dependenties/edit', [DependencyController:
 Route::get('/companies/{company:slug}/buildings/{building}/getdependencies', [DependencyController::class, 'getBuildingDependencies'])
     ->middleware(['auth','verified','company.check','permission:dependency-read'])
     ->name('company.building.getdependencies');
+/**
+ * Accessory CRUD
+ */
+Route::get('/companies/{company:slug}/accessories', [AccessoryController::class, 'index'])
+    ->middleware(['auth','verified','company.check','permission:accessory-read'])
+    ->name('company.accessories');
+Route::post('/companies/{company:slug}/accessories', [AccessoryController::class, 'store'])
+    ->middleware(['auth','verified','company.check','permission:accessory-create|accessory-update'])
+    ->name('company.accessories.store');
+Route::get('/companies/{company:slug}/accessories/{accessory}', [AccessoryController::class, 'show'])
+    ->middleware(['auth','verified','company.check','permission:accessory-read'])
+    ->name('company.accessory.show');
+Route::get('/companies/{company:slug}/accessories/{accessory}/edit', [AccessoryController::class, 'edit'])
+    ->middleware(['auth','verified','company.check','permission:accessory-update'])
+    ->name('company.accessory.edit');
 //PDF Test
 Route::get(
     'print/invoice',

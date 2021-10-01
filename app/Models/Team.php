@@ -71,7 +71,7 @@ class Team extends LaratrustTeam
     /**
      * Addresses
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function addresses()
     {
@@ -81,7 +81,7 @@ class Team extends LaratrustTeam
     /**
      * Contacts
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function contacts()
     {
@@ -93,7 +93,7 @@ class Team extends LaratrustTeam
     /**
      * Team users
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function users()
     {
@@ -118,7 +118,7 @@ class Team extends LaratrustTeam
     /**
      * Employee contracts
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function contracts()
     {
@@ -131,7 +131,7 @@ class Team extends LaratrustTeam
     /**
      * Company Settings
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function settings()
     {
@@ -141,7 +141,7 @@ class Team extends LaratrustTeam
     /**
      * Contract Setting
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function contractsSetting()
     {
@@ -151,7 +151,7 @@ class Team extends LaratrustTeam
     /**
      * Buildings
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function buildings()
     {
@@ -161,7 +161,7 @@ class Team extends LaratrustTeam
     /**
      * Apartments
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function apartments()
     {
@@ -171,11 +171,21 @@ class Team extends LaratrustTeam
     /**
      * Dependencies
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function dependencies()
     {
         return $this->hasManyThrough(Dependency::class, Building::class);
+    }
+
+    /**
+     * Accessories
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function accessories()
+    {
+        return $this->hasMany(Accessory::class);
     }
 
 }

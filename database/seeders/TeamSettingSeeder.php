@@ -227,6 +227,117 @@ class TeamSettingSeeder extends Seeder
                     ],
                 ];
 
+                $services = [
+                    [
+                        'type'        => 'service',
+                        'name'        => 'electrical',
+                        'display_name'=> 'Electrical',
+                        'description' => 'Electrical service'
+                    ],
+                    [
+                        'type'        => 'service',
+                        'name'        => 'plumbing',
+                        'display_name'=> 'Plumbing',
+                        'description' => 'Plumbing service'
+                    ],
+                    [
+                        'type'        => 'service',
+                        'name'        => 'floor',
+                        'display_name'=> 'Floor Varnish',
+                        'description' => 'Floor Varnish service'
+                    ],
+                    [
+                        'type'        => 'service',
+                        'name'        => 'painting',
+                        'display_name'=> 'Painting',
+                        'description' => 'Painting service'
+                    ],
+                    [
+                        'type'        => 'service',
+                        'name'        => 'snow_removal_parking',
+                        'display_name'=> 'Parking area',
+                        'description' => 'Snow and ice removal on parking area.'
+                    ],
+                    [
+                        'type'        => 'service',
+                        'name'        => 'snow_removal_balcony',
+                        'display_name'=> 'Balcony',
+                        'description' => 'Snow and ice removal from balcony.',
+                    ],
+                    [
+                        'type'        => 'service',
+                        'name'        => 'snow_removal_entrance',
+                        'display_name'=> 'Entrance, walkway, driveway',
+                        'description' => 'Snow and ice removal from entrance, walkway, driveway.'
+                    ],
+                    [
+                        'type'        => 'service',
+                        'name'        => 'snow_removal_stairs',
+                        'display_name'=> 'Stairs',
+                        'description' => 'Snow and ice removal from stairs.'
+                    ],
+                ];
+
+                $consumption_costs = [
+                    [
+                        'type'        => 'consumption_cost',
+                        'name'        => 'electricity_heating',
+                        'display_name'=> 'Electrical heating',
+                        'description' => 'Electrical heating.'
+                    ],
+                    [
+                        'type'        => 'consumption_cost',
+                        'name'        => 'gas_heating',
+                        'display_name'=> 'Gas heating',
+                        'description' => 'Gas heating.'
+                    ],
+                    [
+                        'type'        => 'consumption_cost',
+                        'name'        => 'fuel_heating',
+                        'display_name'=> 'Fuel oil heating',
+                        'description' => 'Fuel oil heating.'
+                    ],
+                    [
+                        'type'        => 'consumption_cost',
+                        'name'        => 'other_gas',
+                        'display_name'=> 'Gas other the heating',
+                        'description' => 'Gas other the heating.'
+                    ],
+                    [
+                        'type'        => 'consumption_cost',
+                        'name'        => 'other_electricity',
+                        'display_name'=> 'Electricity other the heating',
+                        'description' => 'Electricity other the heating.'
+                    ],
+                    [
+                        'type'        => 'consumption_cost',
+                        'name'        => 'hot_wather_heater',
+                        'display_name'=> 'Hot wather Heater (rental fees)',
+                        'description' => 'Hot wather Heater (rental fees).'
+                    ],
+                    [
+                        'type'        => 'consumption_cost',
+                        'name'        => 'hot_wather',
+                        'display_name'=> 'Hot wather(user fees)',
+                        'description' => 'Hot wather (user fees).'
+                    ],
+                    [
+                        'type'        => 'consumption_cost',
+                        'name'        => 'wather_consumption_tax',
+                        'display_name'=> 'Wather consumption tax for dwelling',
+                        'description' => 'Wather consumption tax for dwelling.'
+                    ],
+                ];
+
+                $lease_restrictions = [
+                    [
+                        'type'        => 'lease_restrictions',
+                        'name'        => 'wather_consumption_tax',
+                        'display_name'=> 'Wather consumption tax for dwelling',
+                        'description' => 'Wather consumption tax for dwelling.'
+                    ],
+                ];
+
                 $teams = Team::all();
 
                 foreach ($teams as $team) {
@@ -235,6 +346,8 @@ class TeamSettingSeeder extends Seeder
                     $team->settings()->createMany($accessories);
                     $team->settings()->createMany($dependencies);
                     $team->settings()->createMany($apartmentTypes);
+                    $team->settings()->createMany($services);
+                    $team->settings()->createMany($consumption_costs);
                 }
             }
         );
