@@ -177,6 +177,28 @@ class EventServiceProvider extends ServiceProvider
                         );
                         $event->menu->add(
                             [
+                                'key' => 'leases',
+                                'text' => 'Leases',
+                                'icon' => 'fas fa-fw fa-handshake',
+                                'permission' => 'leaseMenu-read',
+                                'submenu' => [
+                                    [
+                                        'text' => 'All Leases',
+                                        'route'  => ['company.leases', ['company' => $company]],
+                                        'icon' => 'fas fa-fw fa-file-contract',
+                                        'permission' => 'lease-read',
+                                    ],
+                                    [
+                                        'text' => 'New Lease',
+                                        'url'  => '#',
+                                        'icon' => 'fas fa-fw fa-folder-plus',
+                                        'permission' => 'lease-create',
+                                    ],
+                                ]
+                            ]
+                        );
+                        $event->menu->add(
+                            [
                                 'key' => 'buildings',
                                 'text' => 'Buildings',
                                 'route'  => ['company.buildings', ['company'=>$company]],

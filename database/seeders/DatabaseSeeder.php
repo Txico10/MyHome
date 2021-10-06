@@ -41,6 +41,7 @@ class DatabaseSeeder extends Seeder
                 AccessorySeeder::class,
                 UserSeeder::class,
                 EmployeeContractSeeder::class,
+                LeaseSeeder::class,
             ]
         );
         // \App\Models\User::factory(10)->create();

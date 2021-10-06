@@ -129,6 +129,19 @@ class Team extends LaratrustTeam
     }
 
     /**
+     * Employee contracts
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function leases()
+    {
+        return $this->morphedByMany(Lease::class, 'engageable')
+            ->using(Contract::class)
+            ->withPivot('user_id')
+            ->withTimestamps();
+    }
+
+    /**
      * Company Settings
      *
      * @return \Illuminate\Database\Eloquent\Model

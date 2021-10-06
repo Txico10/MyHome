@@ -14,7 +14,6 @@ namespace Database\Seeders;
 
 use App\Models\Address;
 use App\Models\EmployeeContract;
-use App\Models\Role;
 use App\Models\Team;
 use App\Models\TeamSetting;
 use App\Models\User;

@@ -57,7 +57,7 @@ class Building extends Model
     /**
      * Team
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function team()
     {
@@ -67,7 +67,7 @@ class Building extends Model
     /**
      * Address
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function address()
     {
@@ -77,7 +77,7 @@ class Building extends Model
     /**
      * Apartments
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function apartments()
     {
@@ -92,5 +92,15 @@ class Building extends Model
     public function dependencies()
     {
         return $this->hasMany(Dependency::class);
+    }
+
+    /**
+     * Leases
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function leases()
+    {
+        return $this->hasManyThrough(Lease::class, Apartment::class);
     }
 }

@@ -55,7 +55,7 @@ class Apartment extends Model
     /**
      * Building
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function building()
     {
@@ -65,7 +65,7 @@ class Apartment extends Model
     /**
      * Team Settings
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function teamSettings()
     {
@@ -73,5 +73,15 @@ class Apartment extends Model
             ->using(ConfigurationSetting::class)
             ->withPivot('description')
             ->withTimestamps();
+    }
+
+    /**
+     * Leases
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function leases()
+    {
+        return $this->hasMany(Lease::class);
     }
 }

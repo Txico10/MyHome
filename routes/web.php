@@ -20,6 +20,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\DependencyController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\LeaseController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -308,6 +309,13 @@ Route::get('/companies/{company:slug}/accessories/{accessory}', [AccessoryContro
 Route::get('/companies/{company:slug}/accessories/{accessory}/edit', [AccessoryController::class, 'edit'])
     ->middleware(['auth','verified','company.check','permission:accessory-update'])
     ->name('company.accessory.edit');
+
+/**
+ * Lease CRUD
+ */
+Route::get('/companies/{company:slug}/leases', [LeaseController::class, 'index'])
+    ->middleware(['auth','verified','company.check','permission:lease-read'])
+    ->name('company.leases');
 //PDF Test
 Route::get(
     'print/invoice',

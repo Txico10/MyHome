@@ -93,4 +93,16 @@ class Accessory extends Model
             ->withPivot('description')
             ->withTimestamps();
     }
+
+    /**
+     * Leases
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function leases()
+    {
+        return $this->belongsToMany(Lease::class, 'lease_accessory')
+            ->withPivot('assigned_at', 'removed_at', 'price', 'description')
+            ->withTimestamps();
+    }
 }

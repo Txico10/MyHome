@@ -329,12 +329,24 @@ class TeamSettingSeeder extends Seeder
                     ],
                 ];
 
-                $lease_restrictions = [
+                $payment_methds = [
                     [
-                        'type'        => 'lease_restrictions',
-                        'name'        => 'wather_consumption_tax',
-                        'display_name'=> 'Wather consumption tax for dwelling',
-                        'description' => 'Wather consumption tax for dwelling.'
+                        'type'        => 'method_payment',
+                        'name'        => 'cash',
+                        'display_name'=> 'Cash',
+                        'description' => 'Payment made with cash.'
+                    ],
+                    [
+                        'type'        => 'method_payment',
+                        'name'        => 'cheque',
+                        'display_name'=> 'Cheque',
+                        'description' => 'Payment made with cheque.'
+                    ],
+                    [
+                        'type'        => 'method_payment',
+                        'name'        => 'e-transfer',
+                        'display_name'=> 'Electronic bank transfer',
+                        'description' => 'Electronic bank transfer.'
                     ],
                 ];
 
@@ -348,6 +360,7 @@ class TeamSettingSeeder extends Seeder
                     $team->settings()->createMany($apartmentTypes);
                     $team->settings()->createMany($services);
                     $team->settings()->createMany($consumption_costs);
+                    $team->settings()->createMany($payment_methds);
                 }
             }
         );

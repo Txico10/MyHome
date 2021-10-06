@@ -79,7 +79,7 @@ class BuildingSeeder extends Seeder
                                                 ->attach($my_apart_type->id);
                                         }
                                     );
-                                Dependency::factory(5)
+                                Dependency::factory(20)
                                     ->create(['building_id'=>$building->id])
                                     ->each(
                                         function ($dependency) use ($depend_types) {

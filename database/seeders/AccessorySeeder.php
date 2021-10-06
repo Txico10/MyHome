@@ -41,7 +41,7 @@ class AccessorySeeder extends Seeder
                 foreach ($teams as $key => $team) {
                     $types = TeamSetting::where('team_id', $team->id)
                         ->whereIn('type', ['furniture', 'appliances'])->get();
-                    Accessory::factory(7)
+                    Accessory::factory(50)
                         ->create(
                             [
                                 'team_id'=>$team->id,

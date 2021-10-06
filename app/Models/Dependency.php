@@ -33,7 +33,7 @@ class Dependency extends Model
         'building_id','number', 'description', 'location'
     ];
 
-    protected static $logName = 'building_dependency_log';
+    protected static $logName = 'dependency_log';
     protected static $logFillable = true;
     protected static $logOnlyDirty = true;
     protected static $submitEmptyLogs = false;
@@ -53,7 +53,7 @@ class Dependency extends Model
     /**
      * Building
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function building()
     {
@@ -63,13 +63,25 @@ class Dependency extends Model
     /**
      * Team Settings
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function teamSettings()
     {
         return $this->morphToMany(TeamSetting::class, 'settingable')
             ->using(ConfigurationSetting::class)
             ->withPivot('description')
+            ->withTimestamps();
+    }
+
+    /**
+     * Leases
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function leases()
+    {
+        return $this->belongsToMany(Lease::class, 'lease_dependency')
+            ->withPivot('price', 'description')
             ->withTimestamps();
     }
 }
