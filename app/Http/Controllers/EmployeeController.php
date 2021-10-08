@@ -41,10 +41,18 @@ class EmployeeController extends Controller
     public function index(Request $request, Team $company)
     {
         //$users = $company->users->load('employees', 'contacts');
+
         //dd($users);
 
         if ($request->ajax()) {
             $users = $company->users->load('employees', 'contacts');
+            $users = $users->filter(
+                function ($user, $key) {
+                    if ($user->employees->isNotEmpty()) {
+                        return $user;
+                    }
+                }
+            );
             $roles = Role::all();
 
             return datatables()->of($users)

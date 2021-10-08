@@ -35,7 +35,8 @@ class LeaseController extends Controller
      */
     public function index(Request $request, Team $company)
     {
-        $leases = $company->leases;
+        $leases = $company->leases->load('accessories', 'dependencies', 'teamSettings', 'users');
+        //dd($leases);
 
         return view('companies.leases', ['company'=>$company, 'leases'=>$leases]);
     }

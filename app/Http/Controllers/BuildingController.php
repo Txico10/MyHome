@@ -43,7 +43,7 @@ class BuildingController extends Controller
 
 
         if ($request->ajax()) {
-            $company = $company->load('buildings.address', 'buildings.apartments', 'buildings.dependencies');
+            $company = $company->load('buildings.address', 'buildings.apartments', 'buildings.dependencies', 'buildings.leases');
             $buildings = $company->buildings;
 
             return datatables()->of($buildings)
@@ -81,8 +81,8 @@ class BuildingController extends Controller
                 )
                 ->addcolumn(
                     'tenant_count',
-                    function () {
-                        return "0";
+                    function ($building) {
+                        return $building->leases->count();
                     }
                 )
                 ->addColumn(
