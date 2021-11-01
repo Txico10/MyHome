@@ -316,6 +316,12 @@ Route::get('/companies/{company:slug}/accessories/{accessory}/edit', [AccessoryC
 Route::get('/companies/{company:slug}/leases', [LeaseController::class, 'index'])
     ->middleware(['auth','verified','company.check','permission:lease-read'])
     ->name('company.leases');
+Route::get('/companies/{company:slug}/leases/create', [LeaseController::class, 'create'])
+    ->middleware(['auth','verified','company.check','permission:lease-create'])
+    ->name('company.lease.create');
+Route::get('/companies/{company:slug}/leases/{lease}', [LeaseController::class, 'show'])
+    ->middleware(['auth','verified','company.check','permission:lease-read'])
+    ->name('company.lease.show');
 //PDF Test
 Route::get(
     'print/invoice',

@@ -102,7 +102,7 @@ class EmployeeController extends Controller
                 ->addColumn(
                     'action',
                     function ($user) use ($company, $roles) {
-                        $btn = null;
+                        $btn = '<nobr>';
                         if (LaratrustFacade::isAbleTo('employee-read')) {
                             $btn = $btn.'<a class="btn btn-outline-primary btn-sm mx-1 shadow" type="button" title="More details" href="'.route('company.employees.show', ['company'=>$company, 'employee'=>$user]).'"><i class="fas fa-search fa-fw"></i></a>';
                         }
@@ -114,7 +114,7 @@ class EmployeeController extends Controller
                                 }
                             }
                         }
-
+                        $btn=$btn.'</nobr>';
                         return $btn;
                     }
                 )

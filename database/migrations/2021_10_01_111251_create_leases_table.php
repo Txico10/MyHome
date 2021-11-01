@@ -18,7 +18,7 @@ class CreateLeasesTable extends Migration
             $table->foreignId('apartment_id')->constrained()->onDelete('cascade');
             $table->boolean('residential_purpose')->default(true);
             $table->string('residential_purpose_description')->nullable();
-            $table->boolean('co-ownership')->default(false);
+            $table->boolean('co_ownership')->default(false);
             $table->boolean('furniture_included')->default(false);
             $table->enum('term', ['fixed', 'indeterminate']);
             $table->date('start_at');

@@ -190,7 +190,7 @@ class EventServiceProvider extends ServiceProvider
                                     ],
                                     [
                                         'text' => 'New Lease',
-                                        'url'  => '#',
+                                        'route'  => ['company.lease.create', ['company' => $company]],
                                         'icon' => 'fas fa-fw fa-folder-plus',
                                         'permission' => 'lease-create',
                                     ],
