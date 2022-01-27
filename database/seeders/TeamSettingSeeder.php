@@ -198,32 +198,53 @@ class TeamSettingSeeder extends Seeder
                     [
                         'type'        => 'apartment',
                         'name'        => '1_1/2',
-                        'display_name'=> 'Un et demi',
-                        'description' => 'Mon 1 1/2'
+                        'display_name'=> '1 1/2',
+                        'description' => 'Un et demi'
                     ],
                     [
                         'type'        => 'apartment',
                         'name'        => '2_1/2',
-                        'display_name'=> 'Deux et demi',
-                        'description' => 'Mon 2 1/2'
+                        'display_name'=> '2 1/2',
+                        'description' => 'Deux et demi'
                     ],
                     [
                         'type'        => 'apartment',
                         'name'        => '3_1/2',
-                        'display_name'=> 'Trois et demi',
-                        'description' => 'Mon 3 1/2'
+                        'display_name'=> '3 1/2',
+                        'description' => 'Trois et demi'
                     ],
                     [
                         'type'        => 'apartment',
                         'name'        => '4_1/2',
-                        'display_name'=> 'Quatre et demi',
-                        'description' => 'Mon 4 1/2'
+                        'display_name'=> '4 1/2',
+                        'description' => 'Quatre et demi'
                     ],
                     [
                         'type'        => 'apartment',
                         'name'        => '5_1/2',
-                        'display_name'=> 'Cinque et demi',
-                        'description' => 'Mon 5 1/2'
+                        'display_name'=> '5 1/2',
+                        'description' => 'Cinque et demi'
+                    ],
+                ];
+
+                $heating_of_dweeling =  [
+                    [
+                        'type'        => 'heating_of_dweeling',
+                        'name'        => 'electricity',
+                        'display_name'=> 'Electricity',
+                        'description' => 'Electrical heating system'
+                    ],
+                    [
+                        'type'        => 'heating_of_dweeling',
+                        'name'        => 'gas',
+                        'display_name'=> 'Gas',
+                        'description' => 'Gas heating system'
+                    ],
+                    [
+                        'type'        => 'heating_of_dweeling',
+                        'name'        => 'fuel_oil',
+                        'display_name'=> 'Fuel Oil',
+                        'description' => 'Fuel Oil heating system'
                     ],
                 ];
 
@@ -253,25 +274,25 @@ class TeamSettingSeeder extends Seeder
                         'description' => 'Painting service'
                     ],
                     [
-                        'type'        => 'service',
+                        'type'        => 'snow_removal',
                         'name'        => 'snow_removal_parking',
                         'display_name'=> 'Parking area',
                         'description' => 'Snow and ice removal on parking area.'
                     ],
                     [
-                        'type'        => 'service',
+                        'type'        => 'snow_removal',
                         'name'        => 'snow_removal_balcony',
                         'display_name'=> 'Balcony',
                         'description' => 'Snow and ice removal from balcony.',
                     ],
                     [
-                        'type'        => 'service',
+                        'type'        => 'snow_removal',
                         'name'        => 'snow_removal_entrance',
                         'display_name'=> 'Entrance, walkway, driveway',
                         'description' => 'Snow and ice removal from entrance, walkway, driveway.'
                     ],
                     [
-                        'type'        => 'service',
+                        'type'        => 'snow_removal',
                         'name'        => 'snow_removal_stairs',
                         'display_name'=> 'Stairs',
                         'description' => 'Snow and ice removal from stairs.'
@@ -281,27 +302,9 @@ class TeamSettingSeeder extends Seeder
                 $consumption_costs = [
                     [
                         'type'        => 'consumption_cost',
-                        'name'        => 'electricity_heating',
-                        'display_name'=> 'Electrical heating',
-                        'description' => 'Electrical heating.'
-                    ],
-                    [
-                        'type'        => 'consumption_cost',
-                        'name'        => 'gas_heating',
-                        'display_name'=> 'Gas heating',
-                        'description' => 'Gas heating.'
-                    ],
-                    [
-                        'type'        => 'consumption_cost',
-                        'name'        => 'fuel_heating',
-                        'display_name'=> 'Fuel oil heating',
-                        'description' => 'Fuel oil heating.'
-                    ],
-                    [
-                        'type'        => 'consumption_cost',
-                        'name'        => 'other_gas',
-                        'display_name'=> 'Gas other the heating',
-                        'description' => 'Gas other the heating.'
+                        'name'        => 'heating_dwelling',
+                        'display_name'=> 'Heating of dwelling',
+                        'description' => 'Heating of dwelling.'
                     ],
                     [
                         'type'        => 'consumption_cost',
@@ -324,7 +327,7 @@ class TeamSettingSeeder extends Seeder
                     [
                         'type'        => 'consumption_cost',
                         'name'        => 'wather_consumption_tax',
-                        'display_name'=> 'Wather consumption tax for dwelling',
+                        'display_name'=> 'Wather consumption tax',
                         'description' => 'Wather consumption tax for dwelling.'
                     ],
                 ];
@@ -358,6 +361,7 @@ class TeamSettingSeeder extends Seeder
                     $team->settings()->createMany($accessories);
                     $team->settings()->createMany($dependencies);
                     $team->settings()->createMany($apartmentTypes);
+                    $team->settings()->createMany($heating_of_dweeling);
                     $team->settings()->createMany($services);
                     $team->settings()->createMany($consumption_costs);
                     $team->settings()->createMany($payment_methds);

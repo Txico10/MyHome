@@ -69,10 +69,10 @@ class Lease extends Model
         'postdated_cheques'=>'boolean',
         'land_access'=>'boolean',
         'animals'=>'boolean',
-        'start_at' => 'date:Y-m-d',
-        'end_at' => 'date:Y-m-d',
-        'first_payment_at' => 'date:Y-m-d',
-        'by_law_given_on' => 'date:Y-m-d'
+        'start_at' => 'datetime:Y-m-d',
+        'end_at' => 'datetime:Y-m-d',
+        'first_payment_at' => 'datetime:Y-m-d',
+        'by_law_given_on' => 'datetime:Y-m-d'
     ];
 
     protected static $logName = 'lease_log';

@@ -99,4 +99,17 @@ class TeamSetting extends Model
             ->withTimestamps();
     }
 
+    /**
+     * Appliances
+     *
+     * @return Illuminate\Database\Eloquent\Model
+     */
+    public function accessories()
+    {
+        return $this->morphedByMany(Accessory::class, 'settingable')
+            ->using(ConfigurationSetting::class)
+            ->withPivot('description')
+            ->withTimestamps();
+    }
+
 }

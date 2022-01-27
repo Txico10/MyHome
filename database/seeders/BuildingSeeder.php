@@ -44,7 +44,7 @@ class BuildingSeeder extends Seeder
 
                 foreach ($teams as $key => $team) {
                     $types = TeamSetting::where('team_id', $team->id)
-                        ->whereIn('type', ['apartment', 'dependencie'])->get();
+                        ->whereIn('type', ['apartment', 'dependencie', 'heating_of_dweeling'])->get();
                     Building::factory(5)
                         ->hasAddress()
                         ->create(
@@ -56,6 +56,7 @@ class BuildingSeeder extends Seeder
                             function ($building) use ($types) {
                                 $apart_types = $types->where('type', 'apartment');
                                 $depend_types = $types->where('type', 'dependencie');
+                                $apart_heat_sys = $types->where('type', 'heating_of_dweeling');
                                 Apartment::factory(5)
                                     ->state(
                                         new Sequence(
@@ -71,12 +72,16 @@ class BuildingSeeder extends Seeder
                                             'building_id'=>$building->id,
                                         ]
                                     )->each(
-                                        function ($apartment) use ($apart_types) {
+                                        function ($apartment) use ($apart_types, $apart_heat_sys) {
 
                                             $my_apart_type = $apart_types->random();
+                                            $my_apart_heating_type = $apart_heat_sys->random();
 
                                             $apartment->teamSettings()
                                                 ->attach($my_apart_type->id);
+                                            $apartment->teamSettings()
+                                                ->attach($my_apart_heating_type->id);
+
                                         }
                                     );
                                 Dependency::factory(20)

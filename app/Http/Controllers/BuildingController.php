@@ -95,7 +95,7 @@ class BuildingController extends Controller
                         }
                         //<i class="fas fa-map-pin"></i>
 
-                        $btn = $btn.'<button class="btn btn-outline-primary mx-1 shadow btn-sm editAddressButton" title="Update address" type="button" value="'.$building->id.'"><i class="fas fa-map-marker-alt fa-fw"></i></button>';
+                        $btn = $btn.'<button class="btn btn-outline-primary mx-1 shadow btn-md editAddressButton" title="Update address" type="button" value="'.$building->id.'"><i class="fas fa-map-marker-alt fa-fw"></i></button>';
 
                         if (LaratrustFacade::isAbleTo('dependency-read')) {
                             $btn = $btn.'<a class="btn btn-outline-primary btn-sm mx-1 shadow" type="button" title="Dependencies" href="'.route('company.building.show', ['company'=>$company, 'building'=>$building]).'"><i class="fas fa-warehouse fa-fw"></i></a>';

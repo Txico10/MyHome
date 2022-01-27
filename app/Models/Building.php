@@ -84,6 +84,7 @@ class Building extends Model
         return $this->hasMany(Apartment::class);
     }
 
+
     /**
      * Dependencies
      *

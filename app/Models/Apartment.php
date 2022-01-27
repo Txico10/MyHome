@@ -12,6 +12,8 @@
  * */
 namespace App\Models;
 
+use Attribute;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -40,6 +42,11 @@ class Apartment extends Model
     protected static $logOnlyDirty = true;
     protected static $submitEmptyLogs = false;
 
+    /*
+    protected $appends = [
+        'active_lease'
+    ];
+    */
     /**
      * Get Description For Event Log
      *
@@ -84,4 +91,25 @@ class Apartment extends Model
     {
         return $this->hasMany(Lease::class);
     }
+
+    /**
+     * Get Active Lease Attribute
+     *
+     * @return boolean
+
+    public function getActiveLeaseAttribute()
+    {
+        $lease = $this->leases()->latest()->first();
+
+        if (!empty($lease)) {
+            if (!empty($lease->end_at)) {
+                if ($lease->end_at->lessThanOrEqualTo(today())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    */
 }

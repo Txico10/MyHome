@@ -50,8 +50,12 @@ class Accessory extends Model
      * @var array
      */
     protected $casts = [
-        'buy_at' => 'datetime',
-        'discontinued_at' => 'datetime',
+        'buy_at' => 'datetime:Y-m-d',
+        'discontinued_at' => 'datetime:Y-m-d',
+    ];
+
+    protected $appends = [
+        'active_lease'
     ];
 
     protected static $logName = 'accessories_log';
@@ -105,4 +109,26 @@ class Accessory extends Model
             ->withPivot('assigned_at', 'removed_at', 'price', 'description')
             ->withTimestamps();
     }
+
+    /**
+     * Get Active Lease Attribute
+     *
+     * @return boolean
+     */
+    public function getActiveLeaseAttribute()
+    {
+        $lease = $this->leases()->latest()->first();
+
+        if (!empty($lease)) {
+            if (!empty($lease->end_at)) {
+                if ($lease->end_at->lessThanOrEqualTo(today())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        return false;
+    }
+
 }

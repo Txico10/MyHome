@@ -28,7 +28,8 @@
 @section('content')
 <div class="row">
     <div class="col-md-12">
-        <livewire:lease-form :company="$company"/>
+      <livewire:lease-form :company="$company"/>
+      {{-- <livewire:dynamic-form /> --}}
     </div>
 </div>
 @stop
