@@ -5,6 +5,7 @@
 @section('plugins.Datepicker', true)
 @section('plugins.Inputmask', true)
 @section('plugins.iCheck', true)
+@section('plugins.BootstrapSwitch', true)
 @section('title', 'New lease')
 
 @section('content_header')

@@ -28,10 +28,9 @@ use PragmaRX\Countries\Package\Countries;
 class LeaseForm extends Component
 {
     public $company;
-    public $countries;
-    public $country_cities;
     public $currentStep=1;
     public $second_lessee = false;
+    public $same_address=false;
     //lessee
     public $lessees = [];
     //lease
@@ -45,6 +44,8 @@ class LeaseForm extends Component
     public $furniture_included = false;
     //address
     public $addresses = [];
+    public $countries = [];
+    public $country_cities = [];
     //dwelling
     public $buildings;
     public $building;
@@ -78,7 +79,11 @@ class LeaseForm extends Component
     public $by_laws_given_at;
     public $consumption_costs;
     public $cost_born_by = [];
-
+    public $land_access = true;
+    public $land_access_description;
+    public $animals=false;
+    public $animals_description;
+    public $other_conditions_restrictions;
 
     /**
      * Mount
@@ -89,9 +94,9 @@ class LeaseForm extends Component
      */
     public function mount($company)
     {
-        $this->company=$company->load('buildings', 'apartments.leases');
+        $this->company=$company->load('addresses', 'contacts', 'buildings', 'apartments.leases');
 
-        $this->countries = Countries::all()->lazy(50)->pluck('name.common', 'cca3')
+        $this->countries[] = Countries::all()->lazy(50)->pluck('name.common', 'cca3')
             ->toArray();
         $this->lessees[] = ['name'=>null, 'birthdate'=>null, 'gender'=>null, 'email'=>null, 'mobile'=>null];
 
@@ -157,7 +162,7 @@ class LeaseForm extends Component
         $parts = explode(".", $key);
 
         if (!empty($value) && strcmp($parts[1], 'country')==0) {
-            $this->country_cities =  Countries::where('cca3', $value)->first()
+            $this->country_cities[$parts[0]] =  Countries::where('cca3', $value)->first()
                 ->hydrate('cities')
                 ->cities
                 ->pluck('name', 'nameascii')
@@ -196,12 +201,40 @@ class LeaseForm extends Component
         if ($this->second_lessee) {
             $this->lessees[] = ['name'=>null, 'birthdate'=>null, 'gender'=>null, 'email'=>null, 'mobile'=>null];
             $this->addresses[] = ['suite'=>null, 'number'=>null, 'street'=>null, 'city'=>null, 'region'=>null, 'country'=>null, 'postcode'=>null];
+            $this->countries[] = Countries::all()->lazy(50)->pluck('name.common', 'cca3');
+
         } else {
             unset($this->lessees[1]);
             $this->lessees = array_values($this->lessees);
             unset($this->addresses[1]);
             $this->addresses = array_values($this->addresses);
+            if (!empty($this->country_cities[1])) {
+                unset($this->country_cities[1]);
+                $this->country_cities = array_values($this->country_cities);
+            }
+
+            unset($this->countries[1]);
+            $this->countries = array_values($this->countries);
         }
+    }
+
+    /**
+     * Updated Same Address
+     *
+     * @return void
+     */
+    public function updatedSameAddress()
+    {
+
+        //$this->validateOnly('addresses', $this->rules2());
+        if ($this->same_address) {
+            unset($this->addresses[1]);
+            $this->addresses = array_values($this->addresses);
+
+        } else {
+            $this->addresses[1] = ['suite'=>null, 'number'=>null, 'street'=>null, 'city'=>null, 'region'=>null, 'country'=>null, 'postcode'=>null];
+        }
+
     }
 
     /**
@@ -304,6 +337,7 @@ class LeaseForm extends Component
                 $this->dependencies[$parts[0]]['number'] = null;
                 $this->dependencies[$parts[0]]['price'] = 0.00;
             }
+            $this->resetErrorBag('dependencies.*');
         }
     }
 
@@ -341,7 +375,7 @@ class LeaseForm extends Component
             $this->appliances_list[$parts[0]] = $appliances->pluck('model', 'id');
             $this->appliances[$parts[0]]['id'] = null;
             $this->appliances[$parts[0]]['price'] = 0.00;
-            //dd($value);
+            $this->resetErrorBag('appliances.*');
         }
     }
 
@@ -379,7 +413,7 @@ class LeaseForm extends Component
             $this->furnitures_list[$parts[0]] = $furnitures->pluck('model', 'id');
             $this->furnitures[$parts[0]]['id'] = null;
             $this->furnitures[$parts[0]]['price'] = 0.00;
-            //dd($value);
+            $this->resetErrorBag('furnitures.*');
         }
     }
 
@@ -478,7 +512,9 @@ class LeaseForm extends Component
      */
     public function myPreviousStep()
     {
-        $this->currentStep -= 1;
+        if ($this->currentStep >1) {
+            $this->currentStep -= 1;
+        }
     }
 
     /**
@@ -526,11 +562,11 @@ class LeaseForm extends Component
             'lessees.*.email'     => ['required', 'email:rfc,dns', 'unique:users,email'],
             'lessees.*.mobile'    => ['required', 'string', 'min:7', 'max:18'],
             'addresses.*.suite'   => ['nullable','alpha_num','min:1','max:191'],
-            'addresses.*.number'  => ['required_with:addresses.*.suite', 'required_with:addresses.*.street','nullable', 'numeric'],
-            'addresses.*.street'  => ['required_with:addresses.*.number','required_with:addresses.*.city','nullable', 'string', 'min:2', 'max:32'],
-            'addresses.*.city'    => ['required_with:addresses.*.street','required_with:addresses.*.country', 'nullable', 'string', 'min:2', 'max:32'],
+            'addresses.*.number'  => ['required_if:same_address,true','required_with:addresses.*.suite', 'required_with:addresses.*.street','nullable', 'numeric'],
+            'addresses.*.street'  => ['required_if:same_address,true','required_with:addresses.*.number','required_with:addresses.*.city','nullable', 'string', 'min:2', 'max:32'],
+            'addresses.*.city'    => ['required_if:same_address,true','required_with:addresses.*.street','required_with:addresses.*.country', 'nullable', 'string', 'min:2', 'max:32'],
             'addresses.*.region'  => ['nullable','string','min:2','max:32'],
-            'addresses.*.country' => ['required_with:addresses.*.street', 'required_with:addresses.*.city', 'nullable', 'string', 'min:3', 'max:32'],
+            'addresses.*.country' => ['required_if:same_address,true','required_with:addresses.*.street', 'required_with:addresses.*.city', 'nullable', 'string', 'min:3', 'max:32'],
             'addresses.*.postcode'=> ['nullable','alpha_num','min:2','max:191'],
             'building'            => ['required', 'exists:buildings,id'],
             'apartment'           => ['required', 'exists:apartments,id'],
@@ -538,18 +574,18 @@ class LeaseForm extends Component
             'family_residence_description' => ['required_if:family_residence,false', 'nullable', 'string', 'min:3', 'max:32'],
             'dwelling_co_ownership'        => ['boolean'],
             'furniture_included'           => ['boolean'],
-            'dependencies.*.type'          => ['sometimes', 'required_with:building'],
-            'dependencies.*.number'        => ['sometimes', 'required_with:dependencies.*.type'],
-            'dependencies.*.price'         => ['sometimes', 'numeric'],
-            'dependencies.*.description'   => ['sometimes', 'nullable', 'string', 'min:3', 'max:32'],
-            'appliances.*.type'            => ['sometimes', 'required_if:furniture_included,true'],
-            'appliances.*.id'              => ['sometimes', 'required_with:appliances.*.type'],
-            'appliances.*.price'           => ['sometimes', 'numeric'],
-            'appliances.*.description'     => ['sometimes', 'nullable', 'string', 'min:3', 'max:32'],
-            'furnitures.*.type'            => ['sometimes', 'required_if:furniture_included,true'],
-            'furnitures.*.id'              => ['sometimes', 'required_with::furnitures.*.type'],
-            'furnitures.*.price'           => ['sometimes', 'numeric'],
-            'furnitures.*.description'     => ['sometimes', 'nullable', 'string', 'min:3', 'max:32'],
+            'dependencies.*.type'           => ['sometimes', 'required_with:building'],
+            'dependencies.*.number'         => ['sometimes', 'required_with:dependencies.*.type', "distinct"],
+            'dependencies.*.price'          => ['sometimes', 'numeric'],
+            'dependencies.*.description'    => ['sometimes', 'nullable', 'string', 'min:3', 'max:32'],
+            'appliances.*.type'             => ['sometimes', 'required_if:furniture_included,true'],
+            'appliances.*.id'               => ['sometimes', 'required_with:appliances.*.type', 'distinct'],
+            'appliances.*.price'            => ['sometimes', 'numeric'],
+            'appliances.*.description'      => ['sometimes', 'nullable', 'string', 'min:3', 'max:32'],
+            'furnitures.*.type'             => ['sometimes', 'required_if:furniture_included,true'],
+            'furnitures.*.id'               => ['sometimes', 'required_with:furnitures.*.type', 'distinct'],
+            'furnitures.*.price'            => ['sometimes', 'numeric'],
+            'furnitures.*.description'      => ['sometimes', 'nullable', 'string', 'min:3', 'max:32'],
             'lease_term'            => ['required'],
             'lease_start'           => ['required', 'date', 'after_or_equal:today'],
             'lease_end'             => ['required_if:lease_term,fixed','nullable','date', 'after:lease_start'],
@@ -616,11 +652,11 @@ class LeaseForm extends Component
                 'lessees.*.email' => ['required', 'email:rfc,dns', 'unique:users,email'],
                 'lessees.*.mobile' => ['required', 'string', 'min:7', 'max:18'],
                 'addresses.*.suite'   => ['nullable','alpha_num','min:1','max:191'],
-                'addresses.*.number'  => ['required_with:addresses.*.suite', 'required_with:addresses.*.street','nullable', 'numeric'],
-                'addresses.*.street'  => ['required_with:addresses.*.number','required_with:addresses.*.city','nullable', 'string', 'min:2', 'max:32'],
-                'addresses.*.city'    => ['required_with:addresses.*.street','required_with:addresses.*.country', 'nullable', 'string', 'min:2', 'max:32'],
+                'addresses.*.number'  => ['required_if:same_address,true', 'required_with:addresses.*.suite', 'required_with:addresses.*.street','nullable', 'numeric'],
+                'addresses.*.street'  => ['required_if:same_address,true', 'required_with:addresses.*.number','required_with:addresses.*.city','nullable', 'string', 'min:2', 'max:32'],
+                'addresses.*.city'    => ['required_if:same_address,true', 'required_with:addresses.*.street','required_with:addresses.*.country', 'nullable', 'string', 'min:2', 'max:32'],
                 'addresses.*.region'  => ['nullable', 'string', 'min:2', 'max:32'],
-                'addresses.*.country' => ['required_with:addresses.*.street', 'required_with:addresses.*.city', 'nullable', 'string', 'min:3', 'max:32'],
+                'addresses.*.country' => ['required_if:same_address,true', 'required_with:addresses.*.street', 'required_with:addresses.*.city', 'nullable', 'string', 'min:3', 'max:32'],
                 'addresses.*.postcode'=> ['nullable', 'alpha_num', 'min:2', 'max:191']
             ]
         ;
@@ -641,15 +677,15 @@ class LeaseForm extends Component
             'dwelling_co_ownership'         => ['boolean'],
             'furniture_included'            => ['boolean'],
             'dependencies.*.type'           => ['sometimes', 'required_with:building'],
-            'dependencies.*.number'         => ['sometimes', 'required_with:dependencies.*.type'],
+            'dependencies.*.number'         => ['sometimes', 'required_with:dependencies.*.type', "distinct"],
             'dependencies.*.price'          => ['sometimes', 'numeric'],
             'dependencies.*.description'    => ['sometimes', 'nullable', 'string', 'min:3', 'max:32'],
             'appliances.*.type'             => ['sometimes', 'required_if:furniture_included,true'],
-            'appliances.*.id'               => ['sometimes', 'required_with:appliances.*.type'],
+            'appliances.*.id'               => ['sometimes', 'required_with:appliances.*.type', 'distinct'],
             'appliances.*.price'            => ['sometimes', 'numeric'],
             'appliances.*.description'      => ['sometimes', 'nullable', 'string', 'min:3', 'max:32'],
             'furnitures.*.type'             => ['sometimes', 'required_if:furniture_included,true'],
-            'furnitures.*.id'               => ['sometimes', 'required_with:furnitures.*.type'],
+            'furnitures.*.id'               => ['sometimes', 'required_with:furnitures.*.type', 'distinct'],
             'furnitures.*.price'            => ['sometimes', 'numeric'],
             'furnitures.*.description'      => ['sometimes', 'nullable', 'string', 'min:3', 'max:32'],
         ];
@@ -719,6 +755,7 @@ class LeaseForm extends Component
         unset($this->dependencies_building[$index]);
         $this->dependencies = array_values($this->dependencies);
         $this->dependencies_building = array_values($this->dependencies_building);
+        $this->resetErrorBag('dependencies.*.number');
         //reset error bag
 
     }
@@ -747,7 +784,7 @@ class LeaseForm extends Component
         unset($this->furnitures_list[$index]);
         $this->furnitures = array_values($this->furnitures);
         $this->furnitures_list = array_values($this->furnitures_list);
-        //reset error bag for the removed line
+        $this->resetErrorBag('furnitures.*.id');
     }
 
     /**
@@ -774,7 +811,7 @@ class LeaseForm extends Component
         unset($this->appliances_list[$index]);
         $this->appliances = array_values($this->appliances);
         $this->appliances_list = array_values($this->appliances_list);
-        //reset error bag for the removed line
+        $this->resetErrorBag('appliances.*.id');
     }
 
     /**

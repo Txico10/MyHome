@@ -79,7 +79,7 @@
                                                     <i class="fas fa-fw fa-birthday-cake text-lightblue"></i>
                                                 </div>
                                             </div>
-                                            <input id="lessees.{{$indexL}}.birthdate" name="lessees.{{$indexL}}.birthdate" data-target="#lessees.{{$indexL}}.birthdate" data-toggle="datetimepicker"  class="form-control datetimepicker @error('lessees.'.$indexL.'.birthdate') is-invalid @enderror" wire:model="lessees.{{$indexL}}.birthdate" placeholder="Choose a date...">
+                                            <input id="lessees.{{$indexL}}.birthdate" name="lessees.{{$indexL}}.birthdate" data-target="#lessees.{{$indexL}}.birthdate" data-toggle="datetimepicker"  class="form-control {{$indexL==0?'datetimepicker':'datetimepicker2'}} @error('lessees.'.$indexL.'.birthdate') is-invalid @enderror" wire:model="lessees.{{$indexL}}.birthdate" placeholder="Choose a date...">
                                             @error('lessees.'.$indexL.'.birthdate')
                                                 <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
                                             @enderror
@@ -94,7 +94,7 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text text-lightblue"><i class="fas fa-fw fa-venus-mars"></i></span>
                                             </div>
-                                            <select name="lessees.{{$indexL}}.gender" id="lessees.{{$indexL}}.gender" class="form-control select2" wire:model="lessees.{{$indexL}}.gender" data-placeholder="Enter lessee gender"  data-allow-clear="true" style="width: 80%">
+                                            <select name="lessees.{{$indexL}}.gender" id="lessees.{{$indexL}}.gender" class="form-control {{$indexL==0?'select2':'select2_dyn'}}" wire:model="lessees.{{$indexL}}.gender" data-placeholder="Enter lessee gender"  data-allow-clear="true" style="width: 80%">
                                                 <option value=""></option>
                                                 <option value="male">Male</option>
                                                 <option value="female">Female</option>
@@ -138,126 +138,138 @@
                                 </div>
                             </div>
                         </x-adminlte-card>
+                        @if($second_lessee && $indexL>0)
+                            <x-adminlte-card>
+                                <div class="form-group" wire:ignore>
+                                    <label class="text-lightblue" for="same_address">The lessees have the same address</label>
+                                    <div class="input-group">
+                                        <input type="checkbox" name="same_address" id="same_address">
+                                    </div>
+                                </div>
+                            </x-adminlte-card>
+                        @endif
                     </div>
                     <div class="col-md-6">
-                        <x-adminlte-card title="Address for lessee # {{$indexL+1}}" theme="lightblue" theme-mode="outline">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="text-lightblue" for="addresses.{{$indexL}}.suite">Suite/Apartment</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text text-lightblue"><i class="fas fa-fw fa-hashtag"></i></span>
+                        @if(isset($addresses[$indexL]))
+                            <x-adminlte-card title="Address for lessee # {{$indexL+1}}" theme="lightblue" theme-mode="outline">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="text-lightblue" for="addresses.{{$indexL}}.suite">Suite/Apartment</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text text-lightblue"><i class="fas fa-fw fa-hashtag"></i></span>
+                                                </div>
+                                                <input type="text" name="addresses.{{$indexL}}.suite" id="addresses.{{$indexL}}.suite" wire:model.lazy="addresses.{{$indexL}}.suite" class="form-control @error('addresses.'.$indexL.'.suite') is-invalid @enderror" placeholder="Enter suite/apartment number">
                                             </div>
-                                            <input type="text" name="addresses.{{$indexL}}.suite" id="addresses.{{$indexL}}.suite" wire:model.lazy="addresses.{{$indexL}}.suite" class="form-control @error('addresses.'.$indexL.'.suite') is-invalid @enderror" placeholder="Enter suite/apartment number">
+                                            @error('addresses.'.$indexL.'.suite')
+                                                <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                                            @enderror
                                         </div>
-                                        @error('addresses.'.$indexL.'.suite')
-                                            <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
-                                        @enderror
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="addresses.{{$indexL}}.number" class="text-lightblue">Building number</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text text-lightblue"><i class="fas fa-fw fa-building"></i></span>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="addresses.{{$indexL}}.number" class="text-lightblue">Building number</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text text-lightblue"><i class="fas fa-fw fa-building"></i></span>
+                                                </div>
+                                                <input type="text" name="addresses.{{$indexL}}.number" id="addresses.{{$indexL}}.number" class="form-control @error('addresses.'.$indexL.'.number') is-invalid @enderror" wire:model.lazy="addresses.{{$indexL}}.number" placeholder="Enter number">
                                             </div>
-                                            <input type="text" name="addresses.{{$indexL}}.number" id="addresses.{{$indexL}}.number" class="form-control @error('addresses.'.$indexL.'.number') is-invalid @enderror" wire:model.lazy="addresses.{{$indexL}}.number" placeholder="Enter number">
+                                            @error('addresses.'.$indexL.'.number')
+                                                <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                                            @enderror
                                         </div>
-                                        @error('addresses.'.$indexL.'.number')
-                                            <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
-                                        @enderror
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="addresses.{{$indexL}}.street" class="text-lightblue">Street</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text text-lightblue"><i class="fas fa-fw fa-road"></i></span>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="addresses.{{$indexL}}.street" class="text-lightblue">Street</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text text-lightblue"><i class="fas fa-fw fa-road"></i></span>
+                                                </div>
+                                                <input type="text" name="addresses.{{$indexL}}.street" id="addresses.{{$indexL}}.street" class="form-control @error('addresses.'.$indexL.'.street') is-invalid @enderror" wire:model.lazy="addresses.{{$indexL}}.street" placeholder="Enter the street">
                                             </div>
-                                            <input type="text" name="addresses.{{$indexL}}.street" id="addresses.{{$indexL}}.street" class="form-control @error('addresses.'.$indexL.'.street') is-invalid @enderror" wire:model.lazy="addresses.{{$indexL}}.street" placeholder="Enter the street">
+                                            @error('addresses.'.$indexL.'.street')
+                                                <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                                            @enderror
                                         </div>
-                                        @error('addresses.'.$indexL.'.street')
-                                            <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
-                                        @enderror
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="addresses.{{$indexL}}.city" class="text-lightblue">City</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text text-lightblue"><i class="fas fa-fw fa-map-marked-alt"></i></span>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="addresses.{{$indexL}}.city" class="text-lightblue">City</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text text-lightblue"><i class="fas fa-fw fa-map-marked-alt"></i></span>
+                                                </div>
+                                                <select class="form-control {{$indexL==0?'select2':'select2_dyn'}}" name="addresses.{{$indexL}}.city" id="addresses.{{$indexL}}.city" wire:model="addresses.{{$indexL}}.city" style="width: 80%" data-placeholder="Select city" data-allow-clear="true">
+                                                    <option value=""></option>
+                                                    @if(!empty($country_cities[$indexL]))
+                                                        @foreach($country_cities[$indexL] as $key => $newCity)
+                                                            <option value="{{$key}}">{{utf8_decode($newCity)}}</option>
+                                                        @endforeach
+                                                    @endif
+                                                </select>
                                             </div>
-                                            <select class="form-control select2" name="addresses.{{$indexL}}.city" id="addresses.{{$indexL}}.city" wire:model="addresses.{{$indexL}}.city" style="width: 80%" data-placeholder="Select city" data-allow-clear="true">
-                                                <option value=""></option>
-                                                @if(!empty($country_cities))
-                                                    @foreach($country_cities as $key => $newCity)
-                                                        <option value="{{$key}}">{{utf8_decode($newCity)}}</option>
+                                            @error('addresses.'.$indexL.'.city')
+                                                <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="addresses.{{$indexL}}.region" class="text-lightblue">Region</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text text-lightblue"><i class="fas fa-fw fa-map-marked-alt"></i></span>
+                                                </div>
+                                                <input type="text" name="addresses.{{$indexL}}.region" id="addresses.{{$indexL}}.region" class="form-control @error('addresses.'.$indexL.'.region') is-invalid @enderror" wire:model="addresses.{{$indexL}}.region" placeholder="Enter the region" disabled>
+                                            </div>
+                                            @error('addresses.'.$indexL.'.region')
+                                                <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="text-lightblue" for="addresses.{{$indexL}}.country">Country</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text text-lightblue"><i class="fas fa-fw fa-map-marked-alt"></i></span>
+                                                </div>
+                                                <select class="form-control {{$indexL==0?'select2':'select2_dyn'}}" name="addresses.{{$indexL}}.country" id="addresses.{{$indexL}}.country" wire:model="addresses.{{$indexL}}.country" data-placeholder="Enter your country" data-allow-clear="true" style="width: 80%">
+                                                    <option value=""></option>
+                                                    @foreach ($countries[$indexL] as $key=>$country)
+                                                    <option value="{{$key}}">{{$country}}</option>
                                                     @endforeach
-                                                @endif
-                                            </select>
-                                        </div>
-                                        @error('addresses.'.$indexL.'.city')
-                                            <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="addresses.{{$indexL}}.region" class="text-lightblue">Region</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text text-lightblue"><i class="fas fa-fw fa-map-marked-alt"></i></span>
+                                                </select>
                                             </div>
-                                            <input type="text" name="addresses.{{$indexL}}.region" id="addresses.{{$indexL}}.region" class="form-control @error('addresses.'.$indexL.'.region') is-invalid @enderror" wire:model="addresses.{{$indexL}}.region" placeholder="Enter the region" disabled>
+                                            @error('addresses.'.$indexL.'.country')
+                                                <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                                            @enderror
                                         </div>
-                                        @error('addresses.'.$indexL.'.region')
-                                            <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
-                                        @enderror
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="text-lightblue" for="addresses.{{$indexL}}.country">Country</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text text-lightblue"><i class="fas fa-fw fa-map-marked-alt"></i></span>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="addresses.{{$indexL}}.postcode" class="text-lightblue">Postal/Zip Code</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text text-lightblue"><i class="fas fa-fw fa-map"></i></span>
+                                                </div>
+                                                <input type="text" name="addresses.{{$indexL}}.postcode" id="addresses.{{$indexL}}.postcode" class="form-control @error('addresses.'.$indexL.'.postcode') is-invalid @enderror" wire:model.lazy="addresses.{{$indexL}}.postcode" placeholder="Enter the postal/zip code">
                                             </div>
-                                            <select class="form-control select2" name="addresses.{{$indexL}}.country" id="addresses.{{$indexL}}.country" wire:model="addresses.{{$indexL}}.country" data-placeholder="Enter your country" data-allow-clear="true" style="width: 80%">
-                                                <option value=""></option>
-                                                @foreach ($countries as $key=>$country)
-                                                <option value="{{$key}}">{{$country}}</option>
-                                                @endforeach
-                                            </select>
+                                            @error('addresses.'.$indexL.'.postcode')
+                                                <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                                            @enderror
                                         </div>
-                                        @error('addresses.'.$indexL.'.country')
-                                            <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
-                                        @enderror
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="addresses.{{$indexL}}.postcode" class="text-lightblue">Postal/Zip Code</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text text-lightblue"><i class="fas fa-fw fa-map"></i></span>
-                                            </div>
-                                            <input type="text" name="addresses.{{$indexL}}.postcode" id="addresses.{{$indexL}}.postcode" class="form-control @error('addresses.'.$indexL.'.postcode') is-invalid @enderror" wire:model.lazy="addresses.{{$indexL}}.postcode" placeholder="Enter the postal/zip code">
-                                        </div>
-                                        @error('addresses.'.$indexL.'.postcode')
-                                            <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                        </x-adminlte-card>
+                            </x-adminlte-card>
+                        @endif
                     </div>
                 </div>
                 @endforeach
-                <button class="btn btn-primary float-right" wire:click="myNextStep">Next <i class="fas fa-fw fa-chevron-right"></i></button>
+                <button class="btn btn-primary float-right" wire:click.prevent="myNextStep">Next <i class="fas fa-fw fa-chevron-right"></i></button>
             </div>
             <div id="adress-part" role="tabpanel" class="bs-stepper-pane fade {{$currentStep == 2 ? 'active dstepper-block':'dstepper-none'}}   "aria-labelledby="adress-part-trigger">
                 <div class="row">
@@ -306,21 +318,15 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group clearfix">
-                                                <div class="icheck-primary d-inline">
-                                                    <div class="form-group clearfix">
-                                                        <div class="icheck-primary d-inline">
-                                                          <input type="checkbox" id="family_residence" class="permission_box" {{$family_residence==true?'checked': ''}} data-selected="{{$family_residence}}" wire:model="family_residence">
-                                                          <label for="family_residence" class="text-lightblue">
-                                                            Used as family residence
-                                                          </label>
-                                                        </div>
-                                                      </div>
-                                                </div>
+                                        <div class="col-md-10">
+                                            <label class="text-lightblue" for="family_residence">Used as family residence</label>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group float-right" wire:ignore>
+                                                <input type="checkbox" checked id="family_residence" data-toggle="switch">
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-8">
                                             @if (!$family_residence)
                                                 <div class="form-group">
                                                     <label class="text-lightblue" for="family_residence_description">Combined purposes of housing</label>
@@ -333,32 +339,20 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-12">
-                                    <div class="form-group clearfix">
-                                        <div class="icheck-primary d-inline">
-                                            <div class="form-group clearfix">
-                                                <div class="icheck-primary d-inline">
-                                                  <input type="checkbox" id="dwelling_co_ownership" class="permission_box" {{$dwelling_co_ownership==true?'checked': ''}} data-selected="{{$dwelling_co_ownership}}" wire:model="dwelling_co_ownership">
-                                                  <label for="dwelling_co_ownership" class="text-lightblue">
-                                                    Dwelling is located in a unit under devided co-ownership
-                                                  </label>
-                                                </div>
-                                              </div>
-                                        </div>
+                                <div class="col-md-10">
+                                    <label class="text-lightblue" for="dwelling_co_ownership">Dwelling is located in a unit under devided co-ownership</label>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group float-right" wire:ignore>
+                                        <input type="checkbox" id="dwelling_co_ownership" data-toggle="switch">
                                     </div>
                                 </div>
-                                <div class="col-md-12">
-                                    <div class="form-group clearfix">
-                                        <div class="icheck-primary d-inline">
-                                            <div class="form-group clearfix">
-                                                <div class="icheck-primary d-inline">
-                                                  <input type="checkbox" id="furniture_included" class="permission_box" {{$furniture_included==true?'checked': ''}} data-selected="{{$furniture_included}}" wire:model="furniture_included">
-                                                  <label for="furniture_included" class="text-lightblue">
-                                                    Furniture is leased and included in the rent.
-                                                  </label>
-                                                </div>
-                                              </div>
-                                        </div>
+                                <div class="col-md-10">
+                                    <label class="text-lightblue" for="furniture_included">Furniture is leased and included in the rent.</label>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group float-right" wire:ignore>
+                                        <input type="checkbox" id="furniture_included" data-toggle="switch">
                                     </div>
                                 </div>
                             </div>
@@ -577,8 +571,8 @@
                         </x-adminlte-card>
                     </div>
                 </div>
-                <button class="btn btn-primary" type="button" wire:click="myPreviousStep"><i class="fas fa-fw fa-chevron-left"></i> Previous</button>
-                <button class="btn btn-primary float-right" type="button" wire:click="myNextStep">Next <i class="fas fa-fw fa-chevron-right"></i></button>
+                <button class="btn btn-primary" type="button" wire:click.prevent="myPreviousStep"><i class="fas fa-fw fa-chevron-left"></i> Previous</button>
+                <button class="btn btn-primary float-right" type="button" wire:click.prevent="myNextStep">Next <i class="fas fa-fw fa-chevron-right"></i></button>
             </div>
             <div id="lease-part" role="tabpanel" class="bs-stepper-pane fade {{$currentStep == 3 ? 'active dstepper-block':'dstepper-none'}}    "aria-labelledby="lease-part-trigger">
                 <div class="row">
@@ -671,18 +665,12 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-12">
-                                    <div class="form-group clearfix">
-                                        <div class="icheck-primary d-inline">
-                                            <div class="form-group clearfix">
-                                                <div class="icheck-primary d-inline">
-                                                  <input type="checkbox" id="subsidy_program" class="permission_box" {{$subsidy_program==true?'checked': ''}} data-selected="{{$subsidy_program}}" wire:model="subsidy_program">
-                                                  <label for="subsidy_program" class="text-lightblue">
-                                                    The lessee is beneficiary of a rent subsidy program
-                                                  </label>
-                                                </div>
-                                              </div>
-                                        </div>
+                                <div class="col-md-10">
+                                    <label class="text-lightblue" for="subsidy_program">The lessee is beneficiary of a rent subsidy program</label>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group float-right" wire:ignore>
+                                        <input type="checkbox" id="subsidy_program" data-toggle="switch">
                                     </div>
                                 </div>
                             </div>
@@ -740,18 +728,12 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="col-md-12">
-                                    <div class="form-group clearfix">
-                                        <div class="icheck-primary d-inline">
-                                            <div class="form-group clearfix">
-                                                <div class="icheck-primary d-inline">
-                                                  <input type="checkbox" id="postdated_cheques" class="permission_box" {{$postdated_cheques==true?'checked': ''}} data-selected="{{$postdated_cheques}}" wire:model="postdated_cheques">
-                                                  <label for="postdated_cheques" class="text-lightblue">
-                                                    The lessee agrees to give the lessor postdated cheques for the term of the lease
-                                                  </label>
-                                                </div>
-                                              </div>
-                                        </div>
+                                <div class="col-md-10">
+                                    <label class="text-lightblue" for="postdated_cheques">The lessee agrees to give the lessor postdated cheques for the term of the lease</label>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group float-right" wire:ignore>
+                                        <input type="checkbox" id="postdated_cheques" data-toggle="switch">
                                     </div>
                                 </div>
                             </div>
@@ -763,18 +745,12 @@
                                 <div class="col-md-12">
                                     <h5 class="text-lightblue py-2">By-laws of immovable</h5>
                                 </div>
-                                <div class="col-md-12">
-                                    <div class="form-group clearfix">
-                                        <div class="icheck-primary d-inline">
-                                            <div class="form-group clearfix">
-                                                <div class="icheck-primary d-inline">
-                                                  <input type="checkbox" id="by_laws" class="permission_box" {{$by_laws==true?'checked': ''}} data-selected="{{$by_laws}}" wire:model="by_laws">
-                                                  <label for="by_laws" class="text-lightblue">
-                                                    A copy of the by-laws of the immovable was given to the lessee before entering into the lease.
-                                                  </label>
-                                                </div>
-                                              </div>
-                                        </div>
+                                <div class="col-md-10">
+                                    <label class="text-lightblue" for="by_laws">A copy of the by-laws of the immovable was given to the lessee before entering into the lease.</label>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group float-right" wire:ignore>
+                                        <input type="checkbox" id="by_laws" data-toggle="switch">
                                     </div>
                                 </div>
                                 @if($by_laws)
@@ -858,7 +834,11 @@
                                             @endphp
                                             @foreach($consumption_costs as $key => $value)
                                             <tr>
-                                                <td>
+                                                <td
+                                                    @if($errors->has('cost_born_by.'.$count.'.lessor') || $errors->has('cost_born_by.'.$count.'.lessee'))
+                                                    style="color: red;"
+                                                    @endif
+                                                >
                                                     @if (strcmp($value, 'Heating of dwelling')==0 && !empty($apartment_heating->display_name))
                                                     {{$value.' ('.$apartment_heating->display_name.')'}}
                                                     @else
@@ -868,21 +848,13 @@
                                                 <td style="text-align: center; vertical-align: middle;">
                                                     <div class="icheck-primary">
                                                         <input type="radio" id="cost_born_by.{{$count}}.lessor" name="{{$value.$key}}" value="{{$key}}" wire:model="cost_born_by.{{$count}}.lessor">
-                                                        <label for="cost_born_by.{{$count}}.lessor">
-                                                            @error('cost_born_by.'.$count.'.lessor')
-                                                                E
-                                                            @enderror
-                                                        </label>
+                                                        <label for="cost_born_by.{{$count}}.lessor"></label>
                                                     </div>
                                                 </td>
                                                 <td style="text-align: center; vertical-align: middle;">
                                                     <div class="icheck-primary">
                                                         <input type="radio" id="cost_born_by.{{$count}}.lessee" name="{{$value.$key}}" value="{{$key}}" wire:model="cost_born_by.{{$count}}.lessee">
-                                                        <label for="cost_born_by.{{$count}}.lessee">
-                                                            @error('cost_born_by.'.$count.'.lessee')
-                                                                E
-                                                            @enderror
-                                                        </label>
+                                                        <label for="cost_born_by.{{$count}}.lessee"></label>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -906,7 +878,11 @@
 
                                             @foreach($snow_removal as $key => $value)
                                             <tr>
-                                                <td>{{$value}}</td>
+                                                <td
+                                                @if($errors->has('cost_born_by.'.$count.'.lessor') || $errors->has('cost_born_by.'.$count.'.lessee'))
+                                                style="color: red;"
+                                                @endif
+                                                >{{$value}}</td>
                                                 <td style="text-align: center; vertical-align: middle;">
                                                     <div class="icheck-primary">
                                                         <input type="radio" id="cost_born_by.{{$count}}.lessor" name="{{$value.$key}}" value="{{$key}}" wire:model="cost_born_by.{{$count}}.lessor">
@@ -928,17 +904,127 @@
                                     </table>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5 class="text-lightblue py-2">Conditions</h5>
+                                </div>
+                                <div class="col-md-10">
+                                    <label class="text-lightblue" for="land_access">The lessee has the rigth of access to the land.</label>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group float-right" wire:ignore>
+                                        <input type="checkbox" checked id="land_access" data-toggle="switch">
+                                    </div>
+                                </div>
+                                @if (!$land_access)
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <input type="text" name="land_access_description" id="land_access_description" wire:model.lazy="land_access_description" class="form-control form-control-border border-width-2 @error('land_access_description') is-invalid @enderror" placeholder="Specify the land access">
+                                            @error('land_access_description')
+                                                <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                @endif
+                                <div class="col-md-10">
+                                    <label class="text-lightblue" for="animals">The lessee has the rigth to keep one or more animals.</label>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group float-right" wire:ignore>
+                                        <input type="checkbox" id="animals" data-toggle="switch">
+                                    </div>
+                                </div>
+                            </div>
+                            @if($animals)
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <input type="text" name="animals_description" id="animals_description" wire:model.lazy="animals_description" class="form-control form-control-border border-width-2 @error('animals_description') is-invalid @enderror" placeholder="Specify animals kepping restrictions">
+                                    @error('animals_description')
+                                        <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                                    @enderror
+                                </div>
+                            </div>
+                            @endif
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="text-lightblue" for="payment_method">Other Services, conditions and restrictions</label>
+                                    <textarea class="form-control" rows="3" placeholder="Enter ..." wire:model.lazy="other_conditions_restrictions"></textarea>
+                                    @error('other_conditions_restrictions')
+                                        <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </x-adminlte-card>
+                    </div>
+                </div>
+                <button class="btn btn-primary" type="button" wire:click.prevent="myPreviousStep"><i class="fas fa-fw fa-chevron-left"></i> Previous</button>
+                <button class="btn btn-primary float-right" type="button" wire:click.prevent="myNextStep">Next <i class="fas fa-fw fa-chevron-right"></i></button>
+            </div>
+            <div id="thankyou-part" role="tabpanel" class="bs-stepper-pane fade {{$currentStep == 4 ? 'active dstepper-block':'dstepper-none'}} "aria-labelledby="thankyou-part-trigger">
+                <div class="row">
+                    <div class="col-md-4">
+                        <x-adminlte-card title="Between the lessor">
+                            <dl class="row">
+                                <dt class="col-sm-4">Name</dt>
+                                <dd class="col-sm-8">{{$company->display_name}}</dd>
+                                <dt class="col-sm-4">Address</dt>
+                                <dd class="col-sm-8">{{$company->addresses->first()->number}} {{$company->addresses->first()->street}}</dd>
+                                @if(!empty($company->addresses->first()->suite))
+                                <dd class="col-sm-8 offset-sm-4">{{"App/Suite: ".$company->addresses->first()->suite}}</dd>
+                                @endif
+                                <dd class="col-sm-8 offset-sm-4">{{$company->addresses->first()->city}}, {{$company->addresses->first()->region}}</dd>
+                                <dd class="col-sm-8 offset-sm-4">{{$company->addresses->first()->country}} {{$company->addresses->first()->postcode}}</dd>
+                                <dt class="col-sm-4">Telephone</dt>
+                                <dd class="col-sm-8">{{$company->contacts->where('type', 'phone')->first()->description}}</dd>
+                                <dt class="col-sm-4">Email</dt>
+                                <dd class="col-sm-8">{{$company->contacts->where('type', 'email')->first()->description}}</dd>
+                            </dl>
+                        </x-adminlte-card>
+                    </div>
+                    @if(!empty($lessees))
+                        @foreach ($lessees as $key=>$lessee)
+                            <div class="col-md-4">
+                                <x-adminlte-card title="and the lessee # {{$key+1}}">
+                                    <dl class="row">
+                                        <dt class="col-sm-4">Name</dt>
+                                        <dd class="col-sm-8">{{$lessee['name']}}</dd>
+                                        <dt class="col-sm-4">Address</dt>
+                                        @if($same_address && $key >0)
+                                            <dd class="col-sm-8">{{$addresses[0]['number']}} {{$addresses[0]['street']}}</dd>
+                                            @if(!empty($addresses[0]['suite']))
+                                            <dd class="col-sm-8 offset-sm-4">{{"App/Suite: ".$addresses[0]['suite']}}</dd>
+                                            @endif
+                                            <dd class="col-sm-8 offset-sm-4">{{$addresses[0]['city']}}, {{$addresses[0]['region']}}</dd>
+                                            <dd class="col-sm-8 offset-sm-4">{{$addresses[0]['country']}} {{$addresses[0]['postcode']}}</dd>
+                                            <dt class="col-sm-4">Telephone</dt>
+                                            <dd class="col-sm-8">{{$lessee['mobile']}}</dd>
+                                            <dt class="col-sm-4">Email</dt>
+                                            <dd class="col-sm-8">{{$lessee['email']}}</dd>
+                                        @else
+                                            <dd class="col-sm-8">{{$addresses[$key]['number']}}, {{$addresses[$key]['street']}} </dd>
+                                            @if(!empty($addresses[$key]['suite']))
+                                            <dd class="col-sm-8 offset-sm-4">{{"App/Suite: ".$addresses[$key]['suite']}}</dd>
+                                            @endif
+                                            <dd class="col-sm-8 offset-sm-4">{{$addresses[$key]['city']}}, {{$addresses[$key]['region']}}</dd>
+                                            <dd class="col-sm-8 offset-sm-4">{{$addresses[$key]['country']}} {{$addresses[$key]['postcode']}}</dd>
+                                            <dt class="col-sm-4">Telephone</dt>
+                                            <dd class="col-sm-8">{{$lessee['mobile']}}</dd>
+                                            <dt class="col-sm-4">Email</dt>
+                                            <dd class="col-sm-8">{{$lessee['email']}}</dd>
+                                        @endif
+                                    </dl>
+                                </x-adminlte-card>
+                            </div>
+                        @endforeach
+                    @endif
+                    <div class="col-md-12">
+                        <x-adminlte-card title="And the lessee">
 
                         </x-adminlte-card>
                     </div>
                 </div>
-                <button class="btn btn-primary" type="button" wire:click="myPreviousStep"><i class="fas fa-fw fa-chevron-left"></i> Previous</button>
-                <button class="btn btn-primary float-right" type="button" wire:click="myNextStep">Next <i class="fas fa-fw fa-chevron-right"></i></button>
-            </div>
-            <div id="thankyou-part" role="tabpanel" class="bs-stepper-pane fade {{$currentStep == 4 ? 'active dstepper-block':'dstepper-none'}} "aria-labelledby="thankyou-part-trigger">
-
-                <button class="btn btn-primary" type="button" wire:click="myPreviousStep"><i class="fas fa-fw fa-chevron-left"></i> Previous</button>
-                <button type="submit" class="btn btn-primary float-right" wire:click="submitForm"><i class="fas fa-fw fa-save"></i> Save</button>
+                <button class="btn btn-primary" type="button" wire:click.prevent="myPreviousStep"><i class="fas fa-fw fa-chevron-left"></i> Previous</button>
+                <button type="submit" class="btn btn-primary float-right" wire:click.prevent="submitForm"><i class="fas fa-fw fa-save"></i> Save</button>
             </div>
         </div>
     </div>
@@ -954,7 +1040,21 @@
                 format: 'YYYY-MM-DD',
             });
 
-
+            $('[data-toggle="switch"]').bootstrapSwitch({
+                //size: 'mini',
+                onText:'Yes',
+                offText:'NO',
+                onColor:'success',
+                offColor:'primary',
+                inverse:true,
+                onSwitchChange: function (event, state) {
+                    //event.preventDefault()
+                    var field = this.getAttribute('id')
+                    //console.log(field)
+                    @this.set(field, state)
+                    //return console.log(state, event.isDefaultPrevented())
+                }
+            });
 
             $('.datetimepicker').on('hide.datetimepicker', function(event) {
                 data = $(this).val() //moment(, 'DD/MM/YYYY').format('DD-MM-YYYY')
@@ -1022,6 +1122,7 @@
                 //console.log(amount)
                 @this.set(field, parseFloat(amount))
             })
+
         })
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -1030,6 +1131,7 @@
                     width: 'resolve',
                     theme: 'bootstrap4',
                 });
+
                 $(".datetimepicker2").datetimepicker({
                     format: 'YYYY-MM-DD',
                 });
@@ -1047,7 +1149,7 @@
                     var field = this.getAttribute('id')
                     var data = $(this).select2("val");
                     //var data = $('#lessee_gender').select2("val");
-                    //console.log(data)
+                    console.log(field)
                     @this.set(field, data);
                 });
 
@@ -1061,15 +1163,7 @@
                         ////console.log(amount)
                         //@this.set(field, amount)
                     },
-                    //onincomplete: function(){
-                    //    if($(this).val()===''){
-                    //        $(this).removeClass('is-invalid');
-                    //    }else {
-                    //        var field = this.getAttribute('id')
-                    //        @this.set(field, '')
-                    //        $(this).addClass('is-invalid');
-                    //    }
-                    //},
+
                     oncleared: function(){
                         var field = this.getAttribute('id')
                         @this.set(field, 0.00);
@@ -1094,7 +1188,24 @@
                     @this.set(field, parseFloat(amount))
                 })
 
+                $("#same_address").bootstrapSwitch({
+                    size: 'large',
+                    onText:'Yes',
+                    offText:'NO',
+                    onColor:'success',
+                    offColor:'primary',
+                    inverse:true,
+                    onSwitchChange: function (event, state) {
+                        //event.preventDefault()
+                        var field = this.getAttribute('id')
+                        //console.log(state)
+
+                        @this.set(field, state)
+                        //return console.log(state, event.isDefaultPrevented())
+                    }
+                });
             })
         })
+
     </script>
 </div>
