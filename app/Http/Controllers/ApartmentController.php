@@ -85,8 +85,18 @@ class ApartmentController extends Controller
         $apartment = $company->apartments->first();
         $buildings = $company->buildings->pluck('display_name', 'id');
         $apartment_types = TeamSetting::where('team_id', $company->id)->where('type', 'apartment')->pluck('display_name', 'id');
+        $heating_of_dweelings = TeamSetting::where('team_id', $company->id)->where('type', 'heating_of_dweeling')->pluck('display_name', 'id');
 
-        return view('companies.apartments', ['company'=>$company, 'apartment'=>$apartment, 'buildings'=>$buildings, 'apartment_types'=>$apartment_types]);
+        return view(
+            'companies.apartments',
+            [
+                'company'=>$company,
+                'apartment'=>$apartment,
+                'buildings'=>$buildings,
+                'apartment_types'=>$apartment_types,
+                'heating_of_dweelings'=>$heating_of_dweelings
+            ]
+        );
     }
 
     /**
@@ -106,6 +116,7 @@ class ApartmentController extends Controller
                     'building'=>['required', 'numeric', 'exists:buildings,id'],
                     'number'=>['required'],
                     'size'=>['required', 'numeric'],
+                    'heating_of_dweeling'=>['required', 'numeric'],
                     'description'=>['nullable', 'string', 'min:5', 'max:255']
                 ]
             );
@@ -122,8 +133,9 @@ class ApartmentController extends Controller
 
             if ($apartment->teamSettings->isEmpty()) {
                 $apartment->teamSettings()->attach($request->size);
+                $apartment->teamSettings()->attach($request->heating_of_dweeling);
             } else {
-                $apartment->teamSettings()->sync($request->size);
+                $apartment->teamSettings()->sync([$request->size, $request->heating_of_dweeling]);
             }
 
             return response()->json(['message'=>'Apartment saved successfully!']);

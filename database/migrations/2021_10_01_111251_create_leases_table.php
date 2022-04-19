@@ -32,6 +32,7 @@ class CreateLeasesTable extends Migration
             $table->boolean('land_access')->default(true);
             $table->string('land_access_description')->nullable();
             $table->boolean('animals')->default(false);
+            $table->string('animals_description')->nullable();
             $table->text('others')->nullable();
             $table->timestamps();
         });

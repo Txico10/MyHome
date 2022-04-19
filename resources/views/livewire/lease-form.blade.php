@@ -297,7 +297,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="text-lightblue" for="apartment">Apartments</label>
+                                        <label class="text-lightblue" for="apartment">Apartment</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text text-lightblue"><i class="fas fa-fw fa-home"></i></span>
@@ -348,7 +348,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-10">
-                                    <label class="text-lightblue" for="furniture_included">Furniture is leased and included in the rent.</label>
+                                    <label class="text-lightblue" for="furniture_included">Include furniture</label>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group float-right" wire:ignore>
@@ -416,7 +416,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             {{-- <label class="text-lightblue" for="dependencies.{{$indexD}}.price">Price</label>--}}
-                                            <input type="text" name="dependencies.{{$indexD}}.description" id="dependencies.{{$indexD}}.description" wire:model.lazy="dependencies.{{$indexD}}.description" class="form-control @error('dependencies.'.$indexD.'.description') is-invalid @enderror" placeholder="Descrition">
+                                            <input type="text" name="dependencies.{{$indexD}}.description" id="dependencies.{{$indexD}}.description" wire:model.lazy="dependencies.{{$indexD}}.description" class="form-control @error('dependencies.'.$indexD.'.description') is-invalid @enderror" placeholder="Add note">
 
                                             @error('dependencies.'.$indexD.'.description')
                                                 <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
@@ -487,7 +487,7 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             {{-- <label class="text-lightblue" for="dependencies.{{$indexD}}.price">Price</label>--}}
-                                            <input type="text" name="appliances.{{$indexA}}.description" id="appliances.{{$indexA}}.description" wire:model.lazy="appliances.{{$indexA}}.description" class="form-control @error('appliances.'.$indexA.'.description') is-invalid @enderror" placeholder="Descrition">
+                                            <input type="text" name="appliances.{{$indexA}}.description" id="appliances.{{$indexA}}.description" wire:model.lazy="appliances.{{$indexA}}.description" class="form-control @error('appliances.'.$indexA.'.description') is-invalid @enderror" placeholder="Add note">
 
                                             @error('appliances.'.$indexA.'.description')
                                                 <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
@@ -556,7 +556,7 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             {{-- <label class="text-lightblue" for="dependencies.{{$indexD}}.price">Price</label>--}}
-                                            <input type="text" name="furnitures.{{$indexF}}.description" id="furnitures.{{$indexF}}.description" wire:model.lazy="furnitures.{{$indexF}}.description" class="form-control @error('furnitures.'.$indexF.'.description') is-invalid @enderror" placeholder="Descrition">
+                                            <input type="text" name="furnitures.{{$indexF}}.description" id="furnitures.{{$indexF}}.description" wire:model.lazy="furnitures.{{$indexF}}.description" class="form-control @error('furnitures.'.$indexF.'.description') is-invalid @enderror" placeholder="Add note">
 
                                             @error('furnitures.'.$indexF.'.description')
                                                 <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
@@ -915,6 +915,9 @@
                                     <div class="form-group float-right" wire:ignore>
                                         <input type="checkbox" checked id="land_access" data-toggle="switch">
                                     </div>
+                                    @error('land_access')
+                                        <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                                    @enderror
                                 </div>
                                 @if (!$land_access)
                                     <div class="col-md-12">
@@ -933,6 +936,9 @@
                                     <div class="form-group float-right" wire:ignore>
                                         <input type="checkbox" id="animals" data-toggle="switch">
                                     </div>
+                                    @error('animals')
+                                        <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                                    @enderror
                                 </div>
                             </div>
                             @if($animals)
@@ -963,7 +969,7 @@
             <div id="thankyou-part" role="tabpanel" class="bs-stepper-pane fade {{$currentStep == 4 ? 'active dstepper-block':'dstepper-none'}} "aria-labelledby="thankyou-part-trigger">
                 <div class="row">
                     <div class="col-md-4">
-                        <x-adminlte-card title="Between the lessor">
+                        <x-adminlte-card title="Between the Lessor" theme="lightblue" icon="fas fa-user-secret">
                             <dl class="row">
                                 <dt class="col-sm-4">Name</dt>
                                 <dd class="col-sm-8">{{$company->display_name}}</dd>
@@ -984,7 +990,7 @@
                     @if(!empty($lessees))
                         @foreach ($lessees as $key=>$lessee)
                             <div class="col-md-4">
-                                <x-adminlte-card title="and the lessee # {{$key+1}}">
+                                <x-adminlte-card title="and the lessee # {{$key+1}}" theme="lightblue" icon="fas fa-lg fa-user-tie">
                                     <dl class="row">
                                         <dt class="col-sm-4">Name</dt>
                                         <dd class="col-sm-8">{{$lessee['name']}}</dd>
@@ -1017,9 +1023,368 @@
                             </div>
                         @endforeach
                     @endif
+                </div>
+                <div class="row">
                     <div class="col-md-12">
-                        <x-adminlte-card title="And the lessee">
+                        <x-adminlte-card title="Lease dweelling, accessories and dependencies" theme="lightblue" icon="fas fa-lg fa-file-contract">
+                            <div class="row">
+                                @if (!empty($building))
+                                <div class="col-md-6">
+                                    <x-adminlte-card title="Leased apartment">
+                                        <dl class="row">
+                                            <dt class="col-sm-4">Address</dt>
+                                            <dd class="col-sm-8">{{$company->buildings->where('id', $building)->first()->address->number}} {{$company->buildings->where('id', $building)->first()->address->street}}</dd>
+                                            @if(!empty($apartment))
+                                            <dd class="col-sm-8 offset-sm-4">{{"App/Suite: ".$company->apartments->where('id', $apartment)->first()->number}}</dd>
+                                            @endif
+                                            <dd class="col-sm-8 offset-sm-4">{{$company->buildings->where('id', $building)->first()->address->city}}, {{$company->buildings->where('id', $building)->first()->address->region}}</dd>
+                                            <dd class="col-sm-8 offset-sm-4">{{$company->buildings->where('id', $building)->first()->address->country}} {{$company->buildings->where('id', $building)->first()->address->postcode}}</dd>
+                                            <dt class="col-sm-10">The dwelling is leased for residencial purpose only</dt>
+                                            <dd class="col-sm-2">{{$family_residence==true?"Yes":"No"}}</dd>
+                                            @if(!$family_residence)
+                                            <dd class="col-sm-12">The dwelling is leased for the combined purpose of housing and {{$family_residence_description}}</dd>
+                                            @endif
+                                            <dt class="col-sm-10">The dwelling is located in a unit under devided co-ownership</dt>
+                                            <dd class="col-sm-2">{{$dwelling_co_ownership==true?"Yes":"No"}}</dd>
+                                        </dl>
+                                    </x-adminlte-card>
+                                </div>
+                                @endif
+                                @if (!empty($dependencies))
+                                <div class="col-md-6">
+                                    <x-adminlte-card title="Dependencies included">
+                                        <table class="table table-hover table-responsive text-nowrap">
+                                            <thead>
+                                                <tr>
+                                                    <th>Unit</th>
+                                                    <th>Number</th>
+                                                    <th>Price</th>
+                                                    <th>Note</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($dependencies as $key=>$dependency)
+                                                    <tr>
+                                                        @if(empty($dependency['type']))
+                                                        <td></td>
+                                                        @else
+                                                        <td>{{$dependencies_company[$dependency['type']]}}</td>
+                                                        @endif
+                                                        @if(empty($dependency['number']))
+                                                            <td></td>
+                                                        @else
+                                                        <td>{{$dependencies_building[$key][$dependency['number']]}}</td>
+                                                        @endif
+                                                        <td>$ {{number_format($dependency['price'], 2, '.', ',')}}</td>
+                                                        <td>{{$dependency['description']}}</td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                            </table>
+                                    </x-adminlte-card>
+                                </div>
+                                @endif
+                                @if(!empty($appliances))
+                                <div class="col-md-6">
+                                    <x-adminlte-card title="Appliances included on lease">
+                                        <table class="table table-hover table-responsive text-nowrap">
+                                            <thead>
+                                                <tr>
+                                                    <th>Type</th>
+                                                    <th>Manufacturer</th>
+                                                    <th>Code</th>
+                                                    <th>Price</th>
+                                                    <th>Note</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($appliances as $key=>$sel_appliance)
+                                                <tr>
+                                                    @if(empty($sel_appliance['type']))
+                                                        <td></td>
+                                                    @else
+                                                        <td>{{$appliances_company[$sel_appliance['type']]}}</td>
+                                                    @endif
+                                                    @if(empty($sel_appliance['id']))
+                                                        <td></td>
+                                                        <td></td>
+                                                    @else
+                                                        <td>SS</td>
+                                                        <td>{{$appliances_list[$key][$sel_appliance['id']]}}</td>
+                                                    @endif
+                                                    <td>$ {{number_format($sel_appliance['price'], 2, '.', ',')}}</td>
+                                                    <td>{{$sel_appliance['description']}}</td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </x-adminlte-card>
+                                </div>
+                                @endif
+                                @if(!empty($furnitures))
+                                <div class="col-md-6">
+                                    <x-adminlte-card title="Furnitures included on lease">
+                                        <table class="table table-hover table-responsive text-nowrap">
+                                            <thead>
+                                                <tr>
+                                                    <th>Type</th>
+                                                    <th>Manufacturer</th>
+                                                    <th>Code</th>
+                                                    <th>Price</th>
+                                                    <th>Note</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($furnitures as $key=>$sel_furniture)
+                                                <tr>
+                                                    @if(empty($sel_furniture['type']))
+                                                        <td></td>
+                                                    @else
+                                                    <td>{{$furnitures_company[$sel_furniture['type']]}}</td>
+                                                    @endif
+                                                    <td>DD</td>
+                                                    @if(empty($sel_furniture['id']))
+                                                        <td></td>
+                                                    @else
+                                                    <td>{{$furnitures_list[$key][$sel_furniture['id']]}}</td>
+                                                    @endif
+                                                    <td>$ {{number_format($sel_furniture['price'], 2, '.', ',')}}</td>
+                                                    <td>{{$sel_furniture['description']}}</td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </x-adminlte-card>
+                                </div>
+                                @endif
+                            </div>
+                        </x-adminlte-card>
+                    </div>
+                    <div class="col-md-12">
+                        <x-adminlte-card title="Rent" theme="lightblue" icon="fas fa-lg fa-file-contract">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <x-adminlte-card title="Term of lease">
+                                        <p class="text-primary">{{ucfirst($lease_term)}} term of lease</p>
+                                        @if(!empty($lease_term))
+                                            @if(strcmp($lease_term, "fixed")==0)
+                                            <dl class="row">
+                                                <dt class="col-sm-4">Term of lease is</dt>
+                                                <dd class="col-sm-8">{{\Carbon\Carbon::parse($lease_end)->diffForHumans(\Carbon\Carbon::parse($lease_start), ['parts' => 3])}} lease starts</dd>
+                                                <dt class="col-sm-4">From</dt>
+                                                <dd class="col-sm-8">{{\Carbon\Carbon::parse($lease_start)->format('jS \o\f F Y')}}</dd>
+                                                <dt class="col-sm-4">To</dt>
+                                                <dd class="col-sm-8">{{\Carbon\Carbon::parse($lease_end)->format('jS \o\f F Y')}}</dd>
+                                            </dl>
+                                            @else
+                                            <dl class="row">
+                                                <dt class="col-sm-4">Term of lease is</dt>
+                                                <dd class="col-sm-8">The term of lease is indeterminate</dd>
+                                                <dt class="col-sm-4">Begin on</dt>
+                                                <dd class="col-sm-8">{{\Carbon\Carbon::parse($lease_start)->format('jS \o\f F Y')}}</dd>
+                                            </dl>
+                                            @endif
 
+                                        @endif
+                                    </x-adminlte-card>
+                                </div>
+                                <div class="col-md-4">
+                                    <x-adminlte-card title="Rent">
+                                        <dl class="row">
+                                            <dt class="col-sm-10">The lessee is beneficiary of a rent subsidy program</dt>
+                                            <dd class="col-sm-2">{{$subsidy_program?"Yes":"No"}}</dd>
+                                            <dt class="col-sm-8">The rent is</dt>
+                                            <dd class="col-sm-4">$ {{number_format($rent_amount, 2, '.', ',')}}</dd>
+                                            <dt class="col-sm-8">The total costs of services</dt>
+                                            <dd class="col-sm-4">$ {{number_format($total_cost_services, 2, '.', ',')}}</dd>
+                                            <dt class="col-sm-8">The total rent is</dt>
+                                            <dd class="col-sm-4">$ {{number_format($rent_amount+$total_cost_services, 2, '.', ',')}}</dd>
+                                        </dl>
+                                    </x-adminlte-card>
+                                </div>
+                                <div class="col-md-4">
+                                    <x-adminlte-card title="Payment">
+                                        <dl class="row">
+                                            <dt class="col-sm-4">First payment</dt>
+                                            <dd class="col-sm-8">{{\Carbon\Carbon::parse($first_payment_at)->format('jS \o\f F Y')}}</dd>
+                                            <dt class="col-sm-9">The rent will be payed on the 1st day of the</dt>
+                                            <dd class="col-sm-3">{{ucfirst($rent_recurrence)}}</dd>
+                                            <dt class="col-sm-4">Payment method</dt>
+                                            <dd class="col-sm-8">
+                                                @if(!empty($payment_method))
+                                                    @foreach ( $payment_method as $key=>$pm)
+                                                        @if($key>0)
+                                                            ,
+                                                        @endif
+                                                        {{$payment_methode_company[$pm]}}
+                                                    @endforeach
+                                                @endif
+                                            </dd>
+                                            <dt class="col-sm-11">The lessee agrees to give the lessor postdated cheques for the term of the lease</dt>
+                                            <dd class="col-sm-1">{{$postdated_cheques?"Yes":"No"}}</dd>
+                                        </dl>
+                                    </x-adminlte-card>
+                                </div>
+                            </div>
+                        </x-adminlte-card>
+                    </div>
+                    <div class="col-md-12">
+                        <x-adminlte-card title="Services and conditions" theme="lightblue" icon="fas fa-lg fa-file-contract">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <x-adminlte-card title="Laws of the immovable">
+                                        <dl class="row">
+                                            <dt class="col-sm-11">A copy of the by-laws of the immovable was given to the lessee before entering into the lease.</dt>
+                                            <dd class="col-sm-1">{{$by_laws?"Yes":"No"}}</dd>
+                                            @if($by_laws)
+                                            <dt class="col-sm-4">Given on</dt>
+                                            <dd class="col-sm-8">{{\Carbon\Carbon::parse($by_laws_given_at)->format('jS \o\f F Y')}}</dd>
+                                            @endif
+                                        </dl>
+                                    </x-adminlte-card>
+                                </div>
+                                <div class="col-md-4">
+                                    <x-adminlte-card title="Work and repairs">
+                                        <dl class="row">
+                                            <dt class="col-sm-8">Before the delivery of the dwelling.</dt>
+                                            @if(!empty($repairs_before))
+                                                @foreach($repairs_before as $key => $value)
+                                                    <dd class="col-sm-4 {{$key>0?'offset-sm-8':''}}">{{$service_company[$value]}}</dd>
+                                                @endforeach
+                                            @else
+                                                <dd class="col-sm-4">N/A</dd>
+                                            @endif
+                                            <dt class="col-sm-8">During the lease</dt>
+                                            @if (!empty($repair_during))
+                                                @foreach($repair_during as $key => $value)
+                                                    <dd class="col-sm-4 {{$key>0?'offset-sm-8':''}}">{{$service_company[$value]}}</dd>
+                                                @endforeach
+                                            @else
+                                                <dd class="col-sm-4">N/A</dd>
+                                            @endif
+                                        </dl>
+                                    </x-adminlte-card>
+                                </div>
+                                <div class="col-md-4">
+                                    <x-adminlte-card title="Janitorial service">
+                                        CCC
+                                    </x-adminlte-card>
+                                </div>
+                            </div>
+                        </x-adminlte-card>
+                    </div>
+                    <div class="col-md-12">
+                        <x-adminlte-card title="Services taxes and comsumption costs" theme="lightblue" icon="fas fa-lg fa-file-contract">
+                            <div class="row">
+                                <div class="col-md-6 table-responsive">
+                                    <table class="table table-hover text-nowrap">
+                                        <thead>
+                                            <tr>
+                                                <th>Will be born by</th>
+                                                <th>lessor</th>
+                                                <th>Lessee</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @php
+                                                $key_count=0;
+                                            @endphp
+                                            @foreach ($consumption_costs as $key=>$value)
+                                            <tr>
+                                                <td>{{$value}}</td>
+                                                @if(strcmp($cost_born_by[$key_count]['lessee'],'')==0)
+                                                <td>
+                                                    <span class="text-lightblue"><i class="fas fa-check-circle"></i></span>
+                                                </td>
+                                                <td>
+
+                                                </td>
+                                                @else
+                                                <td>
+
+                                                </td>
+                                                <td>
+                                                    <span class="text-lightblue"><i class="fas fa-check-circle"></i></span>
+                                                </td>
+                                                @endif
+                                            </tr>
+                                            @php
+                                                $key_count++;
+                                            @endphp
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-6 table-responsive">
+                                    <table class="table table-hover text-nowrap">
+                                        <thead>
+                                            <tr>
+                                                <th>Snow and ice removal by</th>
+                                                <th>lessor</th>
+                                                <th>Lessee</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($snow_removal as $key=>$value)
+                                            <tr>
+                                                <td>{{$value}}</td>
+                                                @if(strcmp($cost_born_by[$key_count]['lessee'],'')==0)
+                                                <td>
+                                                    <span class="text-lightblue"><i class="fas fa-check-circle"></i></span>
+                                                </td>
+                                                <td>
+
+                                                </td>
+                                                @else
+                                                <td>
+
+                                                </td>
+                                                <td>
+                                                    <span class="text-lightblue"><i class="fas fa-check-circle"></i></span>
+                                                </td>
+                                                @endif
+                                            </tr>
+                                            @php
+                                                $key_count++;
+                                            @endphp
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </x-adminlte-card>
+                    </div>
+                    <div class="col-md-12">
+                        <x-adminlte-card title="Services taxes and comsumption costs" theme="lightblue" icon="fas fa-lg fa-file-contract">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <x-adminlte-card title="Conditions and restrictions">
+                                        <dl class="row">
+                                            <dt class="col-sm-8">The lessee has the rigth of access to the land</dt>
+                                            <dd class="col-sm-4">{{$land_access?"Yes":"No"}}</dd>
+                                            @if(!$land_access)
+                                            <dt class="col-sm-2">Specify</dt>
+                                            <dd class="col-sm-10">{{$land_access_description}}</dd>
+                                            @endif
+                                            <dt class="col-sm-8">The lessee has the rigth to keep one or more animals.</dt>
+                                            <dd class="col-sm-4">{{$animals?"Yes":"No"}}</dd>
+                                            @if($animals)
+                                            <dt class="col-sm-2">Specify.</dt>
+                                            <dd class="col-sm-10">{{$animals_description}}</dd>
+                                            @endif
+                                            @if(!empty($other_conditions_restrictions))
+                                            <dt class="col-sm-6">Other Services, conditions and restrictions</dt>
+                                            <dd class="col-sm-6">{{$other_conditions_restrictions}}</dd>
+                                            @endif
+                                        </dl>
+                                    </x-adminlte-card>
+                                </div>
+                                <div class="col-md-6">
+                                    <x-adminlte-card title="Conditions and restrictions">
+                                        BBB
+                                    </x-adminlte-card>
+                                </div>
+                            </div>
                         </x-adminlte-card>
                     </div>
                 </div>
@@ -1206,6 +1571,23 @@
                 });
             })
         })
+
+        window.addEventListener('swalLease:form', event => {
+            Swal.fire({
+                position: 'top-end',
+                icon: event.detail.icon,
+                title: event.detail.title,
+                text: event.detail.text,
+                showConfirmButton: false,
+                timer: 5000
+            }).then((result) => {
+                if (result.dismiss === Swal.DismissReason.timer) {
+                    location.reload()
+                    //$("#employee_ssn").val('')
+                    //Livewire.emit('sendToEmployeeList')
+                }
+            });
+        });
 
     </script>
 </div>

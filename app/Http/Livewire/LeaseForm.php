@@ -13,9 +13,15 @@
 namespace App\Http\Livewire;
 
 use App\Models\Address;
+use App\Models\Lease;
+use App\Models\Role;
 use Livewire\Component;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use PragmaRX\Countries\Package\Countries;
+use Illuminate\Support\Facades\DB;
+use phpDocumentor\Reflection\Types\Void_;
+
 /**
  *  Create lease form component class
  *
@@ -94,7 +100,7 @@ class LeaseForm extends Component
      */
     public function mount($company)
     {
-        $this->company=$company->load('addresses', 'contacts', 'buildings', 'apartments.leases');
+        $this->company=$company->load('addresses', 'contacts', 'buildings.address', 'apartments.leases');
 
         $this->countries[] = Countries::all()->lazy(50)->pluck('name.common', 'cca3')
             ->toArray();
@@ -371,7 +377,7 @@ class LeaseForm extends Component
 
                 }
             );
-            //dd($appliances);
+            //dd($appliances->first()->manufacturer_model);
             $this->appliances_list[$parts[0]] = $appliances->pluck('model', 'id');
             $this->appliances[$parts[0]]['id'] = null;
             $this->appliances[$parts[0]]['price'] = 0.00;
@@ -486,6 +492,30 @@ class LeaseForm extends Component
     }
 
     /**
+     * Updated Land Access
+     *
+     * @return void
+     */
+    public function updatedLandAccess()
+    {
+        if (!$this->land_access) {
+            $this->land_access_description='';
+        }
+    }
+
+    /**
+     * Updated Animals
+     *
+     * @return void
+     */
+    public function updatedAnimals()
+    {
+        if (!$this->animals) {
+            $this->animals_description='';
+        }
+    }
+
+    /**
      * Total costs
      *
      * @return float
@@ -534,10 +564,13 @@ class LeaseForm extends Component
         if ($this->currentStep == 2) {
             $this->validate($this->rules2());
             $this->total_cost_services = $this->totalCosts();
+            //dd($this->dependencies_building);
         }
 
         if ($this->currentStep == 3) {
             $this->validate($this->rules3());
+            //dd($this->consumption_costs);
+            //dd($this->company->buildings->where('id', $this->building)->first()->address);
             //$this->my_role = $this->roles->where('id', $this->contract_role_id)->first()->display_name;
             //dd($this->cost_born_by);
         }
@@ -586,21 +619,27 @@ class LeaseForm extends Component
             'furnitures.*.id'               => ['sometimes', 'required_with:furnitures.*.type', 'distinct'],
             'furnitures.*.price'            => ['sometimes', 'numeric'],
             'furnitures.*.description'      => ['sometimes', 'nullable', 'string', 'min:3', 'max:32'],
-            'lease_term'            => ['required'],
-            'lease_start'           => ['required', 'date', 'after_or_equal:today'],
-            'lease_end'             => ['required_if:lease_term,fixed','nullable','date', 'after:lease_start'],
-            'rent_amount'           => ['required', 'numeric'],
-            'rent_recurrence'       => ['required'],
-            'first_payment_at'      => ['required', 'date', 'before_or_equal:lease_start'],
-            'payment_method'        => ['required'],
-            'subsidy_program'       => ['boolean'],
-            'postdated_cheques'     => ['boolean'],
-            'by_laws'               => ['boolean'],
-            'by_laws_given_at'      => ['required_if:by_laws,true','nullable','date','before_or_equal:lease_start'],
-            'repairs_before'        => ['required'],
-            'repair_during'         => ['required'],
-            'cost_born_by.*.lessor' => ['required_if:cost_born_by.*.lessee,""'],
-            'cost_born_by.*.lessee' => ['required_if:cost_born_by.*.lessor,""'],
+            'lease_term'                    => ['required'],
+            'lease_start'                   => ['required', 'date', 'after_or_equal:today'],
+            'lease_end'                     => ['required_if:lease_term,fixed','nullable','date', 'after:lease_start'],
+            'rent_amount'                   => ['required', 'numeric'],
+            'rent_recurrence'               => ['required'],
+            'first_payment_at'              => ['required', 'date', 'before_or_equal:lease_start'],
+            'payment_method'                => ['required'],
+            'subsidy_program'               => ['boolean'],
+            'postdated_cheques'             => ['boolean'],
+            'by_laws'                       => ['boolean'],
+            'by_laws_given_at'              => ['required_if:by_laws,true','nullable','date','before_or_equal:lease_start'],
+            'repairs_before'                => ['required'],
+            'repair_during'                 => ['required'],
+            'cost_born_by.*.lessor'         => ['required_if:cost_born_by.*.lessee,""'],
+            'cost_born_by.*.lessee'         => ['required_if:cost_born_by.*.lessor,""'],
+            'land_access'                   => ['boolean'],
+            'land_access_description'       => ['required_if:land_access,false', 'nullable', 'string', 'min:3', 'max:32'],
+            'animals'                       => ['boolean'],
+            'animals_description'           => ['required_if:animals,true', 'nullable', 'string', 'min:3', 'max:32'],
+            'other_conditions_restrictions' => ['nullable', 'string', 'min:3', 'max:512'],
+
         ];
     }
 
@@ -699,21 +738,26 @@ class LeaseForm extends Component
     public function rules3():array
     {
         return [
-            'lease_term'            => ['required'],
-            'lease_start'           => ['required', 'date', 'after_or_equal:today'],
-            'lease_end'             => ['required_if:lease_term,fixed','nullable','date', 'after:lease_start'],
-            'rent_amount'           => ['required', 'numeric'],
-            'rent_recurrence'       => ['required'],
-            'first_payment_at'      => ['required', 'date', 'before_or_equal:lease_start'],
-            'payment_method'        => ['required'],
-            'subsidy_program'       => ['boolean'],
-            'postdated_cheques'     => ['boolean'],
-            'by_laws'               => ['boolean'],
-            'by_laws_given_at'      => ['required_if:by_laws,true','nullable','date','before_or_equal:lease_start'],
-            'repairs_before'        => ['required'],
-            'repair_during'         => ['required'],
-            'cost_born_by.*.lessor' => ['required_if:cost_born_by.*.lessee,""'],
-            'cost_born_by.*.lessee' => ['required_if:cost_born_by.*.lessor,""'],
+            'lease_term'                    => ['required'],
+            'lease_start'                   => ['required', 'date', 'after_or_equal:today'],
+            'lease_end'                     => ['required_if:lease_term,fixed','nullable','date', 'after:lease_start'],
+            'rent_amount'                   => ['required', 'numeric'],
+            'rent_recurrence'               => ['required'],
+            'first_payment_at'              => ['required', 'date', 'before_or_equal:lease_start'],
+            'payment_method'                => ['required'],
+            'subsidy_program'               => ['boolean'],
+            'postdated_cheques'             => ['boolean'],
+            'by_laws'                       => ['boolean'],
+            'by_laws_given_at'              => ['required_if:by_laws,true','nullable','date','before_or_equal:lease_start'],
+            'repairs_before'                => ['required'],
+            'repair_during'                 => ['required'],
+            'cost_born_by.*.lessor'         => ['required_if:cost_born_by.*.lessee,""'],
+            'cost_born_by.*.lessee'         => ['required_if:cost_born_by.*.lessor,""'],
+            'land_access'                   => ['boolean'],
+            'land_access_description'       => ['required_if:land_access,false', 'nullable', 'string', 'min:3', 'max:32'],
+            'animals'                       => ['boolean'],
+            'animals_description'           => ['required_if:animals,true', 'nullable', 'string', 'min:3', 'max:32'],
+            'other_conditions_restrictions' => ['nullable', 'string', 'min:3', 'max:512'],
         ];
     }
 
@@ -815,12 +859,257 @@ class LeaseForm extends Component
     }
 
     /**
+     * Reset Input Fields
+     *
+     * @return void
+     */
+    public function resetInputFields()
+    {
+        $this->reset(
+            [
+                'lessees',
+                'lease_term',
+                'lease_start',
+                'lease_end',
+                'family_residence_description',
+                'addresses',
+                'countries',
+                'country_cities',
+                'building',
+                'apartments',
+                'apartment',
+                'apartment_heating',
+                'dependencies',
+                'dependencies_building',
+                'furnitures',
+                'furnitures_list',
+                'appliances',
+                'appliances_list',
+                'rent_recurrence',
+                'first_payment_at',
+                'payment_method',
+                'repairs_before',
+                'repair_during',
+                'by_laws_given_at',
+                'cost_born_by',
+                'land_access_description',
+                'animals_description',
+                'other_conditions_restrictions',
+            ]
+        );
+
+        $this->currentStep=1;
+        $this->second_lessee = false;
+        $this->same_address=false;
+        $this->family_residence = true;
+        $this->dwelling_co_ownership = false;
+        $this->subsidy_program = false;
+        $this->furniture_included = false;
+        $this->rent_amount=0.00;
+        $this->postdated_cheques=false;
+        $this->total_cost_services=0.00;
+        $this->land_access = true;
+        $this->animals=false;
+        $this->buildConsumptionArray();
+    }
+
+    /**
      * Submit Form
      *
      * @return void
      */
     public function submitForm()
     {
-        // code...
+        //dd($this->cost_born_by);
+        $this->validate();
+
+        DB::beginTransaction();
+        try {
+
+            $users = [];
+            $passwd = [];
+            $role = Role::where('name', 'tenant')->first();
+
+            //Create User with address and contact.
+            //Assign role tenant to the created user
+            foreach ($this->lessees as $key => $lessee) {
+                $passwd[] = $this->generatePassword();
+                $users[] = User::create(
+                    [
+                        'name'     => $lessee['name'],
+                        'email'    => $lessee['email'],
+                        'birthdate'=> $lessee['birthdate'],
+                        'gender'   => $lessee['gender'],
+                        'password' => bcrypt($passwd[$key]),
+                    ]
+                );
+
+                if ($this->same_address) {
+                    $address = $this->addresses[0];
+                } else {
+                    $address = $this->addresses[$key];
+                }
+                $address['type']="primary";
+
+                $users[$key]->addresses()->create($address);
+
+                $contacts = [
+                    [
+                        'priority'=>'main',
+                        'type'=>'mobile',
+                        'description'=>$lessee['mobile']
+                    ],
+                    [
+                        'priority'=>'main',
+                        'type'=>'email',
+                        'description'=>$lessee['email']
+                    ]
+                ];
+
+                $users[$key]->contacts()->createMany($contacts);
+
+                $users[$key]->attachRole($role, $this->company);
+            }
+
+            //create a new lease
+            $lease = Lease::create(
+                [
+                    'apartment_id'                    => $this->apartment,
+                    'residential_purpose'             => $this->family_residence,
+                    'residential_purpose_description' => $this->family_residence_description,
+                    'co_ownership'                    => $this->dwelling_co_ownership,
+                    'furniture_included'              => $this->furniture_included,
+                    'term'                            => $this->lease_term,
+                    'start_at'                        => $this->lease_start,
+                    'end_at'                          => $this->lease_end,
+                    'rent_amount'                     => $this->rent_amount,
+                    'rent_recurrence'                 => $this->rent_recurrence,
+                    'subsidy_program'                 => $this->subsidy_program,
+                    'first_payment_at'                => $this->first_payment_at,
+                    'postdated_cheques'               => $this->postdated_cheques,
+                    'by_law_given_on'                 => $this->by_laws_given_at,
+                    'land_access'                     => $this->land_access,
+                    'land_access_description'         => $this->land_access_description,
+                    'animals'                         => $this->animals,
+                    'animals_description'             => $this->animals_description,
+                    'others'                          => $this->other_conditions_restrictions,
+                ]
+            );
+            //attach lessors (users) to lease
+            foreach ($users as $user) {
+                $lease->users()->attach($user, ['team_id'=>$this->company->id]);//Attache users to lease
+            }
+
+            //attach dependecies to the lease
+            foreach ($this->dependencies as $dependencie) {
+                $lease->dependencies()->attach(
+                    $dependencie['number'],
+                    [
+                        'price'=>$dependencie['price'],
+                        'description'=>$dependencie['description']
+                    ]
+                );
+            }
+
+            //attach furnitures (accessories) to the lease
+            foreach ($this->furnitures as $furniture) {
+                $lease->accessories()->attach(
+                    $furniture['id'],
+                    [
+                        'assigned_at'=>now(),//To be commented
+                        'price'=>$furniture['price'],
+                        'description'=>$furniture['description']
+                    ]
+                );
+            }
+
+            //attach appliances (accessories) to the lease
+            foreach ($this->appliances as $appliance) {
+                $lease->accessories()->attach(
+                    $appliance['id'],
+                    [
+                        'assigned_at'=>now(),//comment
+                        'price'=>$appliance['price'],
+                        'description'=>$appliance['description']
+                    ]
+                );
+            }
+
+            //Attach Payment Methode to the lease
+            $lease->teamSettings()->attach($this->payment_method);
+
+            //works and repairs
+            //Before the delivery of the dwelling
+            $lease->teamSettings()->attach($this->repairs_before, ['description'=>"before the delivery of the dwelling"]);
+            //During the lease
+            $lease->teamSettings()->attach($this->repair_during, ['description'=>"during the lease"]);
+
+            //Services and consumption costs
+            foreach ($this->cost_born_by as $key => $cost_born) {
+                if (!empty($cost_born['lessor'])) {
+                    $responsability = "lessor";
+                    $service_id = $cost_born['lessor'];
+                } else {
+                    $responsability = "lessee";
+                    $service_id = $cost_born['lessee'];
+                }
+                $lease->teamSettings()->attach($service_id, ['description'=>$responsability]);
+            }
+
+            DB::commit();
+
+            foreach ($users as $user) {
+                event(new Registered($user));
+            }
+            $this->resetInputFields();
+
+            $message_type = "success";
+            $message = "Lease created successfully";
+            //Send notification to the new user
+
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            $message_type = "error";
+            $message = $th->getMessage();
+        }
+
+        $this->dispatchBrowserEvent(
+            'swalLease:form',
+            [
+                'icon'=>$message_type,
+                'title' => $message,
+                'text' => '',
+            ]
+        );
+
+    }
+
+    /**
+     * Generate Password
+     *
+     * @return string
+     */
+    public function generatePassword()
+    {
+        $lowercase = range('a', 'z');
+        $uppercase = range('A', 'Z');
+        $digits = range(0, 9);
+        $special = ['!', '@', '#', '$', '^', '*'];
+        $chars = array_merge($lowercase, $uppercase, $digits, $special);
+        $length = env('PASSWORD_LENGTH', 8);
+
+        do {
+            $password = array();
+
+            for ($i = 0; $i<$length; $i++) {
+                $int = rand(0, count($chars)-1);
+                array_push($password, $chars[$int]);
+
+            }
+        } while (empty(array_intersect($special, $password)));
+
+        $f_password = implode('', $password);
+
+        return $f_password;
     }
 }

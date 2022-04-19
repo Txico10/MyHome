@@ -1,6 +1,8 @@
 @extends('adminlte::page')
 @section('plugins.Sweetalert2', true)
 @section('plugins.Select2', true)
+@section('plugins.Moment', true)
+@section('plugins.Datepicker', true)
 @section('plugins.Datatables', true)
 @section('plugins.DatatablesPlugins', true)
 @section('plugins.Inputmask', true)
@@ -73,6 +75,20 @@
                             <div class="input-group-text text-lightblue"><i class="fas fa-fw fa-building"></i></div>
                         </div>
                         <input type="text" name="building_display_name" id="building_display_name" class="form-control" placeholder="Enter the building name">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                {{-- building ready for habitation --}}
+                <div class="form-group">
+                    <label for="building_ready_for_habitation" class="text-lightblue">Ready for habitation on</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <i class="fas fa-fw fa-calendar-check text-lightblue"></i>
+                            </div>
+                        </div>
+                        <input id="building_ready_for_habitation" name="building_ready_for_habitation" data-target="#building_ready_for_habitation" data-toggle="datetimepicker"  class="form-control datetimepicker" placeholder="Choose a date...">
                     </div>
                 </div>
             </div>
@@ -205,6 +221,10 @@
             showMaskOnFocus: false,
         })
 
+        $(".datetimepicker").datetimepicker({
+                format: 'YYYY-MM-DD',
+        });
+
         $(".addBuilding").on("click", function(event){
             event.preventDefault();
             $("#buildingModal").modal('show');
@@ -217,6 +237,8 @@
             $("#building_lot").removeClass('is-invalid')
             $("#building_display_name").val('')
             $("#building_display_name").removeClass('is-invalid')
+            $("#building_ready_for_habitation").val('')
+            $("#building_ready_for_habitation").removeClass('is-invalid')
             $("#building_description").val('')
             $("#building_description").removeClass('is-invalid')
         })
@@ -324,6 +346,7 @@
                     $("#building_id").val(response.building.id)
                     $("#building_lot").val(response.building.lot)
                     $("#building_display_name").val(response.building.display_name)
+                    $("#building_ready_for_habitation").val(response.building.ready_for_habitation)
                     $("#building_description").val(response.building.description)
 
                     $("#buildingModal").modal('show');
@@ -416,11 +439,13 @@
         var building_id = $("#building_id").val()
         var lot = $("#building_lot").val()
         var display_name = $("#building_display_name").val()
+        var ready_for_habitation = $("#building_ready_for_habitation").val()
         var description = $("#building_description").val()
 
         $(".invalid-feedback").remove()
         $("#building_lot").removeClass('is-invalid')
         $("#building_display_name").removeClass('is-invalid')
+        $("#building_ready_for_habitation").removeClass('is-invalid')
         $("#building_description").removeClass('is-invalid')
 
         $.ajax({
@@ -432,6 +457,7 @@
                 lot: lot,
                 display_name: display_name,
                 description: description,
+                ready_for_habitation:ready_for_habitation,
             },
             success: function(response) {
                 $("#buildingModal").modal('hide')

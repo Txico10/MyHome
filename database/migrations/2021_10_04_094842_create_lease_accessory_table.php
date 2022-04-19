@@ -17,7 +17,7 @@ class CreateLeaseAccessoryTable extends Migration
             $table->id();
             $table->foreignId('accessory_id')->constrained();
             $table->foreignId('lease_id')->constrained();
-            $table->date('assigned_at');
+            $table->date('assigned_at')->nullable();
             $table->date('removed_at')->nullable();
             $table->decimal('price', 10, 2)->default(0.00);
             $table->text('description')->nullable();

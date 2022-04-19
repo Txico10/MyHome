@@ -136,6 +136,7 @@ class BuildingController extends Controller
                     'building_id'=> ['nullable', 'numeric', 'exists:buildings,id'],
                     'lot'=>['required'],
                     'display_name'=> ['required', 'string', 'min:5', 'max:255'],
+                    'ready_for_habitation'=> ['required', 'date'],
                     'description' => ['nullable', 'string', 'min:5', 'max:500']
                 ]
             );
@@ -145,6 +146,7 @@ class BuildingController extends Controller
                 [
                     'lot'=>$request->lot,
                     'display_name'=>$request->display_name,
+                    'ready_for_habitation'=>$request->ready_for_habitation,
                     'description'=>$request->description,
                 ]
             );

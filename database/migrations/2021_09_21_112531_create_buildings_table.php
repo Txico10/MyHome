@@ -18,6 +18,7 @@ class CreateBuildingsTable extends Migration
             $table->foreignId('team_id')->constrained()->onDelete('cascade');
             $table->string('lot');
             $table->string('display_name')->nullable();
+            $table->date('ready_for_habitation');
             $table->text('description')->nullable();
             $table->timestamps();
         });

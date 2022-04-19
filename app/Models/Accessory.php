@@ -55,7 +55,7 @@ class Accessory extends Model
     ];
 
     protected $appends = [
-        'active_lease'
+        'manufacturer_model'
     ];
 
     protected static $logName = 'accessories_log';
@@ -115,6 +115,7 @@ class Accessory extends Model
      *
      * @return boolean
      */
+    /*
     public function getActiveLeaseAttribute()
     {
         $lease = $this->leases()->latest()->first();
@@ -130,5 +131,14 @@ class Accessory extends Model
 
         return false;
     }
-
+    */
+    /**
+     * GetManufacturerModelAttribute
+     *
+     * @return void
+     */
+    public function getManufacturerModelAttribute()
+    {
+        return $this->manufacturer."-".$this->model;
+    }
 }

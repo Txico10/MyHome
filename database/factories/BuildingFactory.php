@@ -47,6 +47,7 @@ class BuildingFactory extends Factory
         return [
             'lot'=>$lot,
             'display_name'=>$this->faker->word(),
+            'ready_for_habitation'=>$this->faker->dateTimeBetween('-15 years', 'now'),
             'description'=>$this->faker->text(200),
         ];
     }

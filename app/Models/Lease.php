@@ -53,6 +53,7 @@ class Lease extends Model
         'land_access',
         'land_access_description',
         'animals',
+        'animals_description',
         'others',
     ];
 

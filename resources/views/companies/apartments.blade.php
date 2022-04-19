@@ -92,6 +92,21 @@
                         </select>
                     </div>
                 </div>
+                {{-- heating_of_dweeling --}}
+                <div class="form-group">
+                    <label for="apartment_size" class="text-lightblue">Heating of dweeling</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text text-lightblue"><i class="fas fa-fw fa-fire"></i></span>
+                        </div>
+                        <select class="form-control select2" name="apartment_heating_of_dweeling" id="apartment_heating_of_dweeling" style="width: 85%" data-placeholder="Select size" data-allow-clear="true">
+                            <option></option>
+                            @foreach($heating_of_dweelings as $key => $value)
+                                <option value="{{$key}}">{{$value}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
                 {{-- Description --}}
                 <div class="form-group">
                     <label for="apartment_description" class="text-lightblue">Description</label>
@@ -142,6 +157,8 @@
                 $("#apartment_number").removeClass('is-invalid')
                 $("#apartment_size").val(null).trigger('change')
                 $("#apartment_size").removeClass('is-invalid')
+                $("#apartment_heating_of_dweeling").val(null).trigger('change')
+                $("#apartment_heating_of_dweeling").removeClass('is-invalid')
                 $("#apartment_description").val('')
                 $("#apartment_description").removeClass('is-invalid')
                 $(".invalid-feedback").remove()
@@ -163,7 +180,14 @@
                         $("#apartment_building").val(response.apartment.building_id).trigger('change')
                         $("#apartment_number").val(response.apartment.number)
                         $.each(response.apartment.team_settings, function(key, value){
-                            $("#apartment_size").val(value.id).trigger('change')
+                            //console.log(value)
+                            if(value.type==='apartment') {
+                                $("#apartment_size").val(value.id).trigger('change')
+                            }
+                            if(value.type==='heating_of_dweeling') {
+                                $("#apartment_heating_of_dweeling").val(value.id).trigger('change')
+                            }
+
                         })
                         $("#apartment_description").val(response.apartment.description)
 
@@ -180,12 +204,14 @@
             var building_id = $("#apartment_building").val()
             var number = $("#apartment_number").val()
             var size = $("#apartment_size").val()
+            var heat = $("#apartment_heating_of_dweeling").val()
             var description = $("#apartment_description").val()
 
             $(".invalid-feedback").remove()
             $("#apartment_building").removeClass('is-invalid')
             $("#apartment_number").removeClass('is-invalid')
             $("#apartment_size").removeClass('is-invalid')
+            $("#apartment_heating_of_dweeling").removeClass('is-invalid')
             $("#apartment_description").removeClass('is-invalid')
 
 
@@ -198,6 +224,7 @@
                     building: building_id,
                     number: number,
                     size:size,
+                    heating_of_dweeling:heat,
                     description: description,
                 },
                 success: function(response) {
@@ -229,7 +256,7 @@
 
                         spanTag.appendChild(strong)
 
-                        if(key==="building" || key ==="size") {
+                        if(key==="building" || key ==="size" || key ==='heating_of_dweeling') {
                             newNode = inputElement.parentNode
                             newNode.parentNode.insertBefore(spanTag, newNode.nextSibling)
                         } else {

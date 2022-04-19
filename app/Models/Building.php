@@ -35,7 +35,7 @@ class Building extends Model
      *
      * @var array
      */
-    protected $fillable = ['team_id', 'lot', 'display_name', 'description'];
+    protected $fillable = ['team_id', 'lot', 'display_name', 'ready_for_habitation', 'description'];
 
     protected static $logName = 'building_log';
     protected static $logFillable = true;
