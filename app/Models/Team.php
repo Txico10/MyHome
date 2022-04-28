@@ -106,7 +106,7 @@ class Team extends LaratrustTeam
      *
      * @param int $role_id Role
      *
-     * @return void
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function usersProfile(int $role_id)
     {

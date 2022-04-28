@@ -13,10 +13,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lease;
+use App\Models\Role;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Laratrust\LaratrustFacade;
+use Barryvdh\DomPDF\Facade as PDF;
 /**
  *  Lease Controller class
  *
@@ -87,18 +89,42 @@ class LeaseController extends Controller
                 ->addColumn(
                     'status',
                     function ($lease) {
-                        return "Active";
+                        if (strcmp($lease->term, "fixed")==0 && $lease->end_at->lessThan(today())) {
+                            return "Inactive";
+                        } else {
+                            if (strcmp($lease->term, "indeterminate")==0 && $lease->end_at!=null) {
+                                return "Inactive";
+                            } else {
+                                return "Active";
+                            }
+
+                        }
+
                     }
                 )
                 ->addColumn(
                     'action',
                     function ($lease) use ($company) {
+                        $btn_validation = false;
                         $btn = '<nobr>';
                         $btn = $btn.'<a class="btn btn-outline-primary btn-sm mx-1 shadow" type="button" title="More details" href="'.route('company.lease.show', ['company'=>$company, 'lease'=>$lease]).'"><i class="fas fa-search fa-fw"></i></a>';
-                        if (LaratrustFacade::isAbleTo('lease-update')) {
+                        $btn = $btn.'<a class="btn btn-outline-danger btn-sm mx-1 shadow" type="button" title="More details" href="'.route('company.lease.download', ['company'=>$company, 'lease'=>$lease]).'"><i class="fas fa-file-pdf fa-fw"></i></a>';
+
+                        if (strcmp($lease->term, "fixed")==0) {
+                            if ($lease->end_at!=null && $lease->end_at->greaterThanOrEqualTo(today())) {
+                                $btn_validation = true;
+                            }
+                        } else {
+                            if ($lease->end_at==null) {
+                                $btn_validation = true;
+                            }
+
+                        }
+
+                        if ($btn_validation && LaratrustFacade::isAbleTo('lease-update')) {
                             $btn = $btn.'<button class="btn btn-outline-secondary mx-1 shadow btn-sm editLeaseButton" type="button" title="Edit lease" value="'.$lease->id.'"><i class="fas fa-pencil-alt fa-fw"></i></button>';
                         }
-                        if (LaratrustFacade::isAbleTo('lease-delete')) {
+                        if ($btn_validation && LaratrustFacade::isAbleTo('lease-delete')) {
                             $btn = $btn.'<button class="btn btn-outline-danger mx-1 shadow btn-sm deleteLeaseButton" title="Delete Lease" type="button" value="'.$lease->id.'"><i class="fas fa-trash-alt fa-fw"></i></button>';
                         }
                         $btn=$btn.'</nobr>';
@@ -169,5 +195,30 @@ class LeaseController extends Controller
         //$tenant = $tenant->loadMissing('contacts');
 
         return view('companies.lease-show', ['company'=>$company, 'lease'=>$lease, 'total_sum'=>$total_sum]);
+    }
+
+    /**
+     * DownloadPDF
+     *
+     * @param Team  $company Company
+     * @param Lease $lease   lease
+     *
+     * @return void
+     */
+    public function downloadPDF(Team $company, Lease $lease)
+    {
+        $company = $company->load('addresses', 'contacts');
+        $lease = $lease->loadMissing('apartment.building.address', 'apartment.teamSettings', 'accessories', 'dependencies', 'teamSettings', 'users.addresses', 'users.contacts');
+        $janitor_role = Role::where('name', 'janitor')->first()->id;
+        $janitor = $company->usersProfile($janitor_role)->first();
+        $janitor = $janitor->load('contacts');
+        $data = [
+            'company' => $company,
+            'lease'=>$lease,
+            'janitor'=>$janitor,
+        ];
+        $pdf = PDF::loadView('companies.dompdf.lease-report', $data)->setPaper('letter');
+
+        return $pdf->download('lease.pdf');
     }
 }

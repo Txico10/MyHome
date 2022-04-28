@@ -37,6 +37,15 @@ class Building extends Model
      */
     protected $fillable = ['team_id', 'lot', 'display_name', 'ready_for_habitation', 'description'];
 
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'ready_for_habitation' => 'datetime:Y-m-d',
+    ];
+
     protected static $logName = 'building_log';
     protected static $logFillable = true;
     protected static $logOnlyDirty = true;

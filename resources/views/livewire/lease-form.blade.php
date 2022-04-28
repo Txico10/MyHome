@@ -981,7 +981,7 @@
                                 <dd class="col-sm-8 offset-sm-4">{{$company->addresses->first()->city}}, {{$company->addresses->first()->region}}</dd>
                                 <dd class="col-sm-8 offset-sm-4">{{$company->addresses->first()->country}} {{$company->addresses->first()->postcode}}</dd>
                                 <dt class="col-sm-4">Telephone</dt>
-                                <dd class="col-sm-8">{{$company->contacts->where('type', 'phone')->first()->description}}</dd>
+                                <dd class="col-sm-8">{{$company->contacts->where('type', 'phone')->first()?$company->contacts->where('type', 'phone')->first()->description:""}}</dd>
                                 <dt class="col-sm-4">Email</dt>
                                 <dd class="col-sm-8">{{$company->contacts->where('type', 'email')->first()->description}}</dd>
                             </dl>

@@ -322,13 +322,24 @@ Route::get('/companies/{company:slug}/leases/create', [LeaseController::class, '
 Route::get('/companies/{company:slug}/leases/{lease}', [LeaseController::class, 'show'])
     ->middleware(['auth','verified','company.check','permission:lease-read'])
     ->name('company.lease.show');
+Route::get('/companies/{company:slug}/leases/{lease}/download', [LeaseController::class, 'downloadPDF'])
+    ->middleware(['auth','verified','company.check'])
+    ->name('company.lease.download');
 //PDF Test
 Route::get(
     'print/invoice',
     function () {
+        //return view('companies.dompdf.lease-report');
         //return view('companies.forprint.invoice');
-        $pdf = PDF::loadView('companies.forprint.invoice');
-        return $pdf->download('invoice.pdf');
+        //$pdf = PDF::loadView('companies.forprint.biglist');
+        //$pdf->getDomPDF()->set_option("enable_php", true);
+        $pdf = PDF::loadView('companies.forprint.biglist');
+        //$pdf = PDF::loadView('companies.dompdf.lease-report');
+        return $pdf->download('lease.pdf');
+        //$pdf = App::make('dompdf.wrapper');
+        //$pdf->getDomPDF()->set_option("enable_php", true);
+        //$pdf->loadView('companies.forprint.biglist');
+        //return $pdf->stream();
 
     }
 );
