@@ -19,6 +19,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Laratrust\LaratrustFacade;
 use Barryvdh\DomPDF\Facade as PDF;
+use Illuminate\Support\Facades\Storage;
+
 /**
  *  Lease Controller class
  *
@@ -122,7 +124,10 @@ class LeaseController extends Controller
                         }
 
                         if ($btn_validation && LaratrustFacade::isAbleTo('lease-update')) {
-                            $btn = $btn.'<button class="btn btn-outline-secondary mx-1 shadow btn-sm editLeaseButton" type="button" title="Edit lease" value="'.$lease->id.'"><i class="fas fa-pencil-alt fa-fw"></i></button>';
+                            if ($lease->start_at->greaterThanOrEqualTo(now())) {
+                                $btn = $btn.'<button class="btn btn-outline-secondary mx-1 shadow btn-sm editLeaseButton" type="button" title="Edit lease" value="'.$lease->id.'"><i class="fas fa-pencil-alt fa-fw"></i></button>';
+                            }
+
                         }
                         if ($btn_validation && LaratrustFacade::isAbleTo('lease-delete')) {
                             $btn = $btn.'<button class="btn btn-outline-danger mx-1 shadow btn-sm deleteLeaseButton" title="Delete Lease" type="button" value="'.$lease->id.'"><i class="fas fa-trash-alt fa-fw"></i></button>';
@@ -207,18 +212,47 @@ class LeaseController extends Controller
      */
     public function downloadPDF(Team $company, Lease $lease)
     {
-        $company = $company->load('addresses', 'contacts');
-        $lease = $lease->loadMissing('apartment.building.address', 'apartment.teamSettings', 'accessories', 'dependencies', 'teamSettings', 'users.addresses', 'users.contacts');
-        $janitor_role = Role::where('name', 'janitor')->first()->id;
-        $janitor = $company->usersProfile($janitor_role)->first();
-        $janitor = $janitor->load('contacts');
-        $data = [
-            'company' => $company,
-            'lease'=>$lease,
-            'janitor'=>$janitor,
-        ];
-        $pdf = PDF::loadView('companies.dompdf.lease-report', $data)->setPaper('letter');
+        $file_path = "public/reports/pdf/";
+        $filename = "BL".$lease->start_at->format('mY').$lease->id.$company->id.".pdf";
 
-        return $pdf->download('lease.pdf');
+        $file_exists= Storage::exists($file_path.$filename);
+
+        if ($file_exists) {
+
+            return Storage::download($file_path.$filename);
+
+        } else {
+            $company = $company->load('addresses', 'contacts');
+            $lease = $lease->loadMissing('apartment.building.address', 'apartment.teamSettings', 'accessories', 'dependencies', 'teamSettings', 'users.addresses', 'users.contacts');
+            $janitor_role = Role::where('name', 'janitor')->first()->id;
+            $janitor = $company->usersProfile($janitor_role)->first();
+            $janitor = $janitor->load('contacts');
+
+            if (strcmp($lease->term, "fixed")==0 && $lease->end_at->lessThan(today())) {
+                $lease_status = "Inactive";
+            } else {
+                if (strcmp($lease->term, "indeterminate")==0 && $lease->end_at!=null) {
+                    $lease_status = "Inactive";
+                } else {
+                    $lease_status = "Active";
+                }
+
+            }
+
+            $data = [
+                'company' => $company,
+                'lease'=>$lease,
+                'janitor'=>$janitor,
+                'lease_status' => $lease_status,
+            ];
+
+            $path = storage_path('app/public/reports/pdf');
+
+            PDF::loadView('companies.dompdf.lease-report', $data)->setPaper('letter')->save($path.'/'.$filename);
+
+            return Storage::download($file_path.$filename);
+            //return $pdf->download('lease.pdf');
+        }
+        //dd($file_exists);
     }
 }

@@ -13,8 +13,10 @@
 namespace App\Providers;
 
 use App\Events\CompanyCreated;
+use App\Events\LeaseCreated;
 use App\Listeners\CompanyCreatedListener;
 use App\Listeners\LoginListener;
+use App\Listeners\SendLeaseNotification;
 use App\Models\Team;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Registered;
@@ -50,7 +52,10 @@ class EventServiceProvider extends ServiceProvider
         ],
         CompanyCreated::class => [
             CompanyCreatedListener::class,
-        ]
+        ],
+        LeaseCreated::class => [
+            SendLeaseNotification::class,
+        ],
     ];
 
     /**

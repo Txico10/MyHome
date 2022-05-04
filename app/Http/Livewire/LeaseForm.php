@@ -12,15 +12,13 @@
  * */
 namespace App\Http\Livewire;
 
-use App\Models\Address;
+use App\Events\LeaseCreated;
 use App\Models\Lease;
 use App\Models\Role;
 use Livewire\Component;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use PragmaRX\Countries\Package\Countries;
 use Illuminate\Support\Facades\DB;
-use phpDocumentor\Reflection\Types\Void_;
 
 /**
  *  Create lease form component class
@@ -1058,14 +1056,13 @@ class LeaseForm extends Component
 
             DB::commit();
 
-            foreach ($users as $user) {
-                event(new Registered($user));
-            }
             $this->resetInputFields();
 
             $message_type = "success";
             $message = "Lease created successfully";
-            //Send notification to the new user
+
+            //Send lease notifications
+            LeaseCreated::dispatch($lease);
 
         } catch (\Throwable $th) {
             DB::rollBack();
