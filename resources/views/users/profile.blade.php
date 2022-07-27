@@ -33,22 +33,16 @@
 @section('content')
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-3">
-            <!-- User profile -->
-            <x-adminlte-profile-widget name="{{$user->name}}" desc="{{$user->roles->first()->display_name}}" theme="lightblue"
-                img="{{!empty($user->photo)? asset('storage/images/profile/users/'.$user->photo) :'https://picsum.photos/id/1/100'}}" layout-type="classic">
-                <x-adminlte-profile-row-item icon="fas fa-fw fa-venus-mars" class="mr-1 border-bottom" title="Gender" text="{{ucfirst(__($user->gender))}}"/>
-                <x-adminlte-profile-row-item icon="fas fa-fw fa-birthday-cake" class="mr-1 border-bottom" title="Birthdate" text="{{$user->birthdate->format('d F Y')}}"/>
-                <x-adminlte-profile-row-item icon="fas fa-fw fa-user-check" class="mr-1 border-bottom" title="Status" text="{{$user->active?__('Active'):__('Inactive')}}"/>
-                <x-adminlte-profile-row-item icon="fas fa-fw fa-envelope" class="mr-1 border-bottom" title="Email" text="{{$user->email}}"/>
-                <x-adminlte-profile-row-item icon="fas fa-fw fa-hashtag" class="mr-1 mb-2" title="SSN" text="{{$user->ssn}}"/>
-                <x-adminlte-button label="Edit profile" class="btn-block editUser"  theme="primary"/>
-            </x-adminlte-profile-widget>
-            <!--User contact-->
-            <livewire:addresses :model="$user" />
-            <livewire:contacts :model="$user" />
+        <div class="col-5 col-sm-3">
+            <div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist" aria-orientation="vertical">
+                <a class="nav-link active" id="vert-tabs-home-tab" data-toggle="pill" href="#vert-tabs-home" role="tab" aria-controls="vert-tabs-home" aria-selected="true">Home</a>
+                <a class="nav-link" id="vert-tabs-address-tab" data-toggle="pill" href="#vert-tabs-address" role="tab" aria-controls="vert-tabs-address" aria-selected="false">Address</a>
+                <a class="nav-link" id="vert-tabs-messages-tab" data-toggle="pill" href="#vert-tabs-messages" role="tab" aria-controls="vert-tabs-messages" aria-selected="false">Messages</a>
+                <a class="nav-link" id="vert-tabs-contract-tab" data-toggle="pill" href="#vert-tabs-contract" role="tab" aria-controls="vert-tabs-contract" aria-selected="false">Contracts</a>
+                <a class="nav-link" id="vert-tabs-passwd-tab" data-toggle="pill" href="#vert-tabs-passwd" role="tab" aria-controls="vert-tabs-passwd" aria-selected="false">Change password</a>
+            </div>
         </div>
-        <div class="col-md-9">
+        <div class="col-7 col-sm-9">
             @if(session()->has('message'))
             <x-adminlte-alert theme="success" title="Success">
                 {{session()->get('message')}}
@@ -63,17 +57,37 @@
                 </ul>
             </x-adminlte-alert>
             @endif
-            <div class="card">
-                <div class="card-header p-2">
-                    <ul class="nav nav-pills" id="tabMenu">
-                        <li class="nav-item"><a class="nav-link active" href="#contracts" data-toggle="tab">Contracts</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#notifications" data-toggle="tab">Notifications</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#reset_password" data-toggle="tab">Change password</a></li>
-                     </ul>
-                </div><!-- /.card-header -->
-                <div class="card-body">
-                    <div class="tab-content">
-                        <div class="tab-pane active" id="contracts">
+            <div class="tab-content" id="vert-tabs-tabContent">
+                <div class="tab-pane text-left fade active show" id="vert-tabs-home" role="tabpanel" aria-labelledby="vert-tabs-home-tab">
+                    <x-adminlte-profile-widget name="{{$user->name}}" desc="{{$user->roles->first()->display_name}}" theme="lightblue"
+                        img="{{!empty($user->photo)? asset('storage/images/profile/users/'.$user->photo) :'https://picsum.photos/id/1/100'}}">
+                        <x-adminlte-profile-row-item icon="fas fa-fw fa-venus-mars" class="mr-1 border-bottom" title="Gender" text="{{ucfirst(__($user->gender))}}"/>
+                        <x-adminlte-profile-row-item icon="fas fa-fw fa-birthday-cake" class="mr-1 border-bottom" title="Birthdate" text="{{$user->birthdate->format('d F Y')}}"/>
+                        <x-adminlte-profile-row-item icon="fas fa-fw fa-user-check" class="mr-1 border-bottom" title="Status" text="{{$user->active?__('Active'):__('Inactive')}}"/>
+                        <x-adminlte-profile-row-item icon="fas fa-fw fa-envelope" class="mr-1 border-bottom" title="Email" text="{{$user->email}}"/>
+                        <x-adminlte-profile-row-item icon="fas fa-fw fa-hashtag" class="mr-1 mb-2" title="SSN" text="{{$user->ssn}}"/>
+                        <x-adminlte-button label="Edit profile" class="btn-block editUser"  theme="primary"/>
+                    </x-adminlte-profile-widget>
+                </div>
+                <div class="tab-pane fade" id="vert-tabs-address" role="tabpanel" aria-labelledby="vert-tabs-address-tab">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <livewire:addresses :model="$user" />
+                        </div>
+                        <div class="col-sm-6">
+                            <livewire:contacts :model="$user" />
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="vert-tabs-messages" role="tabpanel" aria-labelledby="vert-tabs-messages-tab">
+                    <x-adminlte-card title="Notifications" theme="lightblue" icon="fas fa-lg fa-bell" removable collapsible>
+                        @livewire('notifications', ['user' => $user], key($user->id))
+                    </x-adminlte-card>
+
+                </div>
+                <div class="tab-pane fade" id="vert-tabs-contract" role="tabpanel" aria-labelledby="vert-tabs-contract-tab">
+                    @if(!strcmp(Auth::user()->roles()->first()->name,"tenant")==0)
+
                             @php
                                 $heads = [
                                     '#',
@@ -99,46 +113,64 @@
                             <x-adminlte-card title="Contracts" theme="lightblue" icon="fas fa-lg fa-file-contract" removable collapsible>
                                 <x-adminlte-datatable id="userContracts" :heads="$heads" :config="$config"/>
                             </x-adminlte-card>
-                        </div>
-                        <!-- /.tab-pane -->
-                        <div class="tab-pane" id="notifications">
-                            @livewire('notifications', ['user' => $user], key($user->id))
-                        </div>
-                        <!-- /.tab-pane -->
-                        <div class="tab-pane" id="reset_password">
 
-                            <form action="{{route('user.updatepasswd', ['user'=>$user])}}" method="POST">
-                                @csrf
-                                <input type="hidden" name="tab" value="reset_password" />
-                                <x-adminlte-input name="old_password" label="Old Password" placeholder="Old password" type="password" label-class="text-lightblue">
-                                    <x-slot name="prependSlot">
-                                        <div class="input-group-text">
-                                            <i class="fas fa-key text-lightblue"></i>
-                                        </div>
-                                    </x-slot>
-                                </x-adminlte-input>
-                                <x-adminlte-input name="new_password" label="New Password" placeholder="New password" type="password" label-class="text-lightblue">
-                                    <x-slot name="prependSlot">
-                                        <div class="input-group-text">
-                                            <i class="fas fa-user-lock text-lightblue"></i>
-                                        </div>
-                                    </x-slot>
-                                </x-adminlte-input>
-                                <x-adminlte-input name="new_password_confirmation" label="Repete new Password" placeholder="Repete new password" type="password" label-class="text-lightblue">
-                                    <x-slot name="prependSlot">
-                                        <div class="input-group-text">
-                                            <i class="fas fa-user-lock text-lightblue"></i>
-                                        </div>
-                                    </x-slot>
-                                </x-adminlte-input>
-                                <x-adminlte-button class="btn-flat float-right" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
-                            </form>
-
-                        </div>
-                        <!-- /.tab-pane -->
-                    </div>
-                    <!-- /.tab-content -->
-                </div><!-- /.card-body -->
+                    @else
+                        @php
+                            $heads = [
+                                '#',
+                                'Code',
+                                'Company',
+                                'Apartement',
+                                'Term',
+                                'Start date',
+                                'End date',
+                                'Status',
+                                'Actions',
+                            ];
+                            $config = [
+                                'processing' => true,
+                                'serverSide' => true,
+                                'ajax' => ['headers'=> ['X-CSRF-TOKEN'=>csrf_token()], 'url'=> route('user.bails', ['user'=>$user])],
+                                'responsive'=> true,
+                                'order' => [[0,'asc']],
+                                'columns' => [['data'=>'DT_RowIndex'], ['data'=>'code'], ['data'=>'company'],['data'=>'apartment'], ['data'=>'term'], ['data'=>'start_at'], ['data'=>'end_at'], ['data'=>'status'], ['data'=>'action', 'searchable'=>false, 'orderable' => false]],
+                            ]
+                        @endphp
+                        <x-adminlte-card title="Bails" theme="lightblue" icon="fas fa-lg fa-file-contract" removable collapsible>
+                            <x-adminlte-datatable id="userBails" :heads="$heads" :config="$config"/>
+                        </x-adminlte-card>
+                    @endif
+                </div>
+                <div class="tab-pane fade" id="vert-tabs-passwd" role="tabpanel" aria-labelledby="vert-tabs-passwd-tab">
+                    <x-adminlte-card title="Change password" theme="lightblue" icon="fas fa-lg fa-key" removable collapsible>
+                        <form action="{{route('user.updatepasswd', ['user'=>$user])}}" method="POST">
+                            @csrf
+                            <input type="hidden" name="tab" value="reset_password" />
+                            <x-adminlte-input name="old_password" label="Old Password" placeholder="Old password" type="password" label-class="text-lightblue">
+                                <x-slot name="prependSlot">
+                                    <div class="input-group-text">
+                                        <i class="fas fa-key text-lightblue"></i>
+                                    </div>
+                                </x-slot>
+                            </x-adminlte-input>
+                            <x-adminlte-input name="new_password" label="New Password" placeholder="New password" type="password" label-class="text-lightblue">
+                                <x-slot name="prependSlot">
+                                    <div class="input-group-text">
+                                        <i class="fas fa-user-lock text-lightblue"></i>
+                                    </div>
+                                </x-slot>
+                            </x-adminlte-input>
+                            <x-adminlte-input name="new_password_confirmation" label="Repete new Password" placeholder="Repete new password" type="password" label-class="text-lightblue">
+                                <x-slot name="prependSlot">
+                                    <div class="input-group-text">
+                                        <i class="fas fa-user-lock text-lightblue"></i>
+                                    </div>
+                                </x-slot>
+                            </x-adminlte-input>
+                            <x-adminlte-button class="btn-flat float-right" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                        </form>
+                    </x-adminlte-card>
+                </div>
             </div>
         </div>
         @php
@@ -284,7 +316,7 @@
             }
         });
 
-        $('#tabMenu a[href="#{{ old('tab') }}"]').tab('show')
+        //$('#tabMenu a[href="#{{ old('tab') }}"]').tab('show')
 
         $("#user_ssn").inputmask({
             mask: "999999999",

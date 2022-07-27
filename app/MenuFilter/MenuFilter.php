@@ -14,6 +14,7 @@ namespace App\MenuFilter;
 
 use JeroenNoten\LaravelAdminLte\Menu\Filters\FilterInterface;
 use Laratrust\LaratrustFacade;
+
 /**
  *  AppServiceProvider Class
  *

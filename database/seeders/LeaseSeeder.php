@@ -12,7 +12,7 @@
  * */
 namespace Database\Seeders;
 
-use App\Models\Accessory;
+//use App\Models\Accessory;
 use App\Models\Address;
 use App\Models\Lease;
 use App\Models\Role;
@@ -79,7 +79,7 @@ class LeaseSeeder extends Seeder
                         ->create()
                         ->each(
                             function ($lease, $key) use ($role, $company, $accessories, $dependencies, $services, $consumptions, $payment_method) {
-
+                                $lease->checkaccount()->create();
                                 $user = $lease->users->first();
                                 $user->attachRole($role, $company);
 

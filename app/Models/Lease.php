@@ -18,7 +18,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\Traits\CausesActivity;
 
 /**
- *  Laratrust Team class
+ *  Lease class
  *
  * @category MyCategory
  * @package  MyPackage
@@ -55,6 +55,8 @@ class Lease extends Model
         'animals',
         'animals_description',
         'others',
+        'end_sooner',
+        'parent_id'
     ];
 
     /**
@@ -73,7 +75,8 @@ class Lease extends Model
         'start_at' => 'datetime:Y-m-d',
         'end_at' => 'datetime:Y-m-d',
         'first_payment_at' => 'datetime:Y-m-d',
-        'by_law_given_on' => 'datetime:Y-m-d'
+        'by_law_given_on' => 'datetime:Y-m-d',
+        'end_sooner' => 'datetime:Y-m-d',
     ];
 
     protected static $logName = 'lease_log';
@@ -165,4 +168,15 @@ class Lease extends Model
     {
         return $this->belongsTo(Apartment::class);
     }
+
+    /**
+     * Check account
+     *
+     * @return void
+     */
+    public function checkaccount()
+    {
+        return $this->hasOne(CheckAccount::class)->latestOfMany();
+    }
+
 }

@@ -73,6 +73,8 @@ Route::middleware(['auth', 'verified', 'personal'])->prefix('users/{user}')->nam
                 ->name('contracts');
             Route::post('/contracts', [UserController::class,'contractSignature'])
                 ->name('contracts.signed');
+            Route::get('/bails', [UserController::class,'bails'])
+                ->name('bails');
         }
     );
 /**

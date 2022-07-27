@@ -34,6 +34,8 @@ class CreateLeasesTable extends Migration
             $table->boolean('animals')->default(false);
             $table->string('animals_description')->nullable();
             $table->text('others')->nullable();
+            $table->date('end_sooner')->nullable();
+            $table->bigInteger('parent_id')->nullable();
             $table->timestamps();
         });
     }

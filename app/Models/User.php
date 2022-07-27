@@ -251,6 +251,19 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Leases
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function leases()
+    {
+        return $this->morphedByMany(Lease::class, 'engageable')
+            ->using(Contract::class)
+            ->withPivot('team_id')
+            ->withTimestamps();
+    }
+
+    /**
      * Active Companies
      *
      * @return array Companies id
@@ -267,8 +280,28 @@ class User extends Authenticatable implements MustVerifyEmail
                     }
                 )->first();
             return $company==null ? null: $company->pivot->team_id;
+        } else {
+            if ($this->leases->isNotEmpty()) {
+                $lease = $this->leases
+                    ->filter(
+                        function ($lease) {
+                            if (strcmp($lease->term, "fixed")==0 && $lease->end_at->greaterThan(today())) {
+                                return true;
+                            } else {
+                                if (strcmp($lease->term, "indeterminate")==0 && $lease->end_at==null) {
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+
+                            }
+                        }
+                    )->first();
+                return $lease==null?null:$lease->pivot->team_id;
+            } else {
+                return null;
+            }
         }
-        return null;
     }
 
 }

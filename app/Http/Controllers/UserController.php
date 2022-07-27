@@ -21,9 +21,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Intervention\Image\ImageManagerStatic as Image;
 
@@ -389,6 +387,108 @@ class UserController extends Controller
             }
 
             return response()->json(['message'=>'Contract signed successfully']);
+        }
+    }
+
+    /**
+     * Bails
+     *
+     * @param Request $request Request
+     * @param User    $user    User
+     *
+     * @return Illuminate\Http\Response
+     */
+    public function bails(Request $request, User $user)
+    {
+        if ($request->ajax()) {
+            $leases = $user->leases;
+
+            return datatables()->of($leases)
+                ->addIndexColumn()
+                ->addColumn(
+                    'code',
+                    function ($lease) {
+                        return "BL".$lease->start_at->format('mY').$lease->id.$lease->pivot->team_id;
+                    }
+                )
+                ->addColumn(
+                    'company',
+                    function ($lease) {
+                        $company = $lease->teams->first();
+                        return $company->display_name;
+                    }
+                )
+                ->addColumn(
+                    'apartment',
+                    function ($lease) {
+                        $apartment = $lease->apartment;
+                        return $apartment->building->display_name." - ".$apartment->number;
+                    }
+                )
+                ->editColumn(
+                    'term',
+                    function ($lease) {
+
+                        return ucfirst($lease->term);
+                    }
+                )
+                ->editColumn(
+                    'start_at',
+                    function ($lease) {
+                        return $lease->start_at->format('d F Y');
+                    }
+                )
+                ->editColumn(
+                    'end_at',
+                    function ($lease) {
+                        return is_null($lease->end_at)? 'N/A':$lease->end_at->format('d F Y');
+                    }
+                )
+                ->editColumn(
+                    'status',
+                    function ($lease) {
+                        if (strcmp($lease->term, "fixed")==0 && $lease->end_at->lessThan(today())) {
+                            return "Inactive";
+                        } else {
+                            if (strcmp($lease->term, "indeterminate")==0 && $lease->end_at!=null) {
+                                return "Inactive";
+                            } else {
+                                return "Active";
+                            }
+
+                        }
+                    }
+                )
+                ->addColumn(
+                    'action',
+                    function ($lease) {
+                        $company = $lease->teams->first();
+                        $btn = '<nobr>';
+                        $btn = $btn.'<a class="btn btn-outline-danger btn-sm mx-1 shadow" type="button" title="More details" href="'.route('company.lease.download', ['company'=>$company, 'lease'=>$lease]).'"><i class="fas fa-file-pdf fa-fw"></i></a>';
+                        $btn=$btn.'</nobr>';
+                        return $btn;
+                    }
+                )
+                ->removeColumn('id')
+                ->removeColumn('residential_purpose')
+                ->removeColumn('residential_purpose_description')
+                ->removeColumn('co-ownership')
+                ->removeColumn('furniture_included')
+                ->removeColumn('rent_amount')
+                ->removeColumn('rent_recurrence')
+                ->removeColumn('subsidy_program')
+                ->removeColumn(' first_payment_at')
+                ->removeColumn('postdated_cheques')
+                ->removeColumn('by_law_given_on')
+                ->removeColumn('land_access')
+                ->removeColumn('land_access_description')
+                ->removeColumn('animals')
+                ->removeColumn('others')
+                ->removeColumn('created_at')
+                ->removeColumn('updated_at')
+                ->removeColumn('pivot')
+                ->make();
+
         }
     }
 }

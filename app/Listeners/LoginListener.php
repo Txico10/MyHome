@@ -18,6 +18,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Validation\ValidationException;
 
+
 /**
  *  LoginListener class
  *
@@ -63,6 +64,7 @@ class LoginListener
             return redirect()->back();
         }
 
+        //Redis::set(Auth::id(), Auth::user()->active_company);
         request()->session()->put('companyID', Auth::user()->active_company);
 
         Login::create(

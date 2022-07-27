@@ -67,8 +67,39 @@
         <x-adminlte-card title="Lease dweelling, accessories and dependencies" theme="lightblue" icon="fas fa-lg fa-file-contract" removable collapsible>
             <div class="row">
                 <div class="col-md-6">
+                    <x-adminlte-card title="Apartment">
+                        <dl class="row">
+                            <dt class="col-sm-4">Number</dt>
+                            <dd class="col-sm-8">{{$lease->apartment->number}}</dd>
+                            @foreach ($lease->apartment->teamSettings as $apt_type)
+                                @if(strcmp($apt_type->type, 'apartment')==0)
+                                <dt class="col-sm-4">Size</dt>
+                                @else
+                                <dt class="col-sm-4">Heating system</dt>
+                                @endif
+                                <dd class="col-sm-8">
+                                    {{$apt_type->display_name}}
+                                </dd>
+                            @endforeach
+                            <dt class="col-sm-4">Building</dt>
+                            <dd class="col-sm-8">{{ucfirst($lease->apartment->building->display_name)}}</dd>
+                            <dt class="col-sm-4">Address</dt>
+                            <dd class="col-sm-8">{{$lease->apartment->building->address->number}}, {{$lease->apartment->building->address->street}}</dd>
+                            <dd class="col-sm-8 offset-sm-4">{{$lease->apartment->building->address->city}}, {{$lease->apartment->building->address->region}}, {{$lease->apartment->building->address->country}}</dd>
+                        </dl>
+                    </x-adminlte-card>
+                </div>
+                <div class="col-md-6">
                     <x-adminlte-card title="Lease">
                         <dl class="row">
+                            <dt class="col-sm-4">Residential purposes only</dt>
+                            <dd class="col-sm-8">{{$lease->residential_purpose==true ? 'Yes': 'No'}}</dd>
+                            @if($lease->residential_purpose==false)
+                            <dt class="col-sm-4">Description</dt>
+                            <dd class="col-sm-8">{{$lease->residential_purpose_description}}</dd>
+                            @endif
+                            <dt class="col-sm-4">Devided co-ownership</dt>
+                            <dd class="col-sm-8">{{$lease->co_ownership?"Yes":"No"}}</dd>
                             <dt class="col-sm-4">Term</dt>
                             <dd class="col-sm-8">{{ucfirst($lease->term)}}</dd>
                             <dt class="col-sm-4">Start date</dt>
@@ -79,35 +110,6 @@
                             <dt class="col-sm-4">End date</dt>
                             <dd class="col-sm-8">{{$lease->end_at->toDateString()}}</dd>
                             @endif
-                            <dt class="col-sm-4">Residential purposes only</dt>
-                            <dd class="col-sm-8">{{$lease->residential_purpose==true ? 'Yes': 'No'}}</dd>
-                            @if($lease->residential_purpose==false)
-                            <dt class="col-sm-4">Description</dt>
-                            <dd class="col-sm-8">{{$lease->residential_purpose_description}}</dd>
-                            @endif
-                            <dt class="col-sm-4">Devided co-ownership</dt>
-                            <dd class="col-sm-8">No</dd>
-                            <dt class="col-sm-4">Rent subsidy program</dt>
-                            <dd class="col-sm-8">{{$lease->subsidy_program==0?"No":"Yes"}}</dd>
-                        </dl>
-                    </x-adminlte-card>
-                </div>
-                <div class="col-md-6">
-                    <x-adminlte-card title="Apartment">
-                        <dl class="row">
-                            <dt class="col-sm-4">Number</dt>
-                            <dd class="col-sm-8">{{$lease->apartment->number}}</dd>
-                            <dt class="col-sm-4">Type</dt>
-                            <dd class="col-sm-8">
-                                @foreach ($lease->apartment->teamSettings as $apt_type)
-                                    {{$apt_type->display_name}}
-                                @endforeach
-                            </dd>
-                            <dt class="col-sm-4">Building</dt>
-                            <dd class="col-sm-8">{{ucfirst($lease->apartment->building->display_name)}}</dd>
-                            <dt class="col-sm-4">Address</dt>
-                            <dd class="col-sm-8">{{$lease->apartment->building->address->number}}, {{$lease->apartment->building->address->street}}</dd>
-                            <dd class="col-sm-8 offset-sm-4">{{$lease->apartment->building->address->city}}, {{$lease->apartment->building->address->region}}, {{$lease->apartment->building->address->country}}</dd>
                         </dl>
                     </x-adminlte-card>
                 </div>
@@ -180,6 +182,8 @@
                             <dd class="col-sm-8">${{$total_sum}}</dd>
                             <dt class="col-sm-4">Total rent</dt>
                             <dd class="col-sm-8">${{number_format($lease->rent_amount+$total_sum, 2)}}</dd>
+                            <dt class="col-sm-4">Rent subsidy program</dt>
+                            <dd class="col-sm-8">{{$lease->subsidy_program==0?"No":"Yes"}}</dd>
                         </dl>
                     </x-adminlte-card>
                 </div>
@@ -286,7 +290,7 @@
                               </tr>
                             </thead>
                             <tbody>
-                                @foreach ($lease->teamSettings->where('type', 'service')->sortBy('name') as $new_snow_service)
+                                @foreach ($lease->teamSettings->where('type', 'snow_removal')->sortBy('name') as $new_snow_service)
                                 @if(strcmp(substr($new_snow_service->name, 0, 4), 'snow')==0)
                                 <tr>
                                     <td>{{$new_snow_service->display_name}}</td>
