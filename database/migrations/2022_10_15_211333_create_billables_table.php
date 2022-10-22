@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBillLinesTable extends Migration
+class CreateBillablesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class CreateBillLinesTable extends Migration
      */
     public function up()
     {
-        Schema::create('bill_lines', function (Blueprint $table) {
+        Schema::create('billables', function (Blueprint $table) {
             $table->id();
+            $table->morphs('billable');
             $table->foreignId('bill_id');
             $table->decimal('amount', $precision = 8, $scale = 2);
-            $table->integer('quantity');
-            $table->enum('operation', ['a','c','d']);//a-annulation; c-credit; d-debit
+            $table->enum('oparation', ['cred','debi']);
             $table->string('description')->nullable();
             $table->timestamps();
         });
@@ -31,6 +31,6 @@ class CreateBillLinesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('bill_lines');
-    }
+        Schema::dropIfExists('billables');
+    }//
 }

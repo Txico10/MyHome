@@ -15,6 +15,7 @@ class CreateEmployeeContractsTable extends Migration
     {
         Schema::create('employee_contracts', function (Blueprint $table) {
             $table->id();
+            $table->string('code')->unique()->nullable();
             $table->foreignId('role_id')->constrained();
             $table->date('start_at');
             $table->date('end_at')->nullable();

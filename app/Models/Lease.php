@@ -36,6 +36,7 @@ class Lease extends Model
      * @var array
      */
     protected $fillable = [
+        'code',
         'apartment_id',
         'residential_purpose',
         'residential_purpose_description',
@@ -105,7 +106,7 @@ class Lease extends Model
     {
         return $this->morphToMany(User::class, 'engageable')
             ->using(Contract::class)
-            ->withPivot('team_id')
+            ->withPivot('team_id', 'check_account_id')
             ->withTimestamps();
     }
 
@@ -117,6 +118,19 @@ class Lease extends Model
     public function teams()
     {
         return $this->morphToMany(Team::class, 'engageable')
+            ->using(Contract::class)
+            ->withPivot('user_id', 'check_account')
+            ->withTimestamps();
+    }
+
+    /**
+     * CheckAccounts
+     *
+     * @return void
+     */
+    public function checkAccounts()
+    {
+        return $this->morphToMany(CheckAccount::class, 'engageable')
             ->using(Contract::class)
             ->withPivot('user_id')
             ->withTimestamps();
@@ -174,9 +188,22 @@ class Lease extends Model
      *
      * @return void
      */
-    public function checkaccount()
+    //public function checkaccount()
+    //{
+    //    return $this->hasOne(CheckAccount::class)->latestOfMany();
+    //}
+
+    /**
+     * Invoices
+     *
+     * @return void
+     */
+    public function invoices()
     {
-        return $this->hasOne(CheckAccount::class)->latestOfMany();
+        return $this->morphToMany(Bill::class, 'billable')
+            ->using(Invoice::class)
+            ->withPivot(['amount', 'description', 'oparation'])
+            ->withTimestamps();
     }
 
 }

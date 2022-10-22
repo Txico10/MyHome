@@ -141,4 +141,17 @@ class Accessory extends Model
     {
         return $this->manufacturer."-".$this->model;
     }
+
+    /**
+     * Invoice
+     *
+     * @return void
+     */
+    public function invoices()
+    {
+        return $this->morphToMany(Bill::class, 'billable')
+            ->using(Invoice::class)
+            ->withPivot(['amount', 'description', 'oparation'])
+            ->withTimestamps();
+    }
 }

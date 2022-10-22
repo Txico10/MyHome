@@ -14,6 +14,7 @@ namespace Database\Seeders;
 
 //use App\Models\Accessory;
 use App\Models\Address;
+use App\Models\CheckAccount;
 use App\Models\Lease;
 use App\Models\Role;
 use App\Models\Team;
@@ -72,17 +73,20 @@ class LeaseSeeder extends Seeder
                                             )
                                         )
                                 )
-                                ->hasContacts(2),
-                            ['team_id'=>$company->id]
+                                ->hasContacts(2)
+                                ->hasCheckAccounts(1, ['team_id'=>$company->id]),
+                            ['team_id'=>$company->id, 'check_account_id'=>1]
                         )
-                        //other
+                        //->hasCheckAccount()
                         ->create()
                         ->each(
                             function ($lease, $key) use ($role, $company, $accessories, $dependencies, $services, $consumptions, $payment_method) {
-                                $lease->checkaccount()->create();
+
+                                $lease->code='BL'.$lease->start_at->format('mY').$lease->id.$company->id;
+                                $lease->save();
                                 $user = $lease->users->first();
                                 $user->attachRole($role, $company);
-
+                                $lease->users()->sync([$user->id => ['check_account_id'=>$user->checkAccounts->first()->id]], false);
                                 $accessories_list = $accessories[$key];
 
                                 foreach ($accessories_list as $accessory) {

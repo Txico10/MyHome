@@ -37,9 +37,11 @@ class Bill extends Model
      */
     protected $fillable = [
         'check_account_id',
+        'period_begin',
+        'period_end',
+        'status',
+        'payment_due_date',
         'total_amount',
-        'quantity',
-        'operation',
         'description',
     ];
 
@@ -61,14 +63,54 @@ class Bill extends Model
     }
 
     /**
+     * ChackAccount
+     *
+     * @return void
+     */
+    public function checkAccount()
+    {
+        return $this->belongsTo(CheckAccount::class);
+    }
+
+    /**
      * Bill Lines
      *
      * @return void
      */
-    public function billLines()
+    public function invoiceLease()
     {
-        return $this->hasMany(BillLine::class);
+        return $this->morphedByMany(Lease::class, 'billable')
+            ->using(Invoice::class)
+            ->withPivot(['amount', 'description', 'oparation'])
+            ->withTimestamps();
     }
+
+    /**
+     * InvoiceDependencie
+     *
+     * @return void
+     */
+    public function invoiceDependencie()
+    {
+        return $this->morphedByMany(Dependency::class, 'billable')
+            ->using(Invoice::class)
+            ->withPivot(['amount', 'description', 'oparation'])
+            ->withTimestamps();
+    }
+
+    /**
+     * InvoiceAccessory
+     *
+     * @return void
+     */
+    public function invoiceAccessory()
+    {
+        return $this->morphedByMany(Accessory::class, 'billable')
+            ->using(Invoice::class)
+            ->withPivot(['amount', 'description', 'oparation'])
+            ->withTimestamps();
+    }
+
 
     /**
      * Payment

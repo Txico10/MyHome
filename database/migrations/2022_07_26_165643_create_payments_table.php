@@ -16,11 +16,12 @@ class CreatePaymentsTable extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId("bill_id");
-            $table->foreignId("user_id");
+            $table->string("email")->nullable();
             $table->decimal('amount', $precision = 8, $scale = 2);
-            $table->enum("method", ["cc","interac", "pp", "cheque"]);//cc-credit card; interac-debit; pp-paypal
-            $table->string("pay_id");
-            $table->date("payment_at");
+            $table->enum("method", ["credit","interac", "paypal", "cheque", "cash"]);//cc-credit card; interac-debit; pp-paypal
+            $table->string("method_number")->nullable();
+            $table->string("transaction_id", 100)->nullable();
+            $table->date("payed_at");
             $table->timestamps();
         });
     }

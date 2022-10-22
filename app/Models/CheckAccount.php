@@ -36,9 +36,11 @@ class CheckAccount extends Model
      * @var array
      */
     protected $fillable = [
-        'lease_id',
-        'description'
+        'name',
+        'description',
+        'total_amount',
     ];
+
 
     protected static $logName = 'checkaccount_log';
     protected static $logFillable = true;
@@ -58,16 +60,6 @@ class CheckAccount extends Model
     }
 
     /**
-     * Lease
-     *
-     * @return void
-     */
-    public function lease()
-    {
-        return $this->belongsTo(Lease::class);
-    }
-
-    /**
      * Bills
      *
      * @return void
@@ -78,12 +70,23 @@ class CheckAccount extends Model
     }
 
     /**
-     * Bill Lines
+     * User
      *
      * @return void
      */
-    public function billLines()
+    public function user()
     {
-        return $this->hasManyThrough(BillLine::class, Bill::class);
+        return $this->belongsTo(User::class);
     }
+
+    /**
+     * Team
+     *
+     * @return void
+     */
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
+    }
+
 }

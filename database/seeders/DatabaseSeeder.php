@@ -42,7 +42,7 @@ class DatabaseSeeder extends Seeder
                 UserSeeder::class,
                 EmployeeContractSeeder::class,
                 LeaseSeeder::class,
-                //BillSeeder::class,
+                BillSeeder::class,
                 //PaymentSeeder::class,
             ]
         );

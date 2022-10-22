@@ -15,8 +15,11 @@ class CreateCheckAccountsTable extends Migration
     {
         Schema::create('check_accounts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('lease_id');
+            $table->foreignId('team_id');
+            $table->foreignId('user_id');
+            $table->string('name')->nullable();
             $table->string('description')->nullable();
+            $table->decimal('total_amount', $precision = 8, $scale = 2)->default(0.00);
             $table->timestamps();
         });
     }

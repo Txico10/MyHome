@@ -251,6 +251,16 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Check Accounts
+     *
+     * @return void
+     */
+    public function checkAccounts()
+    {
+        return $this->hasMany(CheckAccount::class);
+    }
+
+    /**
      * Leases
      *
      * @return \Illuminate\Database\Eloquent\Model

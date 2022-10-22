@@ -15,6 +15,7 @@ class CreateLeasesTable extends Migration
     {
         Schema::create('leases', function (Blueprint $table) {
             $table->id();
+            $table->string('code')->unique()->nullable();
             $table->foreignId('apartment_id')->constrained()->onDelete('cascade');
             $table->boolean('residential_purpose')->default(true);
             $table->string('residential_purpose_description')->nullable();

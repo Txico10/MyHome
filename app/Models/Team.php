@@ -102,6 +102,16 @@ class Team extends LaratrustTeam
     }
 
     /**
+     * Users Check Account
+     *
+     * @return void
+     */
+    public function checkAccounts()
+    {
+        return $this->hasMany(CheckAccount::class);
+    }
+
+    /**
      * Users Profile
      *
      * @param int $role_id Role
@@ -199,6 +209,16 @@ class Team extends LaratrustTeam
     public function accessories()
     {
         return $this->hasMany(Accessory::class);
+    }
+
+    /**
+     * Check Account
+     *
+     * @return void
+     */
+    public function checkAccount()
+    {
+        return $this->hasMany(CheckAccount::class);
     }
 
 }

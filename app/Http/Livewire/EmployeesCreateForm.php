@@ -459,8 +459,16 @@ class EmployeesCreateForm extends Component
                 }
             }
 
+            $contract->code = 'CT'.$contract->start_at->format('mY').$contract->id.$this->company->id;
+            $contract->save();
+            $check_account = $employee->checkAccounts()->create(
+                [
+                    'team_id'=>$this->company->id,
+                ]
+            );
             $employee->employees()
-                ->attach($contract->id, ['team_id'=>$this->company->id]);
+                ->attach($contract->id, ['team_id'=>$this->company->id, 'check_account_id'=>$check_account->id]);
+
 
             DB::commit();
 

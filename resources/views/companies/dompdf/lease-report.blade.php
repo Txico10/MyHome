@@ -160,7 +160,7 @@
                             {{$company->addresses->first()->city}}, {{$company->addresses->first()->region}} <br>
                             {{$company->addresses->first()->country}} {{$company->addresses->first()->postcode}} <br>
                             <span><i class="fas fa-phone-alt fa-fw"></i></span> : <span>{{$company->contacts->where('type', 'phone')->first()?$company->contacts->where('type', 'phone')->first()->description:""}}</span><br>
-                            <span><i class="fas fa-envelope fa-fw"></i></span> : <span>{{$company->contacts->where('type', 'email')->first()->description}}</span><br>
+                            <span><i class="fas fa-envelope fa-fw"></i></span> : <span>{{$company->contacts->where('type', 'email')->first()?$company->contacts->where('type', 'email')->first()->description:""}}</span><br>
                         </div>
 
                         @foreach ($lease->users as $user)

@@ -994,8 +994,12 @@ class LeaseForm extends Component
                 ]
             );
             //attach lessors (users) to lease
+            $lease->code = 'BL'.$lease->start_at->format('mY').$lease->id.$this->company->id;
+            $lease->save();
             foreach ($users as $user) {
-                $lease->users()->attach($user, ['team_id'=>$this->company->id]);//Attache users to lease
+                $check_account = $user->checkAccounts()->create(['team_id'=>$this->company->id]);
+                $lease->users()->attach($user, ['team_id'=>$this->company->id, 'check_account_id'=>$check_account->id]);//Attache users to lease
+
             }
 
             //attach dependecies to the lease

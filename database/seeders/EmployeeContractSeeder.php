@@ -70,15 +70,18 @@ class EmployeeContractSeeder extends Seeder
                                             )
                                         )
                                 )
-                                ->hasContacts(3),
-                            ['team_id'=>$company->id]
+                                ->hasContacts(3)
+                                ->hasCheckAccounts(1, ['team_id'=>$company->id]),
+                            ['team_id'=>$company->id, 'check_account_id'=>1]
                         )
                         ->create()
                         ->each(
                             function ($contract) use ($company, $benefits) {
+                                $contract->code = 'CT'.$contract->start_at->format('mY').$contract->id.$company->id;
+                                $contract->save();
                                 $user = $contract->users->first();
                                 $user->attachRole($contract->role_id, $company);
-
+                                $contract->users()->sync([$user->id => ['check_account_id'=>$user->checkAccounts->first()->id]], false);
                                 $num = rand(1, 6);
                                 $contract_benefits = $benefits->random($num);
                                 foreach ($contract_benefits as $benefit) {

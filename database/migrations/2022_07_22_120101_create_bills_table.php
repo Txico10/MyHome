@@ -16,11 +16,11 @@ class CreateBillsTable extends Migration
         Schema::create('bills', function (Blueprint $table) {
             $table->id();
             $table->foreignId('check_account_id');
-            $table->string('month');
-            $table->unsignedInteger('year');
-            $table->enum('status', ['c','p','c','r']);//c-created; p-payed; c-cancelled; r-returned
-            $table->date("payment_due");
-            //$table->decimal('total_amount', $precision = 8, $scale = 2);
+            $table->date('period_from');
+            $table->date('period_to');
+            $table->enum('status', ['created','payed','cancel']);//c-created; p-payed; c-cancelled;
+            $table->date("payment_due_date");
+            $table->decimal('total_amount', $precision = 8, $scale = 2)->default(0.00);
             $table->string("description")->nullable();
             $table->timestamps();
         });

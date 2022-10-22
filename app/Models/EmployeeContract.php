@@ -34,6 +34,7 @@ class EmployeeContract extends Model
      * @var array
      */
     protected $fillable = [
+        'code',
         'role_id',
         'start_at',
         'end_at',
@@ -87,7 +88,7 @@ class EmployeeContract extends Model
     {
         return $this->morphToMany(User::class, 'engageable')
             ->using(Contract::class)
-            ->withPivot('team_id')
+            ->withPivot('team_id', 'check_account_id')
             ->withTimestamps();
     }
 
@@ -99,6 +100,19 @@ class EmployeeContract extends Model
     public function teams()
     {
         return $this->morphToMany(Team::class, 'engageable')
+            ->using(Contract::class)
+            ->withPivot('user_id')
+            ->withTimestamps();
+    }
+
+    /**
+     * Check accounts
+     *
+     * @return void
+     */
+    public function checkAccounts()
+    {
+        return $this->morphToMany(CheckAccount::class, 'engageable')
             ->using(Contract::class)
             ->withPivot('user_id')
             ->withTimestamps();
