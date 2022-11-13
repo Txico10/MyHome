@@ -14,7 +14,10 @@ namespace Database\Seeders;
 
 use App\Models\Lease;
 use App\Models\Bill;
+use App\Models\Team;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
 /**
  *  Bill seeder class
  *
@@ -36,18 +39,27 @@ class BillSeeder extends Seeder
         activity()->withoutLogs(
             function () {
                 $leases = Lease::all();
-
+                $companies = Team::all();
+                $bill_number = [];
+                foreach ($companies as $company) {
+                    $bill_number[$company->id]=0;
+                }
                 foreach ($leases as $lease) {
                     $total = 0;
-                    $user = $lease->users()->first();
-                    $bill = Bill::factory()->create(
-                        [
-                            'check_account_id'=>$user->checkAccounts()->first()->id,
-                            'period_from'=>$lease->start_at,
-                            'period_to'=>$lease->start_at->addMonth(),
-                            'payment_due_date'=>$lease->start_at->addMonth(2),
-                        ]
-                    );
+
+                    $bill_company = $lease->teams->first();
+
+                    $bill = Bill::factory()
+                        ->create(
+                            [
+                                'team_id'=>$bill_company->id,
+                                'period_from'=>$lease->start_at,
+                                'period_to'=>$lease->start_at->addMonth(),
+                                'payment_due_date'=>$lease->start_at->addMonth(2),
+                            ]
+                        );
+
+                    $bill->number = ++$bill_number[$bill->team_id];
 
                     $bill->invoiceLease()->attach(
                         $lease,
@@ -79,6 +91,14 @@ class BillSeeder extends Seeder
                         );
                         $total+=$accessory->pivot->price;
                     }
+
+                    $tenants = $lease->users;
+
+                    foreach ($tenants as $tenant) {
+                        $checkaccount=$tenant->checkAccounts->first();
+                        $bill->checkAccounts()->attach($checkaccount);
+                    }
+
                     $bill->total_amount = $total;
                     $bill->save();
                 }

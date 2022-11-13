@@ -12,6 +12,7 @@
  * */
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\Traits\CausesActivity;
@@ -45,4 +46,5 @@ class Invoice extends MorphPivot
     {
         return "Invoice has been {$eventName}";
     }
+
 }

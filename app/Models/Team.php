@@ -221,4 +221,14 @@ class Team extends LaratrustTeam
         return $this->hasMany(CheckAccount::class);
     }
 
+    /**
+     * Bills
+     *
+     * @return void
+     */
+    public function bills()
+    {
+        return $this->hasMany(Bill::class);
+    }
+
 }

@@ -12,6 +12,7 @@
  * */
 namespace App\Models;
 
+use Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -30,13 +31,19 @@ class Bill extends Model
 {
     use HasFactory, LogsActivity, CausesActivity;
 
+    protected $casts = [
+        'period_from'=>'datetime:Y-m-d',
+        'period_to'=>'datetime:Y-m-d',
+        'payment_due_date'=>'datetime:Y-m-d',
+    ];
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'check_account_id',
+        'team_id',
+        'number',
         'period_begin',
         'period_end',
         'status',
@@ -67,9 +74,9 @@ class Bill extends Model
      *
      * @return void
      */
-    public function checkAccount()
+    public function company()
     {
-        return $this->belongsTo(CheckAccount::class);
+        return $this->belongsTo(Team::class);
     }
 
     /**
@@ -120,5 +127,36 @@ class Bill extends Model
     public function payment()
     {
         return $this->hasMany(Payment::class);
+    }
+
+    /**
+     * Check Accounts
+     *
+     * @return void
+     */
+    public function checkAccounts()
+    {
+        return $this->morphToMany(CheckAccount::class, 'checkable')
+            ->withTimestamps();
+    }
+
+    /**
+     * GetNumberAttribute
+     *
+     * @return void
+     */
+    public function getNumberAttribute($value)
+    {
+        $bill_number = (string)$value;
+        $size = strlen($bill_number);
+        $max_size = 6;
+        $blanc ='';
+        if ($max_size >=$size) {
+            for ($i=0; $i<6-$size; $i++) {
+                $blanc.='0';
+            }
+        }
+        $blanc = $blanc.$bill_number;
+        return $blanc;
     }
 }

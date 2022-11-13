@@ -119,7 +119,7 @@ class Lease extends Model
     {
         return $this->morphToMany(Team::class, 'engageable')
             ->using(Contract::class)
-            ->withPivot('user_id', 'check_account')
+            ->withPivot('user_id', 'check_account_id')
             ->withTimestamps();
     }
 

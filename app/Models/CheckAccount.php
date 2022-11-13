@@ -66,7 +66,8 @@ class CheckAccount extends Model
      */
     public function bills()
     {
-        return $this->hasMany(Bill::class);
+        return $this->morphedByMany(Bill::class, 'checkable')
+            ->withTimestamps();
     }
 
     /**

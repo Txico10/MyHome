@@ -16,7 +16,7 @@ class CreateBillablesTable extends Migration
         Schema::create('billables', function (Blueprint $table) {
             $table->id();
             $table->morphs('billable');
-            $table->foreignId('bill_id');
+            $table->foreignId('bill_id')->constrained();
             $table->decimal('amount', $precision = 8, $scale = 2);
             $table->enum('oparation', ['cred','debi']);
             $table->string('description')->nullable();

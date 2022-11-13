@@ -15,10 +15,9 @@ namespace App\Http\Controllers;
 use App\Models\Lease;
 use App\Models\Role;
 use App\Models\Team;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Laratrust\LaratrustFacade;
-use Barryvdh\DomPDF\Facade as PDF;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -144,7 +143,7 @@ class LeaseController extends Controller
                 ->removeColumn('rent_amount')
                 ->removeColumn('rent_recurrence')
                 ->removeColumn('subsidy_program')
-                ->removeColumn(' first_payment_at')
+                ->removeColumn('first_payment_at')
                 ->removeColumn('postdated_cheques')
                 ->removeColumn('by_law_given_on')
                 ->removeColumn('land_access')
@@ -248,7 +247,7 @@ class LeaseController extends Controller
 
             $path = storage_path('app/public/reports/pdf');
 
-            PDF::loadView('companies.dompdf.lease-report', $data)->setPaper('letter')->save($path.'/'.$filename);
+            Pdf::loadView('companies.dompdf.lease-report', $data)->setPaper('letter')->save($path.'/'.$filename);
 
             return Storage::download($file_path.$filename);
             //return $pdf->download('lease.pdf');

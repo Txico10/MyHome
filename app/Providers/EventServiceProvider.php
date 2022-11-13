@@ -162,22 +162,9 @@ class EventServiceProvider extends ServiceProvider
                             [
                                 'key' => 'employees',
                                 'text' => 'Employees',
-                                'icon' => 'fas fa-fw fa-user-tie',
+                                'route'  => ['company.employees', ['company' => $company]],
+                                'icon' => 'fas fa-fw fa-users',
                                 'permission' => 'employee-read',
-                                'submenu' => [
-                                    [
-                                        'text' => 'All Employees',
-                                        'route'  => ['company.employees', ['company' => $company]],
-                                        'icon' => 'fas fa-fw fa-users',
-                                        'permission' => 'employee-read',
-                                    ],
-                                    [
-                                        'text' => 'New Employee',
-                                        'route'  => ['company.employees.create', ['company' => $company]],
-                                        'icon' => 'fas fa-fw fa-user-plus',
-                                        'permission' => 'employee-create',
-                                    ],
-                                ]
                             ],
                         );
                         $event->menu->add(
@@ -188,16 +175,16 @@ class EventServiceProvider extends ServiceProvider
                                 'permission' => 'leaseMenu-read',
                                 'submenu' => [
                                     [
-                                        'text' => 'All Leases',
+                                        'text' => 'Leases',
                                         'route'  => ['company.leases', ['company' => $company]],
                                         'icon' => 'fas fa-fw fa-file-contract',
                                         'permission' => 'lease-read',
                                     ],
                                     [
-                                        'text' => 'New Lease',
-                                        'route'  => ['company.lease.create', ['company' => $company]],
-                                        'icon' => 'fas fa-fw fa-folder-plus',
-                                        'permission' => 'lease-create',
+                                        'text' => 'Invoices',
+                                        'route'  => ['company.invoices', ['company' => $company]],
+                                        'icon' => 'fas fa-fw fa-file-invoice',
+                                        'permission' => 'bill-read',
                                     ],
                                 ]
                             ]

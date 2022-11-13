@@ -15,7 +15,8 @@ class CreateBillsTable extends Migration
     {
         Schema::create('bills', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('check_account_id');
+            $table->foreignId('team_id')->constrained();
+            $table->unsignedInteger('number')->default(0);
             $table->date('period_from');
             $table->date('period_to');
             $table->enum('status', ['created','payed','cancel']);//c-created; p-payed; c-cancelled;

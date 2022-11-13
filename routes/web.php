@@ -15,6 +15,7 @@ use App\Http\Controllers\AccessoryController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\ApartmentController;
 use App\Http\Controllers\BenefitsSettingController;
+use App\Http\Controllers\BillController;
 use App\Http\Controllers\BuildingController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ContractController;
@@ -24,7 +25,7 @@ use App\Http\Controllers\LeaseController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
-use Barryvdh\DomPDF\Facade as PDF;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -327,17 +328,32 @@ Route::get('/companies/{company:slug}/leases/{lease}', [LeaseController::class, 
 Route::get('/companies/{company:slug}/leases/{lease}/download', [LeaseController::class, 'downloadPDF'])
     ->middleware(['auth','verified','company.check'])
     ->name('company.lease.download');
+/*
+    Bills CRUD
+
+*/
+Route::get('/companies/{company:slug}/leases-invoices', [BillController::class, 'index'])
+    ->middleware(['auth','verified','company.check','permission:bill-read'])
+    ->name('company.invoices');
+Route::get('/companies/{company:slug}/leases-invoice/create', [BillController::class, 'create'])
+    ->middleware(['auth','verified','company.check','permission:bill-create'])
+    ->name('company.invoice.create');
+Route::get('/companies/{company:slug}/leases-invoice/{bill}', [BillController::class, 'show'])
+    ->middleware(['auth','verified','company.check','permission:bill-read'])
+    ->name('company.invoice.show');
 //PDF Test
 Route::get(
     'print/invoice',
     function () {
+        return view('companies.dompdf.invoice-report');
         //return view('companies.dompdf.lease-report');
         //return view('companies.forprint.invoice');
         //$pdf = PDF::loadView('companies.forprint.biglist');
         //$pdf->getDomPDF()->set_option("enable_php", true);
-        $pdf = PDF::loadView('companies.forprint.biglist');
+        //PDF::setOption('isHtml5ParserEnabled', true);
+        //$pdf = PDF::loadView('companies.dompdf.invoice-report');
         //$pdf = PDF::loadView('companies.dompdf.lease-report');
-        return $pdf->download('lease.pdf');
+        //return $pdf->download('invoice.pdf');
         //$pdf = App::make('dompdf.wrapper');
         //$pdf->getDomPDF()->set_option("enable_php", true);
         //$pdf->loadView('companies.forprint.biglist');
