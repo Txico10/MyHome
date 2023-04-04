@@ -22,9 +22,11 @@ use App\Http\Controllers\ContractController;
 use App\Http\Controllers\DependencyController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LeaseController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Models\Payment;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Support\Facades\Route;
 
@@ -328,6 +330,9 @@ Route::get('/companies/{company:slug}/leases/{lease}', [LeaseController::class, 
 Route::get('/companies/{company:slug}/leases/{lease}/download', [LeaseController::class, 'downloadPDF'])
     ->middleware(['auth','verified','company.check'])
     ->name('company.lease.download');
+Route::post('/companies/{company:slug}/leases/getLeasesCode', [LeaseController::class, 'getLeasesCode'])
+    ->middleware(['auth','verified','company.check'])
+    ->name('company.lease.getLeasesCode');
 /*
     Bills CRUD
 
@@ -335,12 +340,27 @@ Route::get('/companies/{company:slug}/leases/{lease}/download', [LeaseController
 Route::get('/companies/{company:slug}/leases-invoices', [BillController::class, 'index'])
     ->middleware(['auth','verified','company.check','permission:bill-read'])
     ->name('company.invoices');
-Route::get('/companies/{company:slug}/leases-invoice/create', [BillController::class, 'create'])
+Route::put('/companies/{company:slug}/leases-invoice/create', [BillController::class, 'create'])
     ->middleware(['auth','verified','company.check','permission:bill-create'])
     ->name('company.invoice.create');
 Route::get('/companies/{company:slug}/leases-invoice/{bill}', [BillController::class, 'show'])
     ->middleware(['auth','verified','company.check','permission:bill-read'])
     ->name('company.invoice.show');
+Route::get('/companies/{company:slug}/leases-invoice/{bill}/download', [BillController::class, 'downloadPDF'])
+    ->middleware(['auth','verified','company.check'])
+    ->name('company.invoice.download');
+Route::post('/companies/{company:slug}/leases-invoice/getTenant', [BillController::class, 'getTenants'])
+    ->middleware(['auth','verified','company.check'])
+    ->name('company.invoice.gettenant');
+
+/**
+ * Payment CRUD
+ */
+Route::post('/companies/{company:slug}/payment', [PaymentController::class, 'store'])
+    ->middleware(['auth','verified','company.check','permission:payment-create'])
+    ->name('company.payment.store');
+
+
 //PDF Test
 Route::get(
     'print/invoice',

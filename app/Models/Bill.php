@@ -44,8 +44,8 @@ class Bill extends Model
     protected $fillable = [
         'team_id',
         'number',
-        'period_begin',
-        'period_end',
+        'period_from',
+        'period_to',
         'status',
         'payment_due_date',
         'total_amount',
@@ -124,7 +124,7 @@ class Bill extends Model
      *
      * @return void
      */
-    public function payment()
+    public function payments()
     {
         return $this->hasMany(Payment::class);
     }
@@ -142,6 +142,8 @@ class Bill extends Model
 
     /**
      * GetNumberAttribute
+     *
+     * @param mixed $value Value
      *
      * @return void
      */

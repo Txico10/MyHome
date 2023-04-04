@@ -1,6 +1,6 @@
 <?php
 /**
- * Lease Controller
+ * Bill Controller
  *
  * PHP version 7.4
  *
@@ -12,13 +12,20 @@
  * */
 namespace App\Http\Controllers;
 
+use App\Jobs\GenerateLeaseBills;
 use App\Models\Accessory;
 use App\Models\Bill;
 use App\Models\Dependency;
 use App\Models\Invoice;
 use App\Models\Lease;
 use App\Models\Team;
+use App\Services\BillService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
+use Illuminate\Http\JsonResponse;
 use Laratrust\LaratrustFacade;
 
 /**
@@ -32,6 +39,21 @@ use Laratrust\LaratrustFacade;
  * */
 class BillController extends Controller
 {
+
+    protected $billService;
+
+    /**
+     * __construct
+     *
+     * @param BillService $billService Bill Service
+     *
+     * @return void
+     */
+    public function __construct(BillService $billService)
+    {
+        $this->billService = $billService;
+    }
+
     /**
      * Index
      *
@@ -117,6 +139,12 @@ class BillController extends Controller
                     }
                 )
                 ->editColumn(
+                    'created_at',
+                    function ($bill) {
+                        return $bill->created_at->toFormattedDateString();
+                    }
+                )
+                ->editColumn(
                     'total_amount',
                     function ($bill) {
                         return '$'.$bill->total_amount;
@@ -125,9 +153,14 @@ class BillController extends Controller
                 ->addColumn(
                     'action',
                     function ($bill) use ($company) {
-                        $btn_validation = true;
+                        $payments = $bill->payments;
+                        $btn_validation = $payments->isEmpty();
                         $btn = '<nobr>';
                         $btn = $btn.'<a class="btn btn-outline-primary btn-sm mx-1 shadow" type="button" title="More details" href="'.route('company.invoice.show', ['company'=>$company, 'bill'=>$bill]).'"><i class="fas fa-search fa-fw"></i></a>';
+
+                        if ($btn_validation && LaratrustFacade::isAbleTo('payment-create')) {
+                            $btn = $btn.'<button class="btn btn-outline-success mx-1 shadow btn-sm makePaymentButton" type="button" title="Make Payment" value="'.$bill->id.'"><i class="fas fa-money-bill-alt fa-fw"></i></button>';
+                        }
 
                         if ($btn_validation && LaratrustFacade::isAbleTo('bill-update')) {
                             $btn = $btn.'<button class="btn btn-outline-secondary mx-1 shadow btn-sm editLeaseButton" type="button" title="Edit bill" value="'.$bill->id.'"><i class="fas fa-pencil-alt fa-fw"></i></button>';
@@ -144,7 +177,7 @@ class BillController extends Controller
                 ->removeColumn('team_id')
                 ->removeColumn('periode_from')
                 ->removeColumn('periode_to')
-                ->removeColumn('created_at')
+                //->removeColumn('created_at')
                 ->removeColumn('updated_at')
                 ->make();
         }
@@ -154,13 +187,41 @@ class BillController extends Controller
     /**
      * Create bill
      *
-     * @param Team $company Company
+     * @param Request $request Request
+     * @param Team    $company Company
      *
      * @return void
      */
-    public function create(Team $company)
+    public function create(Request $request, Team $company)
     {
-        // code...
+        if ($request->ajax()) {
+
+            $request->validate(
+                [
+                    'lease_code'=>['nullable', 'numeric', 'exists:leases,id'],
+                    'start_date' => ['required', 'date', 'before_or_equal:today'],
+                    'end_date' => ['required', 'date', 'after_or_equal:start_date']
+                ]
+            );
+
+            $search = [
+                'company_id' => $company->id,
+                'lease_id'   => $request->lease_code,
+                'start_at'   => $request->start_date,
+                'end_at'     => $request->end_date
+            ];
+
+            GenerateLeaseBills::dispatch($search);
+            /*
+            if ($this->billService->generateBills($search)) {
+                $data = "W Company ID";
+            } else {
+                $data = "Wout Company ID";
+            }
+            */
+            return response()->json(['message'=>"Bill created successfully"]);
+        }
+        return null;
     }
 
     /**
@@ -174,54 +235,138 @@ class BillController extends Controller
      */
     public function show(Request $request, Team $company, Bill $bill)
     {
-        //$bill = $bill->loadMissing('invoiceLease', 'invoiceDependencie', 'invoiceAccessory');
-        //$lease = $bill->invoiceLease->first();
-        //$dependencies = $bill->invoiceDependencie;
-        //$accessories = $bill->invoiceAccessory;
-        //dd($dependencies);
-        if ($request->ajax()) {
-            $invoices = Invoice::where('bill_id', $bill->id)->get();
-            $total = 0.00;
-            return datatables()->of($invoices)
-                ->addIndexColumn()
-                ->addColumn(
-                    'type',
-                    function ($invoice) {
-                        $parts = explode("\\", $invoice->billable_type);
-                        $content = '';
-                        if (strcmp($parts[2], "Lease")==0) {
-                            $record = Lease::find($invoice->billable_id);
-                            $content = $parts[2];
-                            $content = $content.' : '.$record->code;
-                        } elseif (strcmp($parts[2], "Accessory")==0) {
-                            $access = Accessory::find($invoice->billable_id);
-                            $content = $access->teamSettings->first()->display_name;
-                            $content = $content.' : '.ucfirst($access->manufacturer).' '.$access->model;
-                        } else {
-                            $dep = Dependency::find($invoice->billable_id);
-                            $content = $dep->teamSettings->first()->display_name;
-                            $content = $content.' : '.$dep->number;
-                        }
-                        return $content;
-                        //return $invoice->billable_type;
-                    }
-                )
-                ->editColumn(
-                    'amount',
-                    function ($invoice) {
-                        return '$'.$invoice->amount;
-                    }
-                )
-                ->with('total', $invoices->sum('amount'))
-                ->removeColumn('id')
-                ->removeColumn('billable_type')
-                ->removeColumn('billable_id')
-                ->removeColumn('bill_id')
-                ->removeColumn('operation')
-                ->removeColumn('created_at')
-                ->removeColumn('updated_at')
-                ->make();
+
+        $invoices = Invoice::where('bill_id', $bill->id)->get();
+        $newData = [];
+        foreach ( $invoices as $invoice) {
+            $parts = explode("\\", $invoice->billable_type);
+            $content = '';
+            if (strcmp($parts[2], "Lease")==0) {
+                $record = Lease::find($invoice->billable_id);
+                $content = $parts[2];
+                $content = $content.' : '.$record->code;
+            } elseif (strcmp($parts[2], "Accessory")==0) {
+                $access = Accessory::find($invoice->billable_id);
+                $content = $access->teamSettings->first()->display_name;
+                $content = $content.' : '.ucfirst($access->manufacturer).' '.$access->model;
+            } else {
+                $dep = Dependency::find($invoice->billable_id);
+                $content = $dep->teamSettings->first()->display_name;
+                $content = $content.' : '.$dep->number;
+            }
+            $newData[]=['name'=>$content, 'amount'=>$invoice->amount];
         }
-        return view('companies.bill-show', ['company'=>$company, 'bill'=>$bill]);
+        $checkAccounts = $bill->checkAccounts->loadMissing('user');
+        $tenants = collect([]);
+        foreach ($checkAccounts as $checkAccount) {
+            $tenants[] = $checkAccount->user;
+        }
+
+        return view('companies.bill-show', ['company'=>$company, 'bill'=>$bill, 'bill_lines'=>$newData, 'tenants'=>$tenants]);
+    }
+
+    /**
+     * DownloadPDF
+     *
+     * @param Team $company Company
+     * @param Bill $bill    Bill
+     *
+     * @return void
+     */
+    public function downloadPDF(Team $company, Bill $bill)
+    {
+        $file_path = "public/reports/pdf/";
+        $filename = "IN".$bill->period_from->format('mY').$bill->number.$company->id.".pdf";
+
+        $file_exists= Storage::exists($file_path.$filename);
+
+        if ($file_exists) {
+
+            return Storage::download($file_path.$filename);
+
+        } else {
+            $invoices = Invoice::where('bill_id', $bill->id)->get();
+            $newData = [];
+
+            foreach ( $invoices as $invoice) {
+                $parts = explode("\\", $invoice->billable_type);
+                $content = '';
+                if (strcmp($parts[2], "Lease")==0) {
+                    $record = Lease::find($invoice->billable_id);
+                    $content = $parts[2];
+                    $content = $content.' : '.$record->code;
+                } elseif (strcmp($parts[2], "Accessory")==0) {
+                    $access = Accessory::find($invoice->billable_id);
+                    $content = $access->teamSettings->first()->display_name;
+                    $content = $content.' : '.ucfirst($access->manufacturer).' '.$access->model;
+                } else {
+                    $dep = Dependency::find($invoice->billable_id);
+                    $content = $dep->teamSettings->first()->display_name;
+                    $content = $content.' : '.$dep->number;
+                }
+                $newData[]=['name'=>$content, 'amount'=>$invoice->amount];
+            }
+            $checkAccounts = $bill->checkAccounts->loadMissing('user');
+            $tenants = collect([]);
+            foreach ($checkAccounts as $checkAccount) {
+                $tenants[] = $checkAccount->user;
+            }
+            $data = [
+                'company'=>$company,
+                'bill'=>$bill,
+                'bill_lines'=>$newData,
+                'tenants'=>$tenants
+            ];
+
+            $path = storage_path('app/public/reports/pdf');
+
+            Pdf::loadView('companies.dompdf.invoice-report', $data)->setPaper('letter')->save($path.'/'.$filename);
+
+            return Storage::download($file_path.$filename);
+            //return $pdf->download('lease.pdf');
+        }
+        //dd($file_exists);
+    }
+
+    /**
+     * Get Tenants
+     *
+     * @param Request $request Request
+     * @param Team    $company Company
+     *
+     * @return JsonResponse
+     */
+    public function getTenants(Request $request, Team $company)
+    {
+        if ($request->ajax()) {
+
+            $request->validate(
+                [
+                    'bill_id'=>['required', 'numeric', 'exists:bills,id']
+                ]
+            );
+
+            $bill = Bill::find($request->bill_id);
+
+            $check_accs = $bill->checkAccounts;
+
+            $data = array();
+
+            foreach ($check_accs as $key => $check_acc) {
+
+                $data[$check_acc->user->id] = [
+                    'name'        =>$check_acc->user->name,
+                    'email'       =>$check_acc->user->email,
+                    'bill_id'     =>$bill->id,
+                    'bill_num'    =>$bill->number,
+                    'total_amount'=>$bill->total_amount,
+                    'payment_at' =>$bill->payment_due_date->format('Y-m-d'),
+                    'created_at' =>$bill->created_at->format('Y-m-d')
+                ];
+            }
+
+            return response()->json(['tenants'=>$data]);
+        }
+
     }
 }

@@ -29,6 +29,9 @@ class Payment extends Model
 {
     use HasFactory, LogsActivity, CausesActivity;
 
+    protected $casts = [
+        'payed_at'=>'datetime:Y-m-d',
+    ];
     /**
      * The attributes that are mass assignable.
      *
@@ -36,11 +39,12 @@ class Payment extends Model
      */
     protected $fillable = [
         'bill_id',
-        'user_id',
+        'email',
         'amount',
         'method',
-        'pay_id',
-        'payment_at',
+        'method_number',
+        'transaction_id',
+        'payed_at'
     ];
 
     protected static $logName = 'payment_log';

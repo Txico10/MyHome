@@ -354,22 +354,6 @@ return [
                 ],
             ],
         ],
-
-        'DateRangePicker' => [
-            'active' => false,
-            'files' => [
-                [
-                    'type' => 'js',
-                    'asset' => true,
-                    'location' => 'vendor/daterangepicker/daterangepicker.js',
-                ],
-                [
-                    'type' => 'css',
-                    'asset' => true,
-                    'location' => 'vendor/daterangepicker/daterangepicker.css',
-                ],
-            ],
-        ],
         'iCheck' => [
             'active' => false,
             'files' => [
@@ -507,6 +491,21 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'vendor/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js',
+                ],
+            ],
+        ],
+        'DateRangePicker' => [
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'vendor/daterangepicker/daterangepicker.js',
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => 'vendor/daterangepicker/daterangepicker.css',
                 ],
             ],
         ],

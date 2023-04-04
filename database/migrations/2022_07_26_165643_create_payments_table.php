@@ -15,7 +15,7 @@ class CreatePaymentsTable extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("bill_id");
+            $table->foreignId("bill_id")->constrained();
             $table->string("email")->nullable();
             $table->decimal('amount', $precision = 8, $scale = 2);
             $table->enum("method", ["credit","interac", "paypal", "cheque", "cash"]);//cc-credit card; interac-debit; pp-paypal

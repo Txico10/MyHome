@@ -254,4 +254,31 @@ class LeaseController extends Controller
         }
         //dd($file_exists);
     }
+
+    /**
+     * Get Lease Code
+     *
+     * @param Request $request Request
+     * @param Team    $company Company
+     *
+     * @return void
+     */
+    public function getLeasesCode(Request $request, Team $company)
+    {
+        if ($request->ajax()) {
+
+            $all_leases = $company->leases->filter(
+                function ($item) {
+                    if (is_null($item->end_at) ||$item->end_at->greaterThanOrEqualTo('today')) {
+                        return $item;
+                    }
+                }
+            )
+            ->values();
+            //$leases = $all_leases->pluck('code', 'id');
+
+            return response()->json(['leases'=>$all_leases->pluck('code', 'id')]);
+        }
+        return null;
+    }
 }
