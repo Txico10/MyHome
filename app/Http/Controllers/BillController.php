@@ -23,9 +23,8 @@ use App\Services\BillService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Carbon\Carbon;
-use Carbon\CarbonPeriod;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Str;
 use Laratrust\LaratrustFacade;
 
 /**
@@ -66,18 +65,13 @@ class BillController extends Controller
     {
         if ($request->ajax()) {
             $bills = $company->bills;
-            $number = 1;
             return datatables()->of($bills)
                 ->addIndexColumn()
                 ->addColumn(
                     'lease',
-                    function ($bill) use ($company) {
-                        $leases = $bill->invoiceLease;
-                        $mycode = '';
-                        foreach ($leases as $lease) {
-                            $mycode= $mycode.'BL'.$lease->start_at->format('mY').$lease->id.$company->id;
-                        }
-                        return $mycode;
+                    function ($bill) {
+                        $lease = $bill->invoiceLease->first();
+                        return $lease->code;
                     }
                 )
                 ->addColumn(
@@ -163,7 +157,7 @@ class BillController extends Controller
                         }
 
                         if ($btn_validation && LaratrustFacade::isAbleTo('bill-update')) {
-                            $btn = $btn.'<button class="btn btn-outline-secondary mx-1 shadow btn-sm editLeaseButton" type="button" title="Edit bill" value="'.$bill->id.'"><i class="fas fa-pencil-alt fa-fw"></i></button>';
+                            $btn = $btn.'<a href="'.route('company.invoice.edit', ['company'=>$company, 'bill'=>$bill]).'" class="btn btn-outline-secondary mx-1 shadow btn-sm"><i class="fas fa-pencil-alt fa-fw"></i></a>';
 
                         }
                         if ($btn_validation && LaratrustFacade::isAbleTo('bill-delete')) {
@@ -235,34 +229,29 @@ class BillController extends Controller
      */
     public function show(Request $request, Team $company, Bill $bill)
     {
+        $company = $company->loadMissing(['addresses', 'contacts']);
 
-        $invoices = Invoice::where('bill_id', $bill->id)->get();
-        $newData = [];
-        foreach ( $invoices as $invoice) {
-            $parts = explode("\\", $invoice->billable_type);
-            $content = '';
-            if (strcmp($parts[2], "Lease")==0) {
-                $record = Lease::find($invoice->billable_id);
-                $content = $parts[2];
-                $content = $content.' : '.$record->code;
-            } elseif (strcmp($parts[2], "Accessory")==0) {
-                $access = Accessory::find($invoice->billable_id);
-                $content = $access->teamSettings->first()->display_name;
-                $content = $content.' : '.ucfirst($access->manufacturer).' '.$access->model;
-            } else {
-                $dep = Dependency::find($invoice->billable_id);
-                $content = $dep->teamSettings->first()->display_name;
-                $content = $content.' : '.$dep->number;
-            }
-            $newData[]=['name'=>$content, 'amount'=>$invoice->amount];
-        }
-        $checkAccounts = $bill->checkAccounts->loadMissing('user');
-        $tenants = collect([]);
-        foreach ($checkAccounts as $checkAccount) {
-            $tenants[] = $checkAccount->user;
-        }
+        $bill = $bill->loadMissing('checkAccounts.user', 'payments');
 
-        return view('companies.bill-show', ['company'=>$company, 'bill'=>$bill, 'bill_lines'=>$newData, 'tenants'=>$tenants]);
+        $bill_lines = $this->billService->billLines($bill->id);
+
+        $tenant_data = $this->billService->billTenants($bill);
+
+
+        return view('companies.bill-show', ['company'=>$company, 'bill'=>$bill, 'bill_lines'=>$bill_lines, 'tenant'=>$tenant_data]);
+    }
+
+    /**
+     * Edit Bill
+     *
+     * @param Team $company Company
+     * @param Bill $bill    Bill
+     *
+     * @return void
+     */
+    public function edit(Team $company, Bill $bill)
+    {
+        return view('companies.bill-edit', ['company'=>$company, 'bill'=>$bill]);
     }
 
     /**
@@ -285,37 +274,15 @@ class BillController extends Controller
             return Storage::download($file_path.$filename);
 
         } else {
-            $invoices = Invoice::where('bill_id', $bill->id)->get();
-            $newData = [];
+            $bill_lines = $this->billService->billLines($bill->id);
 
-            foreach ( $invoices as $invoice) {
-                $parts = explode("\\", $invoice->billable_type);
-                $content = '';
-                if (strcmp($parts[2], "Lease")==0) {
-                    $record = Lease::find($invoice->billable_id);
-                    $content = $parts[2];
-                    $content = $content.' : '.$record->code;
-                } elseif (strcmp($parts[2], "Accessory")==0) {
-                    $access = Accessory::find($invoice->billable_id);
-                    $content = $access->teamSettings->first()->display_name;
-                    $content = $content.' : '.ucfirst($access->manufacturer).' '.$access->model;
-                } else {
-                    $dep = Dependency::find($invoice->billable_id);
-                    $content = $dep->teamSettings->first()->display_name;
-                    $content = $content.' : '.$dep->number;
-                }
-                $newData[]=['name'=>$content, 'amount'=>$invoice->amount];
-            }
-            $checkAccounts = $bill->checkAccounts->loadMissing('user');
-            $tenants = collect([]);
-            foreach ($checkAccounts as $checkAccount) {
-                $tenants[] = $checkAccount->user;
-            }
+            $tenant = $this->billService->billTenants($bill);
+
             $data = [
                 'company'=>$company,
                 'bill'=>$bill,
-                'bill_lines'=>$newData,
-                'tenants'=>$tenants
+                'bill_lines'=>$bill_lines,
+                'tenants'=>$tenant
             ];
 
             $path = storage_path('app/public/reports/pdf');

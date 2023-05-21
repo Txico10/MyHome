@@ -81,7 +81,7 @@ class Dependency extends Model
     public function leases()
     {
         return $this->belongsToMany(Lease::class, 'lease_dependency')
-            ->withPivot('price', 'description')
+            ->withPivot('assigned_at', 'removed_at', 'price', 'description')
             ->withTimestamps();
     }
 

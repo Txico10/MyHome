@@ -16,6 +16,7 @@ use App\Models\Apartment;
 use App\Models\Building;
 use App\Models\Team;
 use App\Models\TeamSetting;
+use App\Services\ApartmentAccessoryService;
 use Illuminate\Http\Request;
 use Laratrust\LaratrustFacade;
 /**
@@ -29,6 +30,20 @@ use Laratrust\LaratrustFacade;
  * */
 class ApartmentController extends Controller
 {
+    protected $apartAccess;
+
+    /**
+     * __construct
+     *
+     * @param ApartmentAccessoryService $apartmentAccessoryService service
+     *
+     * @return void
+     */
+    public function __construct(ApartmentAccessoryService $apartmentAccessoryService)
+    {
+        $this->apartAccess = $apartmentAccessoryService;
+    }
+
     /**
      * Index
      *
@@ -146,13 +161,19 @@ class ApartmentController extends Controller
     /**
      * Show
      *
-     * @param Team $company   Company
-     * @param int  $apartment Apartment
+     * @param Request   $request   Request
+     * @param Team      $company   Company
+     * @param Apartment $apartment Apartment
      *
      * @return void
      */
-    public function show(Team $company, Apartment $apartment)
+    public function show(Request $request, Team $company, Apartment $apartment)
     {
+        if ($request->ajax()) {
+
+            return $this->apartAccess->accessoryTable($company, $apartment);
+
+        }
 
         return view('companies.apartment-show', ['company'=>$company, 'apartment'=>$apartment]);
     }

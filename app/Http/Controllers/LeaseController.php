@@ -64,9 +64,9 @@ class LeaseController extends Controller
                 )
                 ->addColumn(
                     'apart',
-                    function ($lease) use ($apartments) {
+                    function ($lease) use ($apartments, $company) {
                         $apartment = $apartments->where('id', $lease->apartment_id)->first();
-                        return $apartment->building->display_name.'-'.$apartment->number;
+                        return '<a href="'.route('company.apartment.show', ['company'=>$company, 'apartment'=>$apartment]).'">'.$apartment->building->display_name.'-'.$apartment->number.'</a>';
                     }
                 )
                 ->editColumn(
@@ -90,17 +90,11 @@ class LeaseController extends Controller
                 ->addColumn(
                     'status',
                     function ($lease) {
-                        if (strcmp($lease->term, "fixed")==0 && $lease->end_at->lessThan(today())) {
-                            return "Inactive";
+                        if ($lease->isActive()) {
+                            return "Active";
                         } else {
-                            if (strcmp($lease->term, "indeterminate")==0 && $lease->end_at!=null) {
-                                return "Inactive";
-                            } else {
-                                return "Active";
-                            }
-
+                            return "Inactive";
                         }
-
                     }
                 )
                 ->addColumn(
@@ -135,6 +129,7 @@ class LeaseController extends Controller
                         return $btn;
                     }
                 )
+                ->rawColumns(['action', 'apart'])
                 ->removeColumn('id')
                 ->removeColumn('residential_purpose')
                 ->removeColumn('residential_purpose_description')

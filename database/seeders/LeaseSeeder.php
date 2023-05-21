@@ -111,7 +111,7 @@ class LeaseSeeder extends Seeder
                                 } else {
                                     $price = '25.00';
                                 }
-                                $lease->dependencies()->attach($dependencies[$position]->id, ['price'=>$price]);
+                                $lease->dependencies()->attach($dependencies[$position]->id, ['assigned_at'=>$lease->start_at, 'price'=>$price]);
 
                                 $my_payment_method = $payment_method->shuffle();
                                 $my_payment_method = $my_payment_method->shift(2);

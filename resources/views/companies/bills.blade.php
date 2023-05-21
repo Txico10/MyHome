@@ -182,6 +182,7 @@
 
 @section('js')
 <script>
+
     $(function(){
         $.ajaxSetup({
             headers: {
@@ -363,7 +364,9 @@
         }
 
 
+
     })
+
 
     function savePaymentForm(){
 

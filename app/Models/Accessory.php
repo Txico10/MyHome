@@ -105,8 +105,8 @@ class Accessory extends Model
      */
     public function leases()
     {
-        return $this->belongsToMany(Lease::class, 'lease_accessory')
-            ->withPivot('assigned_at', 'removed_at', 'price', 'description')
+        return $this->belongsToMany(Lease::class, LeaseAccessory::class)
+            ->withPivot('id', 'assigned_at', 'removed_at', 'price', 'description')
             ->withTimestamps();
     }
 

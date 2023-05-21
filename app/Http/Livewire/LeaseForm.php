@@ -1007,6 +1007,7 @@ class LeaseForm extends Component
                 $lease->dependencies()->attach(
                     $dependencie['number'],
                     [
+                        'assigned_at'=>now(),//To be commented
                         'price'=>$dependencie['price'],
                         'description'=>$dependencie['description']
                     ]

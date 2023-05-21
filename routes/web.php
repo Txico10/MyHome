@@ -13,6 +13,7 @@
 
 use App\Http\Controllers\AccessoryController;
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\ApartmentAccessoryController;
 use App\Http\Controllers\ApartmentController;
 use App\Http\Controllers\BenefitsSettingController;
 use App\Http\Controllers\BillController;
@@ -26,7 +27,9 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Models\Bill;
 use App\Models\Payment;
+use App\Models\Team;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Support\Facades\Route;
 
@@ -314,6 +317,18 @@ Route::get('/companies/{company:slug}/accessories/{accessory}', [AccessoryContro
 Route::get('/companies/{company:slug}/accessories/{accessory}/edit', [AccessoryController::class, 'edit'])
     ->middleware(['auth','verified','company.check','permission:accessory-update'])
     ->name('company.accessory.edit');
+/**
+ * Apartment Accessorie Apartment
+ */
+Route::get('/companies/{company:slug}/apartacces/edit', [ApartmentAccessoryController::class, 'edit'])
+    ->middleware(['auth','verified','company.check','permission:lease-update'])
+    ->name('company.apartaccessory.edit');
+Route::post('/companies/{company:slug}/apartacces/update', [ApartmentAccessoryController::class, 'update'])
+    ->middleware(['auth','verified','company.check','permission:lease-update'])
+    ->name('company.apartaccessory.update');
+Route::put('/companies/{company:slug}/apartacces/remove', [ApartmentAccessoryController::class, 'removeAccessory'])
+    ->middleware(['auth','verified','company.check','permission:lease-update'])
+    ->name('company.apartaccessory.remove');
 
 /**
  * Lease CRUD
@@ -346,6 +361,9 @@ Route::put('/companies/{company:slug}/leases-invoice/create', [BillController::c
 Route::get('/companies/{company:slug}/leases-invoice/{bill}', [BillController::class, 'show'])
     ->middleware(['auth','verified','company.check','permission:bill-read'])
     ->name('company.invoice.show');
+Route::get('/companies/{company:slug}/leases-invoice/{bill}/edit', [BillController::class, 'edit'])
+    ->middleware(['auth','verified','company.check','permission:bill-update'])
+    ->name('company.invoice.edit');
 Route::get('/companies/{company:slug}/leases-invoice/{bill}/download', [BillController::class, 'downloadPDF'])
     ->middleware(['auth','verified','company.check'])
     ->name('company.invoice.download');
@@ -365,19 +383,25 @@ Route::post('/companies/{company:slug}/payment', [PaymentController::class, 'sto
 Route::get(
     'print/invoice',
     function () {
-        return view('companies.dompdf.invoice-report');
+        //$company = Team::findOrFail(1);
+        //$bill = $company->bills->first();
+        return view('companies.dompdf.invoice-print');
         //return view('companies.dompdf.lease-report');
         //return view('companies.forprint.invoice');
         //$pdf = PDF::loadView('companies.forprint.biglist');
         //$pdf->getDomPDF()->set_option("enable_php", true);
         //PDF::setOption('isHtml5ParserEnabled', true);
-        //$pdf = PDF::loadView('companies.dompdf.invoice-report');
+        //$pdf = PDF::loadView('companies.dompdf.invoice-print');
         //$pdf = PDF::loadView('companies.dompdf.lease-report');
         //return $pdf->download('invoice.pdf');
         //$pdf = App::make('dompdf.wrapper');
         //$pdf->getDomPDF()->set_option("enable_php", true);
         //$pdf->loadView('companies.forprint.biglist');
         //return $pdf->stream();
+        //$path = storage_path('app/public/reports/pdf');
+        //$data = ['company'=>$company,'bill'=>$bill];
+        //$pdf = Pdf::loadView('companies.dompdf.invoice-print', $data)->setPaper('letter')->setOption(['dpi' => 300]);
+        //return $pdf->download('invoice.pdf');
 
     }
 );

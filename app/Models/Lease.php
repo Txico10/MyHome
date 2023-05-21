@@ -156,8 +156,8 @@ class Lease extends Model
      */
     public function accessories()
     {
-        return $this->belongsToMany(Accessory::class, 'lease_accessory')
-            ->withPivot('assigned_at', 'removed_at', 'price', 'description')
+        return $this->belongsToMany(Accessory::class, LeaseAccessory::class)
+            ->withPivot('id', 'assigned_at', 'removed_at', 'price', 'description')
             ->withTimestamps();
     }
 
@@ -204,6 +204,20 @@ class Lease extends Model
             ->using(Invoice::class)
             ->withPivot(['amount', 'description', 'oparation'])
             ->withTimestamps();
+    }
+
+    /**
+     * Is Active
+     *
+     * @return boolean
+     */
+    public function isActive():bool
+    {
+        if ($this->start_at->lessThanOrEqualTo('today') && (is_null($this->end_at)||$this->end_at->greaterThanOrEqualTo('today'))) {
+            return true;
+        }
+
+        return false;
     }
 
 }
